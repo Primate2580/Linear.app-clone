@@ -1,0 +1,27 @@
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: 240px 1fr 320px;
+  grid-template-rows: 64px 1fr;
+  grid-template-areas:
+    "sidebar topbar  topbar"
+    "sidebar content detail";
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background: var(--color-ink-900);
+}
+.topbar {
+  grid-area: topbar;
+  background: var(--color-surface);
+}
+.content {
+  grid-area: content;
+  padding: var(--space-8);
+  overflow-y: auto;
+}
+.detail-panel {
+  grid-area: detail;
+  background: var(--color-surface);
+}

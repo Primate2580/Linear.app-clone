@@ -1,0 +1,11 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* .feature-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+} */

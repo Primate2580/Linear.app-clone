@@ -1,0 +1,116 @@
+/* html,
+body {
+  width: 90%;
+  height: 50%;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  gap: 15px;
+  background-color: darkgray;
+  height: 100%;
+}
+
+.col {
+  background-color: darkslateblue;
+} */
+
+
+/* .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.item {
+  background-color: lightgray;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #ccc;
+} */
+
+/* .grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 20px 1fr);
+  column-gap: 10px;
+}
+
+.grid-container div {
+  height: 100px;
+  background-color: darkblue;
+} */
+
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: minmax(150px, 300px) 1fr;
+  gap: 20px;
+}
+
+/* .grid-container > div {
+  background: crimson;
+  padding: 20px;
+  text-align: center;
+} */
+
+/* The first column, minmax(150px, 300px), 
+will always be at least 150px and at most 300px, depending on the available space.
+
+On the other hand, the second column, 1fr, will take up any available 
+remaining space in the grid container since there are no additional columns to share the space with. */
+
+/* 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  4 equal columns 
+  grid-template-rows: repeat(3, 100px);  3 equal rows 
+  gap: 10px;
+} */
+
+/* .grid > div {
+  display: grid;
+  place-items: center;
+  background: crimson;
+  color: white;
+  font-size: 4rem;
+} */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+  grid-template-rows: repeat(3, 100px); /* 3 equal rows */
+  gap: 10px;
+}
+
+.grid > div {
+  display: grid;
+  place-items: center;
+  background: crimson;
+  color: white;
+  font-size: 4rem;
+}
+
+/* .item1 {
+  grid-column: 1 / 3;
+   /* grid-row: 1 / 3; */
+     /* grid-column: 1 / span 2; */
+  /* grid-row: 1 / span 2; */
+
+
+.item1 {
+  grid-column: 1 / span 2;
+}
+
+.item4 {
+  grid-column: 1 / span 3;
+}
+
+.item6 {
+  grid-column: 1 / span 2;
+}
+
+.item7 {
+  grid-column: 3 / span 2;
+}

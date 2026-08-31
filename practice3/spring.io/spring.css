@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgb(27, 31, 35);
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  background-color: #1b1f23;
+  height: 100px;
+  align-items: center;
+  border-bottom: 1px solid #d3d4d5;
+}
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  font-family:
+    "arial", "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.image-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.image-container span {
+  color: #fff;
+  font-family: "Open Sans", sans-serif;
+}
+
+.toggle button {
+  background-color: #1b1f23;
+  border: none;
+  width: 50px;
+  height: 50px;
+  color: white;
+}
+
+.hero-section {
+  background-color: #262a2d;
+  height: 40vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
+  color: #fff;
+}
+
+.hero-section h1 {
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.btn {
+  display: flex;
+  gap: 10px;
+}
+
+.btn button {
+  background: transparent;
+  color: white;
+  font-weight: bold;
+  padding: 15px 30px;
+  border: 2px solid white;
+}
+
+.middle-section {
+  margin: 0 150px;
+}
+
+.boxes {
+  width: 100%;
+  height: 130vh;
+  background-color: #1b1f23;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 40px;
+  margin-top: 30px;
+}
+
+.box {
+  height: 400px;
+  border: 2px solid #2b2f33;
+  border-radius: 5px;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.box:hover {
+  transform: translateY(-7px);
+  border: 2px solid rgb(103, 101, 101);
+  border-radius: 5px;
+background-color: #262b30;
+}
+
+.box img{
+    width: 180px;
+    height: auto;
+}
+
+.box h2,p{
+    color: white;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.box p{
+    text-align: center;
+    width: 170px;
+}
+
+.two p{
+    width: 200px;
+}
+
+.two h2{
+    margin-top: -10px;
+}
+
