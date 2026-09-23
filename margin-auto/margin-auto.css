@@ -1,0 +1,9 @@
+.navbar {
+  display: flex;
+  gap: 16px;
+}
+
+/* Pushes itself and everything after it to the right edge */
+.profile {
+  margin-left: auto;
+}

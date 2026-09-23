@@ -1,4 +1,4 @@
-.app-shell {
+/* .app-shell {
   display: grid;
   min-height: 100vh;
   grid-template-columns: 240px 1fr 320px;
@@ -10,11 +10,11 @@
 
 .sidebar {
   grid-area: sidebar;
-  background: var(--color-ink-900);
+  background: blue;
 }
 .topbar {
   grid-area: topbar;
-  background: var(--color-surface);
+  background: red;
 }
 .content {
   grid-area: content;
@@ -23,5 +23,74 @@
 }
 .detail-panel {
   grid-area: detail;
-  background: var(--color-surface);
+  background: yellow;
+} */
+
+/* 1. Parent Container */
+.layout {
+  display: grid;
+  grid-template-columns: 200px 1fr; /* Sidebar fixed 200px, Main takes remaining space */
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+
+  grid-template-areas:
+    "head head"
+    "side main"
+    "foot foot";
+}
+
+/* 2. Assigning Children to Area Names */
+.site-header {
+  grid-area: head;
+}
+.site-sidebar {
+  grid-area: side;
+}
+.site-main {
+  grid-area: main;
+}
+.site-footer {
+  grid-area: foot;
+}
+
+
+/* Write CSS for .dashboard using display: grid and grid-template-areas mapped out like this:
+
+Row 1: Header spans across all 3 columns.
+
+Row 2: Sidebar in column 1 (200px), Main Content in column 2 (1fr), Widgets Panel in column 3 (250px).
+
+Row 3: Footer spans across all 3 columns.
+
+Assign the respective grid-area property to each child class. */
+
+.dashboard{
+  display: grid;
+  grid-template-columns: 200px 1fr 250px;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  grid-template-areas:
+    "header header header"
+    "sidebar main widgets"
+    "footer footer footer";
+}
+
+.site-header {
+  grid-area: header;
+}
+
+.site-sidebar{
+  grid-area: sidebar;
+}
+
+.site-main{
+  grid-area: main;
+}
+
+.site-widgets{
+  grid-area: widgets;
+}
+
+.site-footer{
+  grid-area: footer;
 }

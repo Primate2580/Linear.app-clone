@@ -1,0 +1,66 @@
+body{
+    background-color: rgb(221, 218, 218);
+}
+.changelog {
+  padding: 5rem 1.5rem;
+}
+ 
+.changelog-heading {
+  color: var(--color-text);
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+ 
+.changelog-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+ 
+.changelog-item {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+
+
+ 
+.changelog-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+}
+
+.changelog-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7a7a7a;
+  border: 7px solid #242425;
+}
+
+
+
+
+
+
+ 
+.changelog-item h3 {
+  color: var(--color-text);
+  font-size: 1.0625rem;
+  margin: 0 0 0.5rem;
+}
+ 
+.changelog-item p {
+  color: var(--color-text-dim);
+  font-size: 0.9375rem;
+}

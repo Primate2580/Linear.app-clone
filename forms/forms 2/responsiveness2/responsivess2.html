@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+ <style>
+        *, *::after, *::before{
+            box-sizing: 0;
+        }
+
+h2{
+    font-size: clamp(2rem, 5vw, 4.5rem);
+}
+        .container{
+            max-width: 1200px;
+            width: 100%;
+            background: antiquewhite;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            
+        }
+
+        .box{
+            height: 18.75rem;
+            max-width: 30.75rem;
+            width: 100%;
+            background: blueviolet;
+            padding: clamp(1rem, 5vh, 4rem);
+        }
+/* @media (min-width:768px) {
+    .container{
+        display: flex;
+        flex-direction: row;
+    }
+    .box{
+        flex: 1;
+    }
+} */
+
+
+        
+    </style>
+
+<body>
+   <h2>these are my boxes</h2>
+<div class="container">
+    <div class="box box1">box1</div>
+    <div class="box box2">box2</div>
+</div>
+
+
+
+</body>
+</html>

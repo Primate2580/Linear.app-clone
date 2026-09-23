@@ -1,0 +1,17 @@
+ .containers :nth-child(even) {
+       background-color: antiquewhite;
+        }
+
+
+
+
+input:focus{
+border-color: red;
+outline: none;
+}
+
+
+a:hover{
+color: red;
+background-color: blue;
+}

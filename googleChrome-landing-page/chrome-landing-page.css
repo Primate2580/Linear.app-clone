@@ -1,0 +1,134 @@
+body {
+  background-color: #1a1a1a;
+  /* color: #ffffff; */
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+}
+
+.header-text {
+  color: #ffffff;
+  font-size:4rem;
+  margin-bottom: 2rem;
+  font-family: roboto, sans-serif;
+}
+
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Left Plus Icon */
+.icon-add {
+  color: #5f6368;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.search-box {
+  background-color: #ffffff;
+  max-width: 700px;
+  width: 100%;
+  border-radius: 32px;
+  position: relative;
+  padding: 20px 24px;
+}
+
+/* Input occupies all remaining middle space */
+.search-box input {
+  flex: 1; /* Pushes the actions to the far right */
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #1a1a1a;
+}
+
+.search-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+.icon-btn {
+  color: #070707;
+  cursor: pointer;
+  font-size: 22px !important;
+  font-weight: 500 !important;
+}
+
+.icon-btn:hover {
+  color: #1a73e8;
+}
+
+
+.ai-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f0f4f9;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f1f1f;
+  cursor: pointer;
+}
+
+.ai-mode-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+.ai-mode-btn:hover {
+  background-color: #e1e8f0;
+}
+
+
+.suggestions {
+  list-style: none;
+  display: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-box:focus-within{
+border-radius: 20px;
+box-shadow:0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.search-box:focus-within .suggestions{
+display: block;
+margin-top: 12px;
+}
+
+.suggestions li{
+display: flex;
+align-items: center;
+padding: 8px 12px; 
+row-gap: 1rem;
+column-gap: 1.5rem;
+/* color: white; */
+}
+
+.suggestions li span:last-child{
+margin-left:auto;
+opacity: 0;
+}
+
+.suggestions li:hover span:last-child{
+opacity: 1;
+}
+
+.suggestions li:hover{
+    background-color: #f1f1f1;
+    padding: 8px 12px;
+    border-radius: 0 28px 28px 0;
+}

@@ -1,0 +1,83 @@
+
+
+
+
+
+
+.btn.btn-pulse {
+  position: relative;     /* Required to contain absolute pseudo-elements */
+  display: inline-block;
+  padding: 15px 30px;
+  border: 2px solid #0052cc;
+  border-radius: 0;
+  color: #0052cc;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  overflow: hidden;       /* Hides the background pseudo-element when off-screen */
+  z-index: 0;             /* Establishes a stacking context */
+  transition: color 0.2s ease-in-out;
+}
+
+.btn.btn-pulse::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #0052cc;
+  transform: translateX(-101%); /* Pushes background layer fully to the left */
+  transition: transform 0.2s ease-in-out;
+  z-index: -1;                  /* Sits behind the button text */
+}
+
+.btn.btn-pulse:hover {
+  color: #ffffff;             /* Switches text color to contrast with the background */
+  text-decoration: none;
+}
+
+.btn.btn-pulse:hover::before {
+  transform: translateX(0);   /* Slides background layer smoothly into view */
+}
+
+
+/* 1. Main Button Container */
+.btn2.btn-pulse2 {
+  position: relative;
+  overflow: hidden;
+  padding: 15px 25px;
+  color: lightgrey;
+  border: 2px solid black;
+  font-weight: 700;
+  font-size: 1rem;
+  z-index: 0;
+  transition: color 0.2s ease-in-out;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* 2. Sliding Background Layer */
+.btn2.btn-pulse2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  transform: translateX(-101%);
+  z-index: -1;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* 3. Hover Interactions */
+.btn2.btn-pulse2:hover {
+  color: #ffffff;
+}
+
+.btn2.btn-pulse2:hover::before {
+  transform: translateX(0);
+}

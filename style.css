@@ -413,108 +413,79 @@ body {
 
 .changelog {
   max-width: 1200px;
-
   margin: 0 auto;
-
   padding: 80px 1.5rem;
 }
 
 .changelog-heading {
   color: #fff;
-
   font-size: 3.5rem;
   font-weight: 600;
-
   margin-bottom: 60px;
 }
 
 .changelog-list {
   display: grid;
-
   grid-template-columns: repeat(4, 1fr);
-
   gap: 48px;
 }
 
 .changelog-item {
   position: relative;
-
   padding-top: 55px;
 }
 
 .changelog-item::before {
   content: "";
-
   position: absolute;
-
   left: 23px;
   top: 10px;
-
   width: 105%;
   height: 1px;
-
   background: #23252b;
 }
 
 .changelog-item::after {
   content: "";
-
   position: absolute;
-
   left: 0;
   top: 1.7px;
-
   width: 6px;
   height: 6px;
-
   border-radius: 50%;
-
   background: #7a7a7a;
-
   border: 7px solid #242425;
 }
 
 .changelog-item.active::after {
   background: #ef5b5b;
-
   border: 7px solid #473333;
 }
 
 .changelog-item h3 {
   color: white;
-
   font-size: 20px;
-
   margin-bottom: 14px;
 }
 
 .changelog-item p {
   color: #8b8f98;
-
   line-height: 1.8;
-
   margin-bottom: 30px;
 }
 
 .date {
   color: #5d616b;
-
   font-size: 12px;
-
   letter-spacing: 2px;
-
   text-transform: uppercase;
 }
 
 .view-all {
   display: inline-block;
-
   margin-top: 70px;
-
   color: #7d828c;
-
   text-decoration: none;
-
   font-size: 18px;
 }
 

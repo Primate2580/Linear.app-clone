@@ -1,24 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Grid Practice</title>
-    <link rel="stylesheet" href="grid.css">
-</head>
+    <link rel="stylesheet" href="grid.css" />
+  </head>
 
-<body>
-    <div class="app-shell">
-        <aside class="sidebar">
+  <body>
+    <!-- <aside class="sidebar">
             <div class="sidebar__brand">Nimbus</div>
             <nav class="sidebar__nav">
                 <a href="#">Overview</a>
                 <a href="#">Projects</a>
                 <a href="#">Reports</a>
                 <a href="#">Settings</a>
-            </nav>
+            </nav> -->
 
-</body>
+    <div class="layout">
+      <header class="site-header">Header</header>
+      <aside class="site-sidebar">Sidebar</aside>
+      <main class="site-main">Main Content</main>
+      <footer class="site-footer">Footer</footer>
+    </div>
 
+
+<!-- Your Task (Grid Area Challenge)
+Build a 3-column desktop layout with a header, sidebar, main content area, right widget panel, and footer.
+Requirements:
+
+Write HTML with 5 distinct sections inside a .dashboard container:
+Header
+Sidebar
+Main Content
+Widgets Panel
+Footer
+
+Write CSS for .dashboard using display: grid and grid-template-areas mapped out like this:
+
+Row 1: Header spans across all 3 columns.
+
+Row 2: Sidebar in column 1 (200px), Main Content in column 2 (1fr), Widgets Panel in column 3 (250px).
+
+Row 3: Footer spans across all 3 columns.
+
+Assign the respective grid-area property to each child class.
+
+Share your HTML and CSS when ready! -->
+<div class="dashboard">
+ <header class="site-header">Header</header>
+ <sidebar class="site-sidebar">Sidebar</sidebar>
+ <main class="site-main">Main Content</main>
+ <div class="site-widgets">Widget Panel</div>
+ <footer class="site-footer"></footer>
+</div>
+  </body>
 </html>
