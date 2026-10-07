@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Gradebook Table</title>
+  <link rel="stylesheet" href="table-style.css">
+</head>
+<body>
+
+  <div class="table-container">
+    <div class="table-header">
+      <h2>Student Performance Tracker</h2>
+      <p>Overview of Week 1 assessment scores and course progress.</p>
+    </div>
+
+    <!-- Responsive Table Wrapper -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Track</th>
+            <th>Assignment Score</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#STD-101</td>
+            <td class="student-name">Alex Johnson</td>
+            <td>Frontend Dev</td>
+            <td>95%</td>
+            <td><span class="badge badge-success">Passed</span></td>
+          </tr>
+          <tr>
+            <td>#STD-102</td>
+            <td class="student-name">Maria Garcia</td>
+            <td>Fullstack Dev</td>
+            <td>88%</td>
+            <td><span class="badge badge-success">Passed</span></td>
+          </tr>
+          <tr>
+            <td>#STD-103</td>
+            <td class="student-name">David Chen</td>
+            <td>Backend Dev</td>
+            <td>62%</td>
+            <td><span class="badge badge-warning">Review Required</span></td>
+          </tr>
+          <tr>
+            <td>#STD-104</td>
+            <td class="student-name">Sarah Smith</td>
+            <td>Frontend Dev</td>
+            <td>45%</td>
+            <td><span class="badge badge-danger">Needs Help</span></td>
+          </tr>
+          <tr>
+            <td>#STD-105</td>
+            <td class="student-name">James Wilson</td>
+            <td>Fullstack Dev</td>
+            <td>91%</td>
+            <td><span class="badge badge-success">Passed</span></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">Class Average Score</td>
+            <td colspan="2"><strong>76.2%</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>

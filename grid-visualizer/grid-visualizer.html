@@ -1,0 +1,1096 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CSS Grid Visualizer</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      code,
+      pre,
+      select,
+      input {
+        font-family: "Fira Code", monospace;
+      }
+
+      input[type="range"] {
+        accent-color: #6366f1;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+
+      .grid-item-box {
+        transition:
+          grid-column 0.2s,
+          grid-row 0.2s,
+          justify-self 0.2s,
+          align-self 0.2s,
+          transform 0.15s,
+          border-color 0.2s;
+      }
+
+      .grid-item-box.selected {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+      }
+
+      .grid-stage {
+        background-image:
+          linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+
+      .code-output {
+        white-space: pre;
+      }
+    </style>
+  </head>
+
+  <body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900 px-4 md:px-6 py-4">
+      <div
+        class="max-w-[1800px] mx-auto w-full flex flex-col xl:flex-row xl:items-center justify-between gap-4"
+      >
+        <div>
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-table-cells-large text-white"></i>
+            </div>
+
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-white">
+                CSS Grid Visualizer
+              </h1>
+
+              <p class="text-xs text-slate-400">
+                Experiment with CSS Grid properties visually
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Presets -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <span
+            class="text-xs text-slate-400 font-medium mr-1 hidden sm:inline"
+          >
+            Presets:
+          </span>
+
+          <button
+            onclick="applyPreset('responsive')"
+            class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700"
+          >
+            3-Column Cards
+          </button>
+
+          <button
+            onclick="applyPreset('dashboard')"
+            class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700"
+          >
+            Dashboard Layout
+          </button>
+
+          <button
+            onclick="applyPreset('centered')"
+            class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700"
+          >
+            Centered Item
+          </button>
+
+          <button
+            onclick="resetAll()"
+            class="px-3 py-1.5 text-xs font-medium rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 hover:text-white transition-all border border-rose-800/60"
+          >
+            <i class="fa-solid fa-rotate-left mr-1"></i>
+            Reset
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main
+      class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 max-w-[1800px] w-full mx-auto"
+    >
+      <!-- LEFT PANEL -->
+      <section
+        class="lg:col-span-5 xl:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-6 shadow-xl overflow-y-auto max-h-[85vh]"
+      >
+        <!-- Container Properties -->
+        <div class="space-y-4">
+          <h2
+            class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-2 pb-2 border-b border-slate-800"
+          >
+            <i class="fa-solid fa-border-all"></i>
+            Grid Container
+          </h2>
+
+          <!-- Columns -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300 block">
+              grid-template-columns
+            </label>
+
+            <select
+              id="select-columns"
+              onchange="setContainerProp('templateColumns', this.value)"
+              class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-indigo-500"
+            >
+              <option value="repeat(3, 1fr)" selected>repeat(3, 1fr)</option>
+
+              <option value="repeat(2, 1fr)">repeat(2, 1fr)</option>
+
+              <option value="repeat(4, 1fr)">repeat(4, 1fr)</option>
+
+              <option value="200px 1fr">200px 1fr</option>
+
+              <option value="1fr 2fr 1fr">1fr 2fr 1fr</option>
+
+              <option value="repeat(auto-fit, minmax(120px, 1fr))">
+                repeat(auto-fit, minmax(120px, 1fr))
+              </option>
+            </select>
+          </div>
+
+          <!-- Rows -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300 block">
+              grid-template-rows
+            </label>
+
+            <select
+              id="select-rows"
+              onchange="setContainerProp('templateRows', this.value)"
+              class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-indigo-500"
+            >
+              <option value="auto" selected>auto</option>
+
+              <option value="repeat(2, 1fr)">repeat(2, 1fr)</option>
+
+              <option value="repeat(3, 1fr)">repeat(3, 1fr)</option>
+
+              <option value="80px 1fr 60px">80px 1fr 60px</option>
+            </select>
+          </div>
+
+          <!-- Justify / Align Items -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300 block">
+                justify-items
+              </label>
+
+              <select
+                id="select-justify-items"
+                onchange="setContainerProp('justifyItems', this.value)"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500"
+              >
+                <option value="stretch">stretch</option>
+                <option value="start">start</option>
+                <option value="center">center</option>
+                <option value="end">end</option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300 block">
+                align-items
+              </label>
+
+              <select
+                id="select-align-items"
+                onchange="setContainerProp('alignItems', this.value)"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500"
+              >
+                <option value="stretch">stretch</option>
+                <option value="start">start</option>
+                <option value="center">center</option>
+                <option value="end">end</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Justify / Align Content -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300 block">
+                justify-content
+              </label>
+
+              <select
+                id="select-justify-content"
+                onchange="setContainerProp('justifyContent', this.value)"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500"
+              >
+                <option value="stretch">stretch</option>
+                <option value="start">start</option>
+                <option value="center">center</option>
+                <option value="end">end</option>
+                <option value="space-between">space-between</option>
+                <option value="space-around">space-around</option>
+                <option value="space-evenly">space-evenly</option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300 block">
+                align-content
+              </label>
+
+              <select
+                id="select-align-content"
+                onchange="setContainerProp('alignContent', this.value)"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-indigo-500"
+              >
+                <option value="stretch">stretch</option>
+                <option value="start">start</option>
+                <option value="center">center</option>
+                <option value="end">end</option>
+                <option value="space-between">space-between</option>
+                <option value="space-around">space-around</option>
+                <option value="space-evenly">space-evenly</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Gaps -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-slate-300">
+                <span>column-gap</span>
+
+                <span id="val-column-gap" class="font-mono text-indigo-400">
+                  16px
+                </span>
+              </div>
+
+              <input
+                type="range"
+                id="input-column-gap"
+                min="0"
+                max="50"
+                value="16"
+                oninput="setContainerProp('columnGap', Number(this.value))"
+                class="w-full"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-slate-300">
+                <span>row-gap</span>
+
+                <span id="val-row-gap" class="font-mono text-indigo-400">
+                  16px
+                </span>
+              </div>
+
+              <input
+                type="range"
+                id="input-row-gap"
+                min="0"
+                max="50"
+                value="16"
+                oninput="setContainerProp('rowGap', Number(this.value))"
+                class="w-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div class="space-y-4 pt-4 border-t border-slate-800">
+          <div class="flex items-center justify-between">
+            <h2
+              class="text-xs font-bold uppercase tracking-wider text-violet-400 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-cubes"></i>
+
+              Grid Items (<span id="item-count">6</span>)
+            </h2>
+
+            <div class="flex gap-2">
+              <button
+                onclick="addItem()"
+                class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-medium transition flex items-center gap-1"
+              >
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                Add
+              </button>
+
+              <button
+                onclick="removeItem()"
+                class="px-2.5 py-1 bg-slate-800 hover:bg-rose-900/60 text-slate-300 hover:text-rose-300 rounded text-xs font-medium transition border border-slate-700 flex items-center gap-1"
+              >
+                <i class="fa-solid fa-minus text-[10px]"></i>
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <!-- Target -->
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-xs text-slate-400"> Target Item: </span>
+
+              <div
+                id="item-selector-pills"
+                class="flex flex-wrap gap-1.5 justify-end"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Individual Item Properties -->
+          <div
+            class="bg-slate-950/60 p-4 rounded-xl border border-violet-900/30 space-y-3"
+          >
+            <div
+              class="text-xs font-semibold text-violet-300 flex justify-between items-center"
+            >
+              <span>
+                Item #<span id="target-item-num">1</span>
+                Placement
+              </span>
+
+              <span class="text-[10px] text-slate-500 font-mono">
+                .item-<span id="target-item-num-sub">1</span>
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">
+                  grid-column
+                </span>
+
+                <input
+                  type="text"
+                  id="item-column"
+                  placeholder="auto / 1 / 1 / span 2"
+                  oninput="updateSelectedItemProp('gridColumn', this.value)"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-indigo-300 outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">
+                  grid-row
+                </span>
+
+                <input
+                  type="text"
+                  id="item-row"
+                  placeholder="auto / 1 / 1 / span 2"
+                  oninput="updateSelectedItemProp('gridRow', this.value)"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-indigo-300 outline-none focus:border-indigo-500"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">
+                  justify-self
+                </span>
+
+                <select
+                  id="item-justify-self"
+                  onchange="updateSelectedItemProp('justifySelf', this.value)"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-emerald-300 outline-none focus:border-indigo-500"
+                >
+                  <option value="auto">auto</option>
+                  <option value="stretch">stretch</option>
+                  <option value="start">start</option>
+                  <option value="center">center</option>
+                  <option value="end">end</option>
+                </select>
+              </div>
+
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">
+                  align-self
+                </span>
+
+                <select
+                  id="item-align-self"
+                  onchange="updateSelectedItemProp('alignSelf', this.value)"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-emerald-300 outline-none focus:border-indigo-500"
+                >
+                  <option value="auto">auto</option>
+                  <option value="stretch">stretch</option>
+                  <option value="start">start</option>
+                  <option value="center">center</option>
+                  <option value="end">end</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL -->
+      <section class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
+        <!-- Visualizer -->
+        <div
+          class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[440px] relative overflow-hidden shadow-xl"
+        >
+          <!-- Legend -->
+          <div
+            class="w-full flex flex-wrap items-center justify-between gap-2 text-xs font-medium bg-slate-950/80 backdrop-blur-md p-3 rounded-xl border border-slate-800/80 z-20 mb-4"
+          >
+            <div class="flex items-center gap-4 flex-wrap">
+              <span class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded bg-indigo-500/80"></span>
+                Columns
+              </span>
+
+              <span class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded bg-violet-500/80"></span>
+                Rows
+              </span>
+            </div>
+
+            <span class="text-slate-400 text-[11px]">
+              <i class="fa-solid fa-hand-pointer mr-1"></i>
+              Click an item to edit placement
+            </span>
+          </div>
+
+          <!-- Stage -->
+          <div
+            class="w-full flex-1 relative flex items-center justify-center p-6 bg-slate-950 rounded-xl border-2 border-dashed border-slate-800 min-h-[320px] grid-stage"
+          >
+            <!-- Grid -->
+            <div
+              id="grid-container"
+              class="w-full h-full min-h-[280px] bg-indigo-950/20 border border-indigo-500/30 rounded-xl p-4 transition-all duration-300 grid"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Generated CSS -->
+        <div
+          class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <h3
+              class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-code text-indigo-400"></i>
+              Generated CSS
+            </h3>
+
+            <button
+              onclick="copyCSS()"
+              class="text-xs px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition flex items-center gap-1.5 shadow"
+            >
+              <i id="copy-icon" class="fa-regular fa-copy"></i>
+
+              <span id="copy-text"> Copy CSS Code </span>
+            </button>
+          </div>
+
+          <pre
+            id="css-output"
+            class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-indigo-200 overflow-x-auto font-mono leading-relaxed max-h-[240px] overflow-y-auto code-output"
+          ></pre>
+
+          <!-- Toast -->
+          <div
+            id="toast"
+            class="hidden mt-3 p-2 bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs rounded-lg text-center font-medium"
+          >
+            <i class="fa-solid fa-check mr-1"></i>
+            CSS snippet copied to clipboard!
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="bg-slate-900 border-t border-slate-800 py-3 px-6 text-center text-xs text-slate-500"
+    >
+      CSS Grid Teaching Visualizer • Interactive Web Development Tool
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+      const itemColors = [
+        {
+          bg: "bg-indigo-600/30",
+          border: "border-indigo-500",
+          text: "text-indigo-300",
+        },
+        {
+          bg: "bg-violet-600/30",
+          border: "border-violet-500",
+          text: "text-violet-300",
+        },
+        {
+          bg: "bg-emerald-600/30",
+          border: "border-emerald-500",
+          text: "text-emerald-300",
+        },
+        {
+          bg: "bg-amber-600/30",
+          border: "border-amber-500",
+          text: "text-amber-300",
+        },
+        {
+          bg: "bg-rose-600/30",
+          border: "border-rose-500",
+          text: "text-rose-300",
+        },
+        {
+          bg: "bg-cyan-600/30",
+          border: "border-cyan-500",
+          text: "text-cyan-300",
+        },
+        {
+          bg: "bg-fuchsia-600/30",
+          border: "border-fuchsia-500",
+          text: "text-fuchsia-300",
+        },
+      ];
+
+      const state = {
+        container: {
+          templateColumns: "repeat(3, 1fr)",
+          templateRows: "auto",
+
+          justifyItems: "stretch",
+          alignItems: "stretch",
+
+          justifyContent: "stretch",
+          alignContent: "stretch",
+
+          columnGap: 16,
+          rowGap: 16,
+        },
+
+        selectedItemIndex: 0,
+
+        items: [
+          {
+            id: 1,
+            gridColumn: "auto",
+            gridRow: "auto",
+            justifySelf: "auto",
+            alignSelf: "auto",
+          },
+          {
+            id: 2,
+            gridColumn: "auto",
+            gridRow: "auto",
+            justifySelf: "auto",
+            alignSelf: "auto",
+          },
+          {
+            id: 3,
+            gridColumn: "auto",
+            gridRow: "auto",
+            justifySelf: "auto",
+            alignSelf: "auto",
+          },
+          {
+            id: 4,
+            gridColumn: "auto",
+            gridRow: "auto",
+            justifySelf: "auto",
+            alignSelf: "auto",
+          },
+          {
+            id: 5,
+            gridColumn: "auto",
+            gridRow: "auto",
+            justifySelf: "auto",
+            alignSelf: "auto",
+          },
+          {
+            id: 6,
+            gridColumn: "auto",
+            gridRow: "auto",
+            justifySelf: "auto",
+            alignSelf: "auto",
+          },
+        ],
+      };
+
+      function setContainerProp(prop, value) {
+        state.container[prop] = value;
+
+        updateApp();
+      }
+
+      function selectItem(index) {
+        if (index >= 0 && index < state.items.length) {
+          state.selectedItemIndex = index;
+
+          updateItemControls();
+
+          renderItems();
+        }
+      }
+
+      function addItem() {
+        if (state.items.length >= 12) return;
+
+        const nextId =
+          state.items.length > 0
+            ? Math.max(...state.items.map((item) => item.id)) + 1
+            : 1;
+
+        state.items.push({
+          id: nextId,
+          gridColumn: "auto",
+          gridRow: "auto",
+          justifySelf: "auto",
+          alignSelf: "auto",
+        });
+
+        state.selectedItemIndex = state.items.length - 1;
+
+        updateApp();
+      }
+
+      function removeItem() {
+        if (state.items.length <= 1) return;
+
+        state.items.pop();
+
+        if (state.selectedItemIndex >= state.items.length) {
+          state.selectedItemIndex = state.items.length - 1;
+        }
+
+        updateApp();
+      }
+
+      function updateSelectedItemProp(prop, value) {
+        const item = state.items[state.selectedItemIndex];
+
+        if (!item) return;
+
+        item[prop] = value.trim() || "auto";
+
+        updateApp();
+      }
+
+      function updateItemControls() {
+        const item = state.items[state.selectedItemIndex];
+
+        if (!item) return;
+
+        document.getElementById("target-item-num").textContent =
+          state.selectedItemIndex + 1;
+
+        document.getElementById("target-item-num-sub").textContent =
+          state.selectedItemIndex + 1;
+
+        document.getElementById("item-column").value =
+          item.gridColumn === "auto" ? "" : item.gridColumn;
+
+        document.getElementById("item-row").value =
+          item.gridRow === "auto" ? "" : item.gridRow;
+
+        document.getElementById("item-justify-self").value = item.justifySelf;
+
+        document.getElementById("item-align-self").value = item.alignSelf;
+
+        const pillsContainer = document.getElementById("item-selector-pills");
+
+        pillsContainer.innerHTML = state.items
+          .map((item, index) => {
+            const selected = index === state.selectedItemIndex;
+
+            return `
+                <button
+                  onclick="selectItem(${index})"
+                  class="px-2.5 py-1 text-xs font-mono rounded-lg border transition ${
+                    selected
+                      ? "bg-indigo-600 border-indigo-500 text-white font-bold"
+                      : "bg-slate-900 border-slate-700 text-slate-400 hover:text-white"
+                  }"
+                >
+                  #${index + 1}
+                </button>
+              `;
+          })
+          .join("");
+      }
+
+      function renderItems() {
+        const container = document.getElementById("grid-container");
+
+        container.innerHTML = "";
+
+        state.items.forEach((item, index) => {
+          const colorScheme = itemColors[index % itemColors.length];
+
+          const isSelected = index === state.selectedItemIndex;
+
+          const itemEl = document.createElement("div");
+
+          itemEl.className = `
+              grid-item-box
+              p-4
+              rounded-xl
+              border-2
+              flex
+              flex-col
+              items-center
+              justify-center
+              cursor-pointer
+              relative
+              min-h-[70px]
+              ${colorScheme.bg}
+              ${colorScheme.border}
+              ${
+                isSelected
+                  ? "ring-2 ring-indigo-400 border-white shadow-lg scale-[1.01] z-10"
+                  : "opacity-90 hover:opacity-100"
+              }
+            `;
+
+          itemEl.style.gridColumn = item.gridColumn;
+
+          itemEl.style.gridRow = item.gridRow;
+
+          itemEl.style.justifySelf = item.justifySelf;
+
+          itemEl.style.alignSelf = item.alignSelf;
+
+          itemEl.onclick = (event) => {
+            event.stopPropagation();
+
+            selectItem(index);
+          };
+
+          itemEl.innerHTML = `
+            <span
+              class="text-sm font-bold ${colorScheme.text}"
+            >
+              #${index + 1}
+            </span>
+
+            <span
+              class="text-[10px] font-mono text-slate-400 mt-1"
+            >
+              col: ${item.gridColumn}
+            </span>
+
+            <span
+              class="text-[10px] font-mono text-slate-500 mt-0.5"
+            >
+              row: ${item.gridRow}
+            </span>
+          `;
+
+          container.appendChild(itemEl);
+        });
+
+        document.getElementById("item-count").textContent = state.items.length;
+      }
+
+      function updateCanvas() {
+        const container = document.getElementById("grid-container");
+
+        container.style.gridTemplateColumns = state.container.templateColumns;
+
+        container.style.gridTemplateRows = state.container.templateRows;
+
+        container.style.justifyItems = state.container.justifyItems;
+
+        container.style.alignItems = state.container.alignItems;
+
+        container.style.justifyContent = state.container.justifyContent;
+
+        container.style.alignContent = state.container.alignContent;
+
+        container.style.columnGap = `${state.container.columnGap}px`;
+
+        container.style.rowGap = `${state.container.rowGap}px`;
+
+        document.getElementById("val-column-gap").textContent =
+          `${state.container.columnGap}px`;
+
+        document.getElementById("val-row-gap").textContent =
+          `${state.container.rowGap}px`;
+      }
+
+      function generateCSS() {
+        let css = `.grid-container {
+  display: grid;
+  grid-template-columns: ${state.container.templateColumns};
+  grid-template-rows: ${state.container.templateRows};
+  justify-items: ${state.container.justifyItems};
+  align-items: ${state.container.alignItems};
+  justify-content: ${state.container.justifyContent};
+  align-content: ${state.container.alignContent};
+  column-gap: ${state.container.columnGap}px;
+  row-gap: ${state.container.rowGap}px;
+}`;
+
+        state.items.forEach((item, index) => {
+          const hasCol = item.gridColumn && item.gridColumn !== "auto";
+
+          const hasRow = item.gridRow && item.gridRow !== "auto";
+
+          const hasJS = item.justifySelf && item.justifySelf !== "auto";
+
+          const hasAS = item.alignSelf && item.alignSelf !== "auto";
+
+          if (hasCol || hasRow || hasJS || hasAS) {
+            css += `\n\n.item-${index + 1} {`;
+
+            if (hasCol) {
+              css += `\n  grid-column: ${item.gridColumn};`;
+            }
+
+            if (hasRow) {
+              css += `\n  grid-row: ${item.gridRow};`;
+            }
+
+            if (hasJS) {
+              css += `\n  justify-self: ${item.justifySelf};`;
+            }
+
+            if (hasAS) {
+              css += `\n  align-self: ${item.alignSelf};`;
+            }
+
+            css += "\n}";
+          }
+        });
+
+        document.getElementById("css-output").textContent = css;
+      }
+
+      function updateApp() {
+        updateCanvas();
+
+        renderItems();
+
+        updateItemControls();
+
+        generateCSS();
+      }
+
+      function applyPreset(preset) {
+        if (preset === "responsive") {
+          state.container.templateColumns = "repeat(3, 1fr)";
+
+          state.container.templateRows = "auto";
+
+          state.container.justifyItems = "stretch";
+
+          state.container.alignItems = "stretch";
+
+          state.container.justifyContent = "stretch";
+
+          state.container.alignContent = "stretch";
+
+          state.items.forEach((item) => {
+            item.gridColumn = "auto";
+
+            item.gridRow = "auto";
+
+            item.justifySelf = "auto";
+
+            item.alignSelf = "auto";
+          });
+        } else if (preset === "dashboard") {
+          state.container.templateColumns = "200px 1fr 1fr";
+
+          state.container.templateRows = "repeat(2, 1fr)";
+
+          if (state.items[0]) {
+            state.items[0].gridColumn = "1";
+
+            state.items[0].gridRow = "1 / span 2";
+          }
+
+          if (state.items[1]) {
+            state.items[1].gridColumn = "2 / span 2";
+
+            state.items[1].gridRow = "1";
+          }
+
+          if (state.items[2]) {
+            state.items[2].gridColumn = "2";
+
+            state.items[2].gridRow = "2";
+          }
+
+          if (state.items[3]) {
+            state.items[3].gridColumn = "3";
+
+            state.items[3].gridRow = "2";
+          }
+        } else if (preset === "centered") {
+          state.container.templateColumns = "repeat(3, 1fr)";
+
+          state.container.templateRows = "repeat(3, 1fr)";
+
+          state.container.justifyItems = "center";
+
+          state.container.alignItems = "center";
+
+          state.container.justifyContent = "stretch";
+
+          state.container.alignContent = "stretch";
+        }
+
+        document.getElementById("select-columns").value =
+          state.container.templateColumns;
+
+        document.getElementById("select-rows").value =
+          state.container.templateRows;
+
+        document.getElementById("select-justify-items").value =
+          state.container.justifyItems;
+
+        document.getElementById("select-align-items").value =
+          state.container.alignItems;
+
+        document.getElementById("select-justify-content").value =
+          state.container.justifyContent;
+
+        document.getElementById("select-align-content").value =
+          state.container.alignContent;
+
+        updateApp();
+      }
+
+      function resetAll() {
+        state.container = {
+          templateColumns: "repeat(3, 1fr)",
+
+          templateRows: "auto",
+
+          justifyItems: "stretch",
+
+          alignItems: "stretch",
+
+          justifyContent: "stretch",
+
+          alignContent: "stretch",
+
+          columnGap: 16,
+
+          rowGap: 16,
+        };
+
+        state.selectedItemIndex = 0;
+
+        state.items = Array.from({ length: 6 }, (_, index) => ({
+          id: index + 1,
+
+          gridColumn: "auto",
+
+          gridRow: "auto",
+
+          justifySelf: "auto",
+
+          alignSelf: "auto",
+        }));
+
+        document.getElementById("select-columns").value = "repeat(3, 1fr)";
+
+        document.getElementById("select-rows").value = "auto";
+
+        document.getElementById("select-justify-items").value = "stretch";
+
+        document.getElementById("select-align-items").value = "stretch";
+
+        document.getElementById("select-justify-content").value = "stretch";
+
+        document.getElementById("select-align-content").value = "stretch";
+
+        document.getElementById("input-column-gap").value = "16";
+
+        document.getElementById("input-row-gap").value = "16";
+
+        updateApp();
+      }
+
+      async function copyCSS() {
+        const text = document.getElementById("css-output").textContent;
+
+        try {
+          await navigator.clipboard.writeText(text);
+
+          const toast = document.getElementById("toast");
+
+          const copyText = document.getElementById("copy-text");
+
+          const copyIcon = document.getElementById("copy-icon");
+
+          toast.classList.remove("hidden");
+
+          copyText.textContent = "Copied!";
+
+          copyIcon.className = "fa-solid fa-check";
+
+          setTimeout(() => {
+            toast.classList.add("hidden");
+
+            copyText.textContent = "Copy CSS Code";
+
+            copyIcon.className = "fa-regular fa-copy";
+          }, 2500);
+        } catch (error) {
+          const textarea = document.createElement("textarea");
+
+          textarea.value = text;
+
+          document.body.appendChild(textarea);
+
+          textarea.select();
+
+          document.execCommand("copy");
+
+          textarea.remove();
+        }
+      }
+
+      updateApp();
+    </script>
+  </body>
+</html>

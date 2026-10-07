@@ -1,0 +1,227 @@
+<style>
+  /* Section Wrapper */
+  .vtour-section {
+    padding: 80px 20px;
+    background: #0f172a; /* Deep dark slate background */
+    color: #ffffff;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  .vtour-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Section Header */
+  .vtour-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .vtour-badge {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #c5a059; /* Luxury Gold */
+    text-transform: uppercase;
+    background: rgba(197, 160, 89, 0.12);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+  }
+
+  .vtour-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #ffffff;
+  }
+
+  /* Bento Gallery Grid */
+  .vtour-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+  }
+
+  /* Asymmetric Row Spans */
+  .vtour-item {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    display: block;
+    text-decoration: none;
+  }
+
+  /* Grid Column Layout Assignments */
+  .vtour-item.span-6 { grid-column: span 6; height: 320px; }
+  .vtour-item.span-4 { grid-column: span 4; height: 280px; }
+
+  .vtour-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Hover Overlay Effect */
+  .vtour-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.75) 100%);
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease;
+  }
+
+  .vtour-icon-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(197, 160, 89, 0.9);
+    color: #0b0f19;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(15px);
+    transition: transform 0.4s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+
+  .vtour-icon-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  /* Hover States */
+  .vtour-item:hover img {
+    transform: scale(1.08);
+  }
+
+  .vtour-item:hover .vtour-overlay {
+    opacity: 1;
+  }
+
+  .vtour-item:hover .vtour-icon-btn {
+    transform: translateY(0);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .vtour-item.span-6,
+    .vtour-item.span-4 {
+      grid-column: span 6;
+      height: 280px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .vtour-header h2 {
+      font-size: 1.8rem;
+    }
+    .vtour-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .vtour-item.span-6,
+    .vtour-item.span-4 {
+      grid-column: span 1;
+      height: 240px;
+    }
+  }
+</style>
+
+<section class="vtour-section" id="virtual-tour">
+  <div class="vtour-container">
+    
+    <!-- Section Header -->
+    <div class="vtour-header">
+      <span class="vtour-badge">✦ Experience Luxury</span>
+      <h2>Virtual Gallery Tour</h2>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="vtour-grid">
+      
+      <!-- Image 1 -->
+      <a href="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_1.jpg" data-fancybox="gallery" class="vtour-item span-6">
+        <img src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_1.jpg" alt="Virtual Tour Image 1" loading="lazy">
+        <div class="vtour-overlay">
+          <div class="vtour-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Image 2 -->
+      <a href="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_2.jpg" data-fancybox="gallery" class="vtour-item span-6">
+        <img src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_2.jpg" alt="Virtual Tour Image 2" loading="lazy">
+        <div class="vtour-overlay">
+          <div class="vtour-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Image 3 -->
+      <a href="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_3.jpg" data-fancybox="gallery" class="vtour-item span-4">
+        <img src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_3.jpg" alt="Virtual Tour Image 3" loading="lazy">
+        <div class="vtour-overlay">
+          <div class="vtour-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Image 4 -->
+      <a href="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_4.jpg" data-fancybox="gallery" class="vtour-item span-4">
+        <img src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_4.jpg" alt="Virtual Tour Image 4" loading="lazy">
+        <div class="vtour-overlay">
+          <div class="vtour-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Image 5 -->
+      <a href="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_5.jpg" data-fancybox="gallery" class="vtour-item span-4">
+        <img src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_5.jpg" alt="Virtual Tour Image 5" loading="lazy">
+        <div class="vtour-overlay">
+          <div class="vtour-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Image 6 -->
+      <a href="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_6.jpg" data-fancybox="gallery" class="vtour-item span-6">
+        <img src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_6.jpg" alt="Virtual Tour Image 6" loading="lazy">
+        <div class="vtour-overlay">
+          <div class="vtour-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Image 7 -->
+      <a href="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_7.jpg" data-fancybox="gallery" class="vtour-item span-6">
+        <img src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_7.jpg" alt="Virtual Tour Image 7" loading="lazy">
+        <div class="vtour-overlay">
+          <div class="vtour-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>

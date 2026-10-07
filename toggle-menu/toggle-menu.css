@@ -1,0 +1,314 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f5f5f5;
+  color: #171717;
+}
+
+/* Enforce Material Symbols font */
+.material-symbols-outlined {
+  /* font-family: 'Material Symbols Outlined' !important; */
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Header Navbar */
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 8px 16px;
+  height: 56px;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.menu-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.logo {
+  background-color: #000000;
+  color: #ffffff;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+}
+
+.header-search {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  padding: 6px 12px;
+  width: 420px; /* Slightly wider to comfortably fit Algolia badge */
+  background-color: #ffffff;
+  gap: 8px;
+}
+
+.header-search:focus-within {
+  border-color: #3b49df;
+  box-shadow: 0 0 0 1px #3b49df;
+}
+
+.header-search input {
+  border: none;
+  outline: none;
+  width: 100%;
+  margin-left: 6px;
+}
+
+.search-icon {
+  color: #525252;
+  font-size: 2rem;
+}
+
+/* Flex-1 allows the input to grow and push Algolia to the right */
+.header-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: #171717;
+}
+
+.search-provider {
+  font-size: 0.75rem;
+  color: #717171;
+  white-space: nowrap; /* Keeps text on one line */
+  user-select: none;
+}
+
+.create-post-btn {
+  border: 1px solid #3b49df;
+  color: #3b49df;
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.create-post-btn:hover {
+  background-color: #3b49df;
+  color: #ffffff;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+/* Base styles for the mobile dropdown container */
+.mobile-dropdown {
+  display: none;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 12px 16px;
+}
+
+.mobile-dropdown ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-dropdown a {
+  text-decoration: none;
+  color: #404040;
+  font-weight: 500;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.mobile-dropdown a:hover {
+  background-color: #f5f5f5;
+  color: #3b49df;
+}
+
+/* Pure CSS Checkbox Hack: Toggle menu display when checkbox is checked */
+/* Hide the actual checkbox */
+#menu-toggle-checkbox {
+  display: none;
+}
+
+/* Dropdown is hidden by default */
+/* .mobile-dropdown {
+  display: none;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 12px 16px;
+} */
+
+/* Show dropdown when checkbox is checked */
+#menu-toggle-checkbox:checked ~ .mobile-dropdown {
+  display: block;
+}
+
+/* ==========================================
+   Responsive Breakpoints (@media queries)
+   ========================================== */
+
+/* On Desktop (768px and up): Hide hamburger button and force dropdown hidden */
+@media (min-width: 768px) {
+  .menu-btn {
+    display: none;
+  }
+
+  .mobile-dropdown {
+    display: none !important;
+  }
+}
+
+/* On Mobile/Tablet (under 768px): Adjust search bar size */
+@media (max-width: 767px) {
+  .header-search {
+    width: 180px;
+  }
+
+  .search-provider {
+    display: none; /* Hide Algolia text on small mobile screens to save space */
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Layout Wrapper */
+.grid-container {
+  display: grid;
+  /* Fixed left, flexible center, fixed right */
+  grid-template-columns: 240px 1fr 320px;
+  grid-template-areas: "left main right";
+  gap: 16px;
+  max-width: 1280px;
+  margin: 16px auto;
+  padding: 0 16px;
+}
+
+/* Assign areas */
+.sidebar-left {
+  grid-area: left;
+}
+
+.main-content {
+  grid-area: main;
+}
+
+.sidebar-right {
+  grid-area: right;
+}
+
+/* Temporary Widget Box Styling for visuals */
+.sidebar-nav, .widget, .main-content {
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.sidebar-nav ul{
+    list-style: none;
+    padding: none;
+    margin: none;
+}
+
+
+.sidebar-nav .material-symbols-outlined {
+  font-size: 22px;
+  vertical-align: middle;
+}
+
+.sidebar-nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #171717;
+}
+
+.sidebar-nav ul li a:hover {
+  color: #3b49df;
+}
+/* ===================================================
+   RESPONSIVE BREAKPOINTS (Pure CSS Sidebars Hiding)
+   =================================================== */
+
+/* Tablet Breakpoint: Drop right sidebar first */
+@media (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: 240px 1fr;
+    grid-template-areas: "left main";
+  }
+  
+  .sidebar-right {
+    display: none; /* Hide right sidebar */
+  }
+}
+
+/* Mobile Breakpoint: Drop left sidebar as well */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-areas: "main";
+  }
+
+  .sidebar-left {
+    display: none; /* Hide left sidebar */
+  }
+}

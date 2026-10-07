@@ -1,247 +1,774 @@
-<div
-  class="elementor-element elementor-element-da6181b e-con-full e-flex e-con e-child"
-  data-id="da6181b"
-  data-element_type="container"
-  data-e-type="container"
->
-  <div
-    class="elementor-element elementor-element-9a16900 e-con-full e-flex e-con e-child"
-    data-id="9a16900"
-    data-element_type="container"
-    data-e-type="container"
-  >
-    <div
-      class="elementor-element elementor-element-f37b27f elementor-widget elementor-widget-video"
-      data-id="f37b27f"
-      data-element_type="widget"
-      data-e-type="widget"
-      data-settings='{"youtube_url":"https:\/\/www.youtube.com\/watch?v=GF41mZBJu60","lazy_load":"yes","video_type":"youtube","controls":"yes"}'
-      data-widget_type="video.default"
-    >
-      <div class="elementor-widget-container">
-        <div class="elementor-wrapper elementor-open-inline">
-          <iframe
-            class="elementor-video"
-            frameborder="0"
-            allowfullscreen=""
-            allow="
-              accelerometer;
-              autoplay;
-              clipboard-write;
-              encrypted-media;
-              gyroscope;
-              picture-in-picture;
-              web-share;
-            "
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="YouTube video player"
-            width="640"
-            height="360"
-            src="https://www.youtube.com/embed/GF41mZBJu60?controls=1&amp;rel=0&amp;playsinline=0&amp;cc_load_policy=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fsamadeyemi.com&amp;widgetid=11&amp;forigin=https%3A%2F%2Fsamadeyemi.com%2Fresources%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fsamadeyemi.com%2F&amp;vf=6"
-            id="widget12"
-          ></iframe>
-        </div>
+
+<!-- =========================================================
+     CHRIS MENE — ABOUT INTRO / STORY SECTION
+     Premium editorial personal-brand design
+========================================================= -->
+
+<style>
+/* =========================================================
+   BASE
+========================================================= */
+
+.cm-about-intro,
+.cm-about-intro * {
+  box-sizing: border-box;
+}
+
+.cm-about-intro {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 8% 15%,
+      rgba(34, 76, 74, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 92% 85%,
+      rgba(184, 150, 82, 0.07),
+      transparent 28%
+    ),
+    #f4f1ea;
+
+  color: #171a19;
+  padding: 120px 70px 130px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+
+/* =========================================================
+   DECORATIVE BACKGROUND SHAPES
+========================================================= */
+
+.cm-about-intro::before {
+  content: "";
+  position: absolute;
+
+  width: 520px;
+  height: 520px;
+
+  top: -260px;
+  right: -170px;
+
+  border: 1px solid rgba(34, 76, 74, 0.14);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.cm-about-intro::after {
+  content: "";
+
+  position: absolute;
+
+  width: 240px;
+  height: 240px;
+
+  bottom: -120px;
+  left: -80px;
+
+  background: #224c4a;
+
+  border-radius: 50%;
+
+  opacity: 0.045;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   INNER CONTAINER
+========================================================= */
+
+.cm-about-intro__inner {
+  position: relative;
+
+  max-width: 1450px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 0.9fr)
+    minmax(0, 1.1fr);
+
+  gap: 110px;
+
+  align-items: center;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   LEFT SIDE
+========================================================= */
+
+.cm-about-intro__left {
+  position: relative;
+
+  min-height: 560px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 55px 50px 60px 65px;
+
+  overflow: hidden;
+}
+
+
+/* Organic accent shape */
+
+.cm-about-intro__left::before {
+  content: "";
+
+  position: absolute;
+
+  width: 430px;
+  height: 430px;
+
+  left: -120px;
+  top: 55px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(34, 76, 74, 0.13),
+      rgba(34, 76, 74, 0.025)
+    );
+
+  border-radius:
+    47% 53% 61% 39%
+    /
+    42% 45% 55% 58%;
+
+  transform: rotate(-12deg);
+
+  z-index: -1;
+}
+
+
+/* Secondary shape */
+
+.cm-about-intro__left::after {
+  content: "";
+
+  position: absolute;
+
+  width: 150px;
+  height: 150px;
+
+  right: 10px;
+  bottom: 20px;
+
+  border: 1px solid rgba(184, 150, 82, 0.35);
+
+  border-radius: 50%;
+
+  z-index: -1;
+}
+
+
+/* =========================================================
+   LARGE BACKGROUND NUMBER
+========================================================= */
+
+.cm-about-intro__number {
+  position: absolute;
+
+  top: -35px;
+  left: 0;
+
+  font-size: 230px;
+  line-height: 1;
+
+  font-weight: 800;
+
+  letter-spacing: -0.08em;
+
+  color: rgba(34, 76, 74, 0.055);
+
+  user-select: none;
+
+  z-index: -1;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.cm-about-intro__label {
+  margin: 0 0 28px;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+
+  color: #224c4a;
+}
+
+.cm-about-intro__label::before {
+  content: "";
+
+  width: 34px;
+  height: 1px;
+
+  background: #b89652;
+}
+
+
+/* =========================================================
+   MAIN HEADLINE
+========================================================= */
+
+.cm-about-intro__headline {
+  max-width: 570px;
+
+  margin: 0;
+
+  font-size: clamp(48px, 5vw, 78px);
+
+  line-height: 0.98;
+
+  letter-spacing: -0.055em;
+
+  font-weight: 500;
+
+  color: #171a19;
+}
+
+.cm-about-intro__headline em {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-weight: 400;
+
+  color: #224c4a;
+
+  letter-spacing: -0.035em;
+}
+
+
+/* =========================================================
+   RIGHT SIDE
+========================================================= */
+
+.cm-about-intro__right {
+  position: relative;
+
+  padding:
+    20px
+    0
+    20px
+    70px;
+
+  border-left: 1px solid rgba(23, 26, 25, 0.15);
+}
+
+
+/* =========================================================
+   EYEBROW
+========================================================= */
+
+.cm-about-intro__eyebrow {
+  margin: 0 0 28px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.18em;
+
+  text-transform: uppercase;
+
+  color: #8a6d35;
+}
+
+
+/* =========================================================
+   LEAD
+========================================================= */
+
+.cm-about-intro__lead {
+  max-width: 760px;
+
+  margin: 0 0 32px;
+
+  font-size: clamp(25px, 2.2vw, 34px);
+
+  line-height: 1.32;
+
+  letter-spacing: -0.025em;
+
+  font-weight: 500;
+
+  color: #171a19;
+}
+
+
+/* =========================================================
+   BODY COPY
+========================================================= */
+
+.cm-about-intro__text {
+  max-width: 720px;
+
+  margin: 0 0 20px;
+
+  font-size: 16px;
+
+  line-height: 1.85;
+
+  color: #555b58;
+}
+
+
+/* =========================================================
+   QUOTE
+========================================================= */
+
+.cm-about-intro__quote {
+  position: relative;
+
+  max-width: 720px;
+
+  margin: 42px 0 35px;
+
+  padding: 30px 35px 30px 42px;
+
+  background: #224c4a;
+
+  color: #fff;
+
+  border-radius: 4px;
+
+  overflow: hidden;
+}
+
+
+/* Gold line */
+
+.cm-about-intro__quote::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 5px;
+
+  background: #b89652;
+}
+
+
+/* Decorative quotation mark */
+
+.cm-about-intro__quote::after {
+  content: "“";
+
+  position: absolute;
+
+  right: 22px;
+  top: -35px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 150px;
+
+  line-height: 1;
+
+  color: rgba(255,255,255,0.06);
+}
+
+.cm-about-intro__quote p {
+  position: relative;
+
+  z-index: 2;
+
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 20px;
+
+  line-height: 1.55;
+
+  font-style: italic;
+
+  color: #fff;
+}
+
+
+/* =========================================================
+   LINK
+========================================================= */
+
+.cm-about-intro__link {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  color: #171a19;
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+
+  transition:
+    gap 0.3s ease,
+    color 0.3s ease;
+}
+
+.cm-about-intro__link span {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid rgba(23,26,25,0.25);
+
+  border-radius: 50%;
+
+  font-size: 18px;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.cm-about-intro__link:hover {
+  color: #224c4a;
+
+  gap: 20px;
+}
+
+.cm-about-intro__link:hover span {
+  background: #224c4a;
+
+  border-color: #224c4a;
+
+  color: #fff;
+}
+
+
+/* =========================================================
+   SMALL DECORATIVE DOT
+========================================================= */
+
+.cm-about-intro__right::after {
+  content: "";
+
+  position: absolute;
+
+  width: 7px;
+  height: 7px;
+
+  right: 0;
+  top: 10px;
+
+  background: #b89652;
+
+  border-radius: 50%;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+
+  .cm-about-intro {
+    padding:
+      90px
+      40px
+      100px;
+  }
+
+  .cm-about-intro__inner {
+    grid-template-columns: 1fr;
+
+    gap: 70px;
+  }
+
+  .cm-about-intro__left {
+    min-height: auto;
+
+    padding:
+      50px
+      40px
+      60px;
+  }
+
+  .cm-about-intro__headline {
+    max-width: 700px;
+  }
+
+  .cm-about-intro__right {
+    padding-left: 45px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .cm-about-intro {
+    padding:
+      75px
+      22px
+      80px;
+  }
+
+  .cm-about-intro__inner {
+    gap: 55px;
+  }
+
+  .cm-about-intro__left {
+    padding:
+      35px
+      10px
+      45px;
+  }
+
+  .cm-about-intro__left::before {
+    width: 320px;
+    height: 320px;
+
+    left: -110px;
+    top: 50px;
+  }
+
+  .cm-about-intro__number {
+    font-size: 160px;
+
+    top: -20px;
+  }
+
+  .cm-about-intro__label {
+    margin-bottom: 22px;
+  }
+
+  .cm-about-intro__headline {
+    font-size: clamp(42px, 12vw, 60px);
+
+    line-height: 1;
+  }
+
+  .cm-about-intro__right {
+    padding:
+      5px
+      0
+      5px
+      25px;
+  }
+
+  .cm-about-intro__lead {
+    font-size: 24px;
+
+    line-height: 1.4;
+  }
+
+  .cm-about-intro__text {
+    font-size: 15px;
+
+    line-height: 1.8;
+  }
+
+  .cm-about-intro__quote {
+    padding:
+      27px
+      25px
+      27px
+      30px;
+
+    margin-top: 35px;
+  }
+
+  .cm-about-intro__quote p {
+    font-size: 18px;
+  }
+
+  .cm-about-intro__right::after {
+    right: -2px;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 420px) {
+
+  .cm-about-intro {
+    padding:
+      65px
+      18px
+      70px;
+  }
+
+  .cm-about-intro__left {
+    padding-left: 5px;
+  }
+
+  .cm-about-intro__headline {
+    font-size: 42px;
+  }
+
+  .cm-about-intro__right {
+    padding-left: 20px;
+  }
+
+  .cm-about-intro__quote {
+    padding:
+      24px
+      22px
+      24px
+      27px;
+  }
+}
+</style>
+
+
+<!-- =========================================================
+     SECTION
+========================================================= -->
+
+<section class="cm-about-intro" id="about-chris">
+
+  <div class="cm-about-intro__inner">
+
+
+    <!-- =====================================================
+         LEFT — BIG EDITORIAL STATEMENT
+    ====================================================== -->
+
+    <div class="cm-about-intro__left">
+
+      <div class="cm-about-intro__number">
+        01
       </div>
+
+      <p class="cm-about-intro__label">
+        The Story
+      </p>
+
+      <h2 class="cm-about-intro__headline">
+        A life shaped by
+        <em>faith,</em>
+        purpose and people.
+      </h2>
+
     </div>
-  </div>
-  <div
-    class="elementor-element elementor-element-5d68add e-con-full e-flex e-con e-child"
-    data-id="5d68add"
-    data-element_type="container"
-    data-e-type="container"
-  >
-    <div
-      class="elementor-element elementor-element-177fe11 elementor-widget elementor-widget-video"
-      data-id="177fe11"
-      data-element_type="widget"
-      data-e-type="widget"
-      data-settings='{"youtube_url":"https:\/\/www.youtube.com\/watch?v=AVFNXMzHpm8","lazy_load":"yes","video_type":"youtube","controls":"yes"}'
-      data-widget_type="video.default"
-    >
-      <div class="elementor-widget-container">
-        <div class="elementor-wrapper elementor-open-inline">
-          <iframe
-            class="elementor-video"
-            frameborder="0"
-            allowfullscreen=""
-            allow="
-              accelerometer;
-              autoplay;
-              clipboard-write;
-              encrypted-media;
-              gyroscope;
-              picture-in-picture;
-              web-share;
-            "
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="YouTube video player"
-            width="640"
-            height="360"
-            src="https://www.youtube.com/embed/AVFNXMzHpm8?controls=1&amp;rel=0&amp;playsinline=0&amp;cc_load_policy=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fsamadeyemi.com&amp;widgetid=9&amp;forigin=https%3A%2F%2Fsamadeyemi.com%2Fresources%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fsamadeyemi.com%2F&amp;vf=6"
-            id="widget10"
-          ></iframe>
-        </div>
+
+
+    <!-- =====================================================
+         RIGHT — STORY
+    ====================================================== -->
+
+    <div class="cm-about-intro__right">
+
+      <p class="cm-about-intro__eyebrow">
+        About Chris Mene
+      </p>
+
+      <p class="cm-about-intro__lead">
+        Chris Mene is passionate about helping people discover
+        purpose, deepen their faith, and become intentional about
+        the lives they are building.
+      </p>
+
+      <p class="cm-about-intro__text">
+        Through teaching, speaking, writing, and meaningful
+        conversations, Chris creates spaces where people can
+        think deeply, ask honest questions, and grow into the
+        people they were created to become.
+      </p>
+
+      <p class="cm-about-intro__text">
+        His work sits at the intersection of faith, personal
+        growth, leadership, and everyday life. Rather than
+        separating spiritual growth from the realities of life,
+        Chris believes that faith should shape how we think,
+        how we relate with people, how we lead, and how we
+        navigate our purpose.
+      </p>
+
+
+      <!-- =====================================================
+           QUOTE
+      ====================================================== -->
+
+      <div class="cm-about-intro__quote">
+
+        <p>
+          “Purpose is not simply about discovering what you
+          were made to do. It is about becoming the person
+          who can faithfully live it out.”
+        </p>
+
       </div>
+
+
+      <!-- =====================================================
+           LINK
+      ====================================================== -->
+
+      <a href="#chris-story" class="cm-about-intro__link">
+
+        Read Chris's Story
+
+        <span>→</span>
+
+      </a>
+
     </div>
+
   </div>
-  <div
-    class="elementor-element elementor-element-1ed4295 e-con-full e-flex e-con e-child"
-    data-id="1ed4295"
-    data-element_type="container"
-    data-e-type="container"
-  >
-    <div
-      class="elementor-element elementor-element-4594ca3 elementor-widget elementor-widget-video"
-      data-id="4594ca3"
-      data-element_type="widget"
-      data-e-type="widget"
-      data-settings='{"youtube_url":"https:\/\/www.youtube.com\/watch?v=9Mykhty6GMc","video_type":"youtube","controls":"yes"}'
-      data-widget_type="video.default"
-    >
-      <div class="elementor-widget-container">
-        <div class="elementor-wrapper elementor-open-inline">
-          <iframe
-            class="elementor-video"
-            frameborder="0"
-            allowfullscreen=""
-            allow="
-              accelerometer;
-              autoplay;
-              clipboard-write;
-              encrypted-media;
-              gyroscope;
-              picture-in-picture;
-              web-share;
-            "
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="YouTube video player"
-            width="640"
-            height="360"
-            src="https://www.youtube.com/embed/9Mykhty6GMc?controls=1&amp;rel=0&amp;playsinline=0&amp;cc_load_policy=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fsamadeyemi.com&amp;widgetid=1&amp;forigin=https%3A%2F%2Fsamadeyemi.com%2Fresources%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fsamadeyemi.com%2F&amp;vf=6"
-            id="widget2"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="elementor-element elementor-element-9693429 e-con-full e-flex e-con e-child"
-    data-id="9693429"
-    data-element_type="container"
-    data-e-type="container"
-  >
-    <div
-      class="elementor-element elementor-element-a7c3cb7 elementor-widget elementor-widget-video"
-      data-id="a7c3cb7"
-      data-element_type="widget"
-      data-e-type="widget"
-      data-settings='{"youtube_url":"https:\/\/www.youtube.com\/watch?v=frDWst64i5k","video_type":"youtube","controls":"yes"}'
-      data-widget_type="video.default"
-    >
-      <div class="elementor-widget-container">
-        <div class="elementor-wrapper elementor-open-inline">
-          <iframe
-            class="elementor-video"
-            frameborder="0"
-            allowfullscreen=""
-            allow="
-              accelerometer;
-              autoplay;
-              clipboard-write;
-              encrypted-media;
-              gyroscope;
-              picture-in-picture;
-              web-share;
-            "
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="YouTube video player"
-            width="640"
-            height="360"
-            src="https://www.youtube.com/embed/frDWst64i5k?controls=1&amp;rel=0&amp;playsinline=0&amp;cc_load_policy=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fsamadeyemi.com&amp;widgetid=3&amp;forigin=https%3A%2F%2Fsamadeyemi.com%2Fresources%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fsamadeyemi.com%2F&amp;vf=6"
-            id="widget4"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="elementor-element elementor-element-e901739 e-con-full e-flex e-con e-child"
-    data-id="e901739"
-    data-element_type="container"
-    data-e-type="container"
-  >
-    <div
-      class="elementor-element elementor-element-17f5721 elementor-widget elementor-widget-video"
-      data-id="17f5721"
-      data-element_type="widget"
-      data-e-type="widget"
-      data-settings='{"youtube_url":"https:\/\/www.youtube.com\/watch?v=YMnlgNZ78vs","video_type":"youtube","controls":"yes"}'
-      data-widget_type="video.default"
-    >
-      <div class="elementor-widget-container">
-        <div class="elementor-wrapper elementor-open-inline">
-          <iframe
-            class="elementor-video"
-            frameborder="0"
-            allowfullscreen=""
-            allow="
-              accelerometer;
-              autoplay;
-              clipboard-write;
-              encrypted-media;
-              gyroscope;
-              picture-in-picture;
-              web-share;
-            "
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="YouTube video player"
-            width="640"
-            height="360"
-            src="https://www.youtube.com/embed/YMnlgNZ78vs?controls=1&amp;rel=0&amp;playsinline=0&amp;cc_load_policy=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fsamadeyemi.com&amp;widgetid=5&amp;forigin=https%3A%2F%2Fsamadeyemi.com%2Fresources%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fsamadeyemi.com%2F&amp;vf=6"
-            id="widget6"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="elementor-element elementor-element-c0a0715 e-con-full e-flex e-con e-child"
-    data-id="c0a0715"
-    data-element_type="container"
-    data-e-type="container"
-  >
-    <div
-      class="elementor-element elementor-element-b3f94d1 elementor-widget elementor-widget-video"
-      data-id="b3f94d1"
-      data-element_type="widget"
-      data-e-type="widget"
-      data-settings='{"youtube_url":"https:\/\/www.youtube.com\/watch?v=7uHtC6Bn0EM&amp;list=PL25XVdBi73msLuvLVoYyiLtln5-eSdwSe","video_type":"youtube","controls":"yes"}'
-      data-widget_type="video.default"
-    >
-      <div class="elementor-widget-container">
-        <div class="elementor-wrapper elementor-open-inline">
-          <iframe
-            class="elementor-video"
-            frameborder="0"
-            allowfullscreen=""
-            allow="
-              accelerometer;
-              autoplay;
-              clipboard-write;
-              encrypted-media;
-              gyroscope;
-              picture-in-picture;
-              web-share;
-            "
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="YouTube video player"
-            width="640"
-            height="360"
-            src="https://www.youtube.com/embed/7uHtC6Bn0EM?controls=1&amp;rel=0&amp;playsinline=0&amp;cc_load_policy=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fsamadeyemi.com&amp;widgetid=7&amp;forigin=https%3A%2F%2Fsamadeyemi.com%2Fresources%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fsamadeyemi.com%2F&amp;vf=6"
-            id="widget8"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+
+</section>
+

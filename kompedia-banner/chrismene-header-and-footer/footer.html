@@ -1,0 +1,158 @@
+
+<!-- Font Awesome CDN -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+/>
+
+<style>
+  .pg-foot {
+    background: #000;
+    color: #fff;
+    padding: 70px 70px 30px;
+  }
+
+  .pg-foot-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 70px;
+  }
+
+  .pg-foot-heading {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 22px;
+  }
+
+  .pg-foot-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pg-foot-list a {
+    color: #e6e6e6;
+    text-decoration: none;
+    font-size: 15px;
+  }
+
+  .pg-foot-list a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .pg-foot-socials {
+    display: flex;
+    gap: 20px;
+    margin-top: 34px;
+  }
+
+  .pg-foot-socials a {
+    color: #fff;
+    font-size: 18px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .pg-foot-socials a:hover {
+    opacity: 0.7;
+    transform: translateY(-2px);
+  }
+
+  .pg-foot-bottom {
+    border-top: 1px solid #262626;
+    padding-top: 26px;
+    text-align: center;
+  }
+
+  .pg-foot-bottom p {
+    margin: 0;
+    color: #aaa;
+    font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .pg-foot {
+      padding: 50px 24px 24px;
+    }
+
+    .pg-foot-top {
+      grid-template-columns: 1fr;
+      gap: 44px;
+    }
+  }
+</style>
+
+<div class="pg-foot">
+  <div class="pg-foot-top">
+
+    <div class="pg-foot-col">
+    </div>
+
+    <div class="pg-foot-col">
+      <h4 class="pg-foot-heading">Quick Links</h4>
+
+      <ul class="pg-foot-list">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Programs</a></li>
+        <li><a href="#">Events</a></li>
+        <li><a href="#">Platforms</a></li>
+        <li><a href="#">Resources</a></li>
+        <li><a href="#">Store</a></li>
+      </ul>
+    </div>
+
+    <div class="pg-foot-col">
+      <h4 class="pg-foot-heading">Legal</h4>
+
+      <ul class="pg-foot-list">
+        <li><a href="#">Terms &amp; Conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+
+      <div class="pg-foot-socials">
+
+        <!-- Instagram -->
+        <a href="#" aria-label="Instagram">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+
+        <!-- X / Twitter -->
+        <a href="#" aria-label="X">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+
+        <!-- Email -->
+        <a href="mailto:#" aria-label="Email">
+          <i class="fa-solid fa-envelope"></i>
+        </a>
+
+        <!-- Facebook -->
+        <a href="#" aria-label="Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+
+        <!-- LinkedIn -->
+        <a href="#" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pg-foot-bottom">
+    <p>&copy; 2026 Chris Sola Mene. All Rights Reserved</p>
+  </div>
+</div>
+

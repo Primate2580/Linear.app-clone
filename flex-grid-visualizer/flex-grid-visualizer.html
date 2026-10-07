@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en" class="h-full bg-slate-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live CSS Grid & Flexbox Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .font-mono-code {
+        font-family: "Fira Code", monospace;
+      }
+
+      /* Custom Scrollbars */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #090d16;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+      }
+
+      /* Synchronized Code Editor Overlay */
+      .editor-container {
+        position: relative;
+        font-family: "Fira Code", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .editor-textarea,
+      .editor-highlights {
+        white-space: pre;
+        word-wrap: normal;
+        overflow-x: auto;
+        tab-size: 2;
+      }
+
+      .editor-textarea {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        color: transparent;
+        caret-color: #38bdf8;
+        resize: none;
+        outline: none;
+        border: none;
+        padding: 12px 16px;
+        z-index: 2;
+      }
+
+      .editor-highlights {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        padding: 12px 16px;
+        z-index: 1;
+        color: #e2e8f0;
+      }
+
+      /* Simple Regex Token Highlighter */
+      .token-tag {
+        color: #f43f5e;
+      }
+      .token-attr {
+        color: #fbbf24;
+      }
+      .token-val {
+        color: #34d399;
+      }
+      .token-prop {
+        color: #38bdf8;
+      }
+      .token-selector {
+        color: #a78bfa;
+      }
+      .token-comment {
+        color: #64748b;
+        font-style: italic;
+      }
+      .token-num {
+        color: #fb923c;
+      }
+
+      .line-numbers {
+        font-family: "Fira Code", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #475569;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body
+    class="h-full flex flex-col text-slate-100 overflow-hidden bg-slate-950"
+  >
+    <!-- TOP APP HEADER -->
+    <header
+      class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-3 z-30 shrink-0"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20"
+        >
+          <i class="fa-solid fa-code text-white text-base"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-white flex items-center gap-2">
+            Grid & Layout Workspace
+            <span
+              class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono"
+              >Live Sync</span
+            >
+          </h1>
+          <p class="text-xs text-slate-400">
+            Interactive CSS Grid & Flexbox Live Code Playground
+          </p>
+        </div>
+      </div>
+
+      <!-- TEMPLATE QUICK LOADERS -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs text-slate-400 font-medium mr-1 hidden xl:inline"
+          ><i class="fa-solid fa-wand-magic-sparkles text-amber-400 mr-1"></i>
+          Templates:</span
+        >
+
+        <button
+          onclick="loadTemplate('grid12')"
+          class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-border-all text-cyan-400"></i> 12-Col Grid
+        </button>
+
+        <button
+          onclick="loadTemplate('autofit')"
+          class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-boxes-packing text-emerald-400"></i> Auto-Fit
+          Cards
+        </button>
+
+        <button
+          onclick="loadTemplate('holygrail')"
+          class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-table-cells text-indigo-400"></i> Holy Grail
+        </button>
+
+        <button
+          onclick="loadTemplate('areas')"
+          class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-layer-group text-violet-400"></i> Grid Areas
+        </button>
+
+        <button
+          onclick="loadTemplate('flexbar')"
+          class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition border border-slate-700 flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-bars text-amber-400"></i> Flex Navbar
+        </button>
+      </div>
+
+      <!-- UTILITY ACTIONS -->
+      <div class="flex items-center gap-2">
+        <button
+          onclick="toggleLayout()"
+          id="btn-layout-toggle"
+          title="Toggle Split Orientation"
+          class="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition"
+        >
+          <i class="fa-solid fa-table-columns text-sm"></i>
+        </button>
+
+        <button
+          onclick="runCode()"
+          class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-lg shadow-cyan-600/20"
+        >
+          <i class="fa-solid fa-play text-[10px]"></i> Run
+        </button>
+
+        <button
+          onclick="resetEditor()"
+          class="px-3 py-1.5 bg-slate-800 hover:bg-rose-900/50 text-slate-300 hover:text-rose-300 border border-slate-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN SPLIT WORKSPACE -->
+    <main
+      id="workspace-container"
+      class="flex-1 flex flex-col md:flex-row overflow-hidden relative"
+    >
+      <!-- LEFT PANEL: CODE EDITOR -->
+      <section
+        id="panel-editor"
+        class="w-full md:w-1/2 h-1/2 md:h-full bg-slate-900 border-r border-b md:border-b-0 border-slate-800 flex flex-col overflow-hidden relative"
+      >
+        <!-- Editor Subheader -->
+        <div
+          class="bg-slate-950/70 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 shrink-0"
+        >
+          <div class="flex items-center gap-2">
+            <i class="fa-regular fa-file-code text-cyan-400"></i>
+            <span class="font-mono font-medium text-slate-300"
+              >index.html & styles</span
+            >
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="char-count" class="font-mono text-[11px] text-slate-500"
+              >0 chars</span
+            >
+            <button
+              onclick="copyCode()"
+              class="hover:text-white transition flex items-center gap-1"
+            >
+              <i class="fa-regular fa-copy"></i>
+              <span id="copy-btn-text">Copy Code</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Code Editing Area -->
+        <div class="flex-1 flex overflow-hidden relative bg-[#0b0f19]">
+          <!-- Line Numbers Column -->
+          <div
+            id="line-numbers"
+            class="line-numbers py-3 px-3 border-r border-slate-800/60 bg-[#070a12] text-right select-none min-w-[45px] overflow-hidden"
+          >
+            1
+          </div>
+
+          <!-- Code Editor Surface -->
+          <div class="editor-container flex-1 h-full overflow-hidden relative">
+            <pre
+              id="editor-highlights"
+              class="editor-highlights font-mono-code"
+            ></pre>
+            <textarea
+              id="code-input"
+              class="editor-textarea font-mono-code"
+              spellcheck="false"
+              placeholder="Type your HTML and <style> CSS here..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Editor Footer Status Bar -->
+        <div
+          class="bg-slate-950 px-4 py-1.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono shrink-0"
+        >
+          <span class="flex items-center gap-1.5 text-emerald-400">
+            <span
+              class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+            ></span>
+            Auto-updating live
+          </span>
+          <span>HTML5 + CSS Grid</span>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: LIVE PREVIEW IFRAME -->
+      <section
+        id="panel-preview"
+        class="w-full md:w-1/2 h-1/2 md:h-full bg-slate-950 flex flex-col overflow-hidden relative"
+      >
+        <!-- Preview Subheader -->
+        <div
+          class="bg-slate-900/90 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 shrink-0"
+        >
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-desktop text-emerald-400"></i>
+            <span class="font-mono font-medium text-slate-300"
+              >Live Browser Preview</span
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <span
+              class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono"
+              >100% Scale</span
+            >
+            <button
+              onclick="refreshPreview()"
+              title="Force Refresh"
+              class="hover:text-white transition"
+            >
+              <i class="fa-solid fa-rotate text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Output Viewport -->
+        <div class="flex-1 w-full h-full bg-white relative">
+          <iframe
+            id="preview-frame"
+            class="w-full h-full border-0 bg-white"
+            sandbox="allow-scripts"
+          ></iframe>
+        </div>
+
+        <!-- Error / Console Status Bar -->
+        <div
+          id="status-bar"
+          class="bg-slate-900 px-4 py-1.5 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono shrink-0"
+        >
+          <span class="text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-check text-emerald-400"></i> Code
+            rendered cleanly
+          </span>
+          <span class="text-slate-500">Iframe Sandbox Active</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+      // PRE-DEFINED TEMPLATES DATA SETS
+      const templates = {
+        grid12: `<!-- 12-Column Responsive CSS Grid Template -->
+<style>
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 2rem;
+    margin: 0;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    font-weight: 600;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Span configurations */
+  .col-12 { grid-column: span 12; background: #3b82f6; color: white; }
+  .col-8  { grid-column: span 8; }
+  .col-4  { grid-column: span 4; background: #8b5cf6; color: white; }
+  .col-6  { grid-column: span 6; }
+  .col-3  { grid-column: span 3; background: #06b6d4; color: white; }
+</style>
+
+<div class="grid-container">
+  <div class="card col-12">Header / Hero (Span 12)</div>
+  <div class="card col-8">Main Content (Span 8)</div>
+  <div class="card col-4">Sidebar (Span 4)</div>
+  <div class="card col-4">Widget 1 (Span 4)</div>
+  <div class="card col-4">Widget 2 (Span 4)</div>
+  <div class="card col-4">Widget 3 (Span 4)</div>
+  <div class="card col-3">Footer 1</div>
+  <div class="card col-3">Footer 2</div>
+  <div class="card col-3">Footer 3</div>
+  <div class="card col-3">Footer 4</div>
+</div>`,
+
+        autofit: `<!-- Auto-Fit Responsive Card Grid (No Media Queries!) -->
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background-color: #090d16;
+    color: #e2e8f0;
+    padding: 2rem;
+    margin: 0;
+  }
+
+  h2 {
+    color: #38bdf8;
+    margin-bottom: 1.5rem;
+  }
+
+  .auto-grid {
+    display: grid;
+    /* The Magic Line: minmax ensures responsive scaling without queries */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid #334155;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: transform 0.2s ease, border-color 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: #38bdf8;
+  }
+
+  .badge {
+    display: inline-block;
+    background: #0284c7;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    margin-bottom: 0.75rem;
+  }
+</style>
+
+<h2>Responsive Card Grid (Resize window to test!)</h2>
+
+<div class="auto-grid">
+  <div class="card">
+    <span class="badge">CSS Grid</span>
+    <h3>Auto-Fit Magic</h3>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Cards automatically wrap and expand to fill available width.</p>
+  </div>
+  <div class="card">
+    <span class="badge">Flexibility</span>
+    <h3>MinMax Function</h3>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Guarantees cards never get smaller than 220px wide.</p>
+  </div>
+  <div class="card">
+    <span class="badge">Clean Layout</span>
+    <h3>Gap Property</h3>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Provides seamless horizontal and vertical spacing.</p>
+  </div>
+  <div class="card">
+    <span class="badge">No Queries</span>
+    <h3>Zero Breakpoints</h3>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Fluid layout without typing @media queries.</p>
+  </div>
+</div>`,
+
+        holygrail: `<!-- Classic Holy Grail Web Layout using CSS Grid -->
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: #020617;
+    color: white;
+  }
+
+  .holy-grail {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 200px 1fr 200px;
+    min-height: 100vh;
+  }
+
+  header {
+    grid-column: 1 / -1;
+    background: #0369a1;
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  nav {
+    background: #0f172a;
+    border-right: 1px solid #1e293b;
+    padding: 1rem;
+  }
+
+  main {
+    background: #020617;
+    padding: 1.5rem;
+  }
+
+  aside {
+    background: #0f172a;
+    border-left: 1px solid #1e293b;
+    padding: 1rem;
+  }
+
+  footer {
+    grid-column: 1 / -1;
+    background: #0f172a;
+    border-top: 1px solid #1e293b;
+    padding: 1rem;
+    text-align: center;
+    color: #64748b;
+  }
+</style>
+
+<div class="holy-grail">
+  <header>Header Bar (grid-column: 1 / -1)</header>
+  <nav>
+    <strong style="color:#38bdf8;">Navigation</strong>
+    <ul style="padding-left: 1rem; color: #94a3b8;">
+      <li>Dashboard</li>
+      <li>Analytics</li>
+      <li>Settings</li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Main Content Area</h2>
+    <p style="color: #94a3b8;">This section grows flexibly (1fr) while sidebar and nav keep fixed 200px widths.</p>
+  </main>
+  <aside>
+    <strong style="color:#a78bfa;">Aside Widget</strong>
+    <p style="color: #94a3b8; font-size: 0.85rem;">Secondary announcements or sidebar feeds go here.</p>
+  </aside>
+  <footer>Footer Content &copy; 2026</footer>
+</div>`,
+
+        areas: `<!-- Named Grid Template Areas -->
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background-color: #0f172a;
+    color: white;
+    padding: 1.5rem;
+    margin: 0;
+  }
+
+  .layout-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-areas:
+      "header header header"
+      "sidebar content content"
+      "footer footer footer";
+    grid-template-columns: 180px 1fr 1fr;
+    grid-template-rows: auto 250px auto;
+  }
+
+  .box {
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: bold;
+  }
+
+  .header  { grid-area: header;  background: #6366f1; }
+  .sidebar { grid-area: sidebar; background: #1e293b; border: 1px solid #334155; }
+  .content { grid-area: content; background: #0f766e; }
+  .footer  { grid-area: footer;  background: #334155; }
+</style>
+
+<div class="layout-container">
+  <div class="box header">Header Area ("header")</div>
+  <div class="box sidebar">Sidebar ("sidebar")</div>
+  <div class="box content">
+    Main Content Area ("content")
+    <p style="font-weight: normal; font-size: 0.9rem; color: #ccfbf1; margin-top: 0.5rem;">
+      Named grid areas make complex CSS layouts human-readable and straightforward to visualize!
+    </p>
+  </div>
+  <div class="box footer">Footer Area ("footer")</div>
+</div>`,
+
+        flexbar: `<!-- Responsive Flexbox Navigation Header -->
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: #090d16;
+    color: white;
+  }
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e293b;
+    padding: 1rem 2rem;
+    border-b: 1px solid #334155;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #38bdf8;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: #38bdf8;
+  }
+
+  .cta-button {
+    background: #0284c7;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+</style>
+
+<nav class="navbar">
+  <div class="logo">BrandLogo</div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Docs</a></li>
+  </ul>
+  <a href="#" class="cta-button">Get Started</a>
+</nav>`,
+      };
+
+      // APP STATE & DOM REFS
+      const codeInput = document.getElementById("code-input");
+      const highlights = document.getElementById("editor-highlights");
+      const lineNumbers = document.getElementById("line-numbers");
+      const previewFrame = document.getElementById("preview-frame");
+      const charCount = document.getElementById("char-count");
+      const workspace = document.getElementById("workspace-container");
+      const panelEditor = document.getElementById("panel-editor");
+      const panelPreview = document.getElementById("panel-preview");
+
+      let isHorizontalLayout = true;
+      let renderTimer = null;
+
+      // SYNTAX HIGHLIGHTER LOGIC
+      function highlightCode(code) {
+        let html = code
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+        // Simple CSS / HTML token highlighting
+        html = html.replace(
+          /(&lt;\/?[a-zA-Z0-9\-]+)/g,
+          '<span class="token-tag">$1</span>',
+        );
+        html = html.replace(
+          /([a-zA-Z\-]+)=/g,
+          '<span class="token-attr">$1</span>=',
+        );
+        html = html.replace(/("[^"]*")/g, '<span class="token-val">$1</span>');
+        html = html.replace(
+          /(\/\*[\s\S]*?\*\/|&lt;!--[\s\S]*?--&gt;)/g,
+          '<span class="token-comment">$1</span>',
+        );
+        html = html.replace(
+          /([a-zA-Z\-]+)\s*:/g,
+          '<span class="token-prop">$1</span>:',
+        );
+
+        return html;
+      }
+
+      // UPDATE EDITOR DECORATIONS (LINE NUMS, HIGHLIGHTS, CHAR COUNT)
+      function updateEditorUI() {
+        const code = codeInput.value;
+
+        // Update highlights overlay
+        highlights.innerHTML = highlightCode(code) + "\n";
+
+        // Update line numbers
+        const lines = code.split("\n").length;
+        lineNumbers.innerHTML = Array.from(
+          { length: lines },
+          (_, i) => i + 1,
+        ).join("<br>");
+
+        // Update char counter
+        charCount.textContent = `${code.length} chars`;
+
+        // Synchronize scroll
+        highlights.scrollTop = codeInput.scrollTop;
+        highlights.scrollLeft = codeInput.scrollLeft;
+        lineNumbers.scrollTop = codeInput.scrollTop;
+      }
+
+      // RENDER CODE INTO PREVIEW IFRAME
+      function runCode() {
+        const code = codeInput.value;
+        const doc =
+          previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+        doc.open();
+        doc.write(code);
+        doc.close();
+      }
+
+      // DEBOUNCED AUTO-RUN ON TYPING
+      function scheduleAutoRun() {
+        updateEditorUI();
+        clearTimeout(renderTimer);
+        renderTimer = setTimeout(runCode, 300);
+      }
+
+      // LOAD PRESETS
+      function loadTemplate(key) {
+        if (templates[key]) {
+          codeInput.value = templates[key];
+          scheduleAutoRun();
+        }
+      }
+
+      // RESET EDITOR
+      function resetEditor() {
+        loadTemplate("grid12");
+      }
+
+      // TOGGLE SPLIT LAYOUT ORIENTATION
+      function toggleLayout() {
+        isHorizontalLayout = !isHorizontalLayout;
+        const btn = document.getElementById("btn-layout-toggle");
+
+        if (isHorizontalLayout) {
+          workspace.className =
+            "flex-1 flex flex-col md:flex-row overflow-hidden relative";
+          panelEditor.className =
+            "w-full md:w-1/2 h-1/2 md:h-full bg-slate-900 border-r border-b md:border-b-0 border-slate-800 flex flex-col overflow-hidden relative";
+          panelPreview.className =
+            "w-full md:w-1/2 h-1/2 md:h-full bg-slate-950 flex flex-col overflow-hidden relative";
+          btn.innerHTML = '<i class="fa-solid fa-table-columns text-sm"></i>';
+        } else {
+          workspace.className = "flex-1 flex flex-col overflow-hidden relative";
+          panelEditor.className =
+            "w-full h-1/2 bg-slate-900 border-b border-slate-800 flex flex-col overflow-hidden relative";
+          panelPreview.className =
+            "w-full h-1/2 bg-slate-950 flex flex-col overflow-hidden relative";
+          btn.innerHTML = '<i class="fa-solid fa-window-maximize text-sm"></i>';
+        }
+      }
+
+      // COPY CODE TO CLIPBOARD
+      function copyCode() {
+        const text = codeInput.value;
+        const copyTextSpan = document.getElementById("copy-btn-text");
+
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+
+        copyTextSpan.textContent = "Copied!";
+        setTimeout(() => {
+          copyTextSpan.textContent = "Copy Code";
+        }, 2000);
+      }
+
+      function refreshPreview() {
+        runCode();
+      }
+
+      // EVENT LISTENERS & INITIALIZATION
+      codeInput.addEventListener("input", scheduleAutoRun);
+
+      codeInput.addEventListener("scroll", () => {
+        highlights.scrollTop = codeInput.scrollTop;
+        highlights.scrollLeft = codeInput.scrollLeft;
+        lineNumbers.scrollTop = codeInput.scrollTop;
+      });
+
+      // Tab key indent support inside textarea
+      codeInput.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const start = codeInput.selectionStart;
+          const end = codeInput.selectionEnd;
+
+          codeInput.value =
+            codeInput.value.substring(0, start) +
+            "  " +
+            codeInput.value.substring(end);
+          codeInput.selectionStart = codeInput.selectionEnd = start + 2;
+          scheduleAutoRun();
+        }
+      });
+
+      // Boot app with default 12-Column Grid template
+      window.onload = function () {
+        loadTemplate("grid12");
+      };
+    </script>
+  </body>
+</html>

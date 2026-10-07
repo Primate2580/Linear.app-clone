@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEV.to</title>
+    <!-- Google Material Symbols Outlined CDN -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+    <link rel="stylesheet" href="toggle-menu.css" />
+  </head>
+  <body>
+    <!-- Hidden Checkbox for Pure CSS Toggle -->
+    <input type="checkbox" id="menu-toggle-checkbox" />
+
+    <header class="top-navbar">
+      <div class="nav-left">
+        <!-- Label acts as the clickable toggle button for the checkbox -->
+        <label for="menu-toggle-checkbox" class="menu-btn" aria-label="Toggle Navigation">
+          <span class="material-symbols-outlined">menu</span>
+        </label>
+
+        <div class="logo">DEV</div>
+
+        <div class="header-search">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" placeholder="Search..." />
+          <span class="search-provider">Powered by Algolia</span>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <button class="create-post-btn">Create Post</button>
+        <button class="icon-btn">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <div class="profile-avatar"></div>
+      </div>
+    </header>
+
+    <!-- Mobile Dropdown Menu -->
+    <nav class="mobile-dropdown">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">DEV Challenges</a></li>
+        <li><a href="#">Reading List</a></li>
+        <li><a href="#">Podcasts</a></li>
+        <li><a href="#">Videos</a></li>
+        <li><a href="#">Tags</a></li>
+      </ul>
+    </nav>
+
+
+
+
+
+
+
+    <!-- Main 3-Column Grid Container -->
+    <main class="grid-container">
+      
+        <!-- Left Sidebar Area -->
+      <aside class="sidebar-left">
+        <nav class="sidebar-nav">
+  <ul>
+    <li>
+      <a href="#"><span class="material-symbols-outlined">home</span>Home</a>
+    </li>
+
+    <li>
+      <a href="#"><span class="material-symbols-outlined">emoji_events</span>DEV Challenges</a>
+    </li>
+
+    <li>
+      <a href="#"><span class="material-symbols-outlined">menu_book</span>Reading List</a>
+    </li>
+
+    <li>
+      <a href="#"><span class="material-symbols-outlined">podcasts</span>Podcasts</a>
+    </li>
+
+    <li>
+      <a href="#"><span class="material-symbols-outlined">smart_display</span>Videos</a>
+    </li>
+
+    <li>
+      <a href="#"><span class="material-symbols-outlined">sell</span>Tags</a>
+    </li>
+  </ul>
+</nav>
+      </aside>
+
+      <!-- Middle Main Content Area -->
+      <section class="main-content">
+
+
+        <h2>Main Content Area</h2>
+        <!-- We will put the expanding input box here next! -->
+      </section>
+
+      <!-- Right Sidebar Area -->
+      <aside class="sidebar-right">
+        <div class="widget">
+          <h3>Active discussions</h3>
+          <p>
+            8 Posts by Women on DEV That Deserve More Than a Once-a-Year
+            Spotlight
+          </p>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>

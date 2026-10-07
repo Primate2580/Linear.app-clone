@@ -1,0 +1,46 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+    background-color: gainsboro;
+
+}
+
+form{
+    height: 700px;
+   width: 400px;
+    background-color: rgb(185, 181, 181);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-one{
+   padding: 10px 15px;
+   outline: none;
+   border-radius: 5px;
+   border: none;
+   background: transparent;
+   background-color: rgb(195, 195, 212);
+   margin: 10px 20px;
+    
+}
+
+button{
+    background: transparent;
+    border: none;
+    padding: 15px 35px;
+    background-color:rgb(195, 195, 212) ;
+     border-radius: 8px;
+}
+
+.btn-1{
+    margin-right: 18px;
+   
+}

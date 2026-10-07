@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Grid Areas Practice</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="page-layout">
+      <header class="site-header">
+        <div class="brand">
+          <span class="material-symbols-outlined"> dashboard </span>
+          <span>GridLab</span>
+        </div>
+
+        <nav class="desktop-nav">
+          <a href="#">Home</a>
+          <a href="#">Projects</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </nav>
+
+        <!-- Mobile Menu Toggle with Checkbox -->
+        <input type="checkbox" id="menu-toggle" class="menu-checkbox" />
+        <label for="menu-toggle" class="menu-button" aria-label="Open navigation">
+          <span class="material-symbols-outlined"> menu </span>
+       </label>
+
+        <!-- Mobile Dropdown -->
+        <nav class="mobile-dropdown">
+          <a href="#">
+            <span class="material-symbols-outlined"> home </span>
+            Home
+          </a>
+          <a href="#">
+            <span class="material-symbols-outlined"> work </span>
+            Projects
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> info </span>
+            About
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> mail </span>
+            Contact
+          </a>
+        </nav>
+      </header>
+
+     
+         <!-- LEFT SIDEBAR -->
+      <aside class="sidebar-left">
+        <h2>Navigation</h2>
+
+        <nav class="sidebar-nav">
+          <a href="#">
+            <span class="material-symbols-outlined"> home </span>
+            Dashboard
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> folder </span>
+            Projects
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> task </span>
+            Tasks
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined">calendar_month </span>
+            Calendar
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> settings </span>
+            Settings
+          </a>
+        </nav>
+      </aside>
+
+         <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <div class="page-heading">
+          <span class="material-symbols-outlined"> dashboard </span>
+
+          <div>
+            <h1>Dashboard</h1>
+            <p>Welcome to your workspace.</p>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <section class="cards">
+          
+          <article class="card">
+            <span class="material-symbols-outlined"> folder </span>
+            <div>
+              <h3>Projects</h3>
+              <strong>24</strong>
+              <p>Active projects</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="material-symbols-outlined"> task_alt </span>
+
+            <div>
+              <h3>Tasks</h3>
+              <strong>86</strong>
+              <p>Completed tasks</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="material-symbols-outlined"> group </span>
+
+            <div>
+              <h3>Team</h3>
+              <strong>12</strong>
+              <p>Team members</p>
+            </div>
+          </article>
+        </section>
+
+        <!-- Activity -->
+        <section class="activity">
+          <h2>Recent Activity</h2>
+
+          <div class="activity-item">
+            <span class="material-symbols-outlined"> check_circle </span>
+
+            <div>
+              <strong>Website project completed</strong>
+              <p>2 hours ago</p>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <span class="material-symbols-outlined"> upload </span>
+
+            <div>
+              <strong>New files uploaded</strong>
+              <p>5 hours ago</p>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <span class="material-symbols-outlined"> person_add </span>
+
+            <div>
+              <strong>New team member added</strong>
+              <p>Yesterday</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+         <!-- RIGHT SIDEBAR -->
+      <aside class="sidebar-right">
+        <div class="profile-card">
+          <span class="material-symbols-outlined profile-icon">
+            account_circle
+          </span>
+          <h2>John Doe</h2>
+          <p>Frontend Developer</p>
+          <button>
+            <span class="material-symbols-outlined"> edit </span>
+            Edit Profile
+          </button>
+        </div>
+
+        <div class="quick-links">
+          <h3>Quick Links</h3>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> add </span>
+            New Project
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> upload_file </span>
+            Upload File
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> help </span>
+            Help Center
+          </a>
+        </div>
+      </aside>
+
+         <!-- FOOTER -->
+      <footer class="site-footer">
+        <p>© 2026 GridLab. Built while learning CSS Grid.</p>
+
+        <div>
+          <a href="#">
+            <span class="material-symbols-outlined"> mail </span>
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> language </span>
+          </a>
+
+          <a href="#">
+            <span class="material-symbols-outlined"> favorite </span>
+          </a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

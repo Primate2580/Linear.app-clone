@@ -1,79 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-*,*::after,*::before{
-    box-sizing: 0;
-}
+ 
 
+  </head>
 
+  <body>
+    <label for="text">text<input type="text" placeholder="/><br /></label>
 
+    <label for="number">number <input type="number" /></label><br />
 
-    </style>
-</head>
-<body>
-    
-<label for="text">text<input type="text" placeholder="text"><br></label>
+    <label>Gender:</label><br />  
+    <input type="radio" id="male" name="gender" value="male"/>
+    <label for="male">Male</label><br />
+    <input type="radio" id="female" name="gender" value="female" />
+    <label for="female">Female</label>
+    <br /><br />
 
-<label for="number">number <input type="number"></label><br>
+    <label>Black or White:</label><br />
+    <input type="radio" id="white" name="color" value="white" />
+    <label for="white">white</label><br />
+    <input type="radio" id="black" name="color" value="black" />
+    <label for="black">black</label> <br />
 
+    <br />
+    <br />
+    <input type="password" />
+    <input type="email" />
+    <input type="file" />
+    <textarea name="" id=""></textarea>
 
+    <form action="">
+      <label for="name">What is your name:</label>
+      <input
+        type="text"
+        placeholder="enter your name here"
+      />
+      <br />
+      <label for="number">Please provide your number:</label>
+      <input type="number" placeholder="takes number only" required /> <br />
+      <input type="file" placeholder="upload your file here" />
 
- <label>Gender:</label><br>
-  <input type="radio" id="male" name="gender" value="male">
-  <label for="male">Male</label><br>
-  <input type="radio" id="female" name="gender" value="female">
-  <label for="female">Female</label>
-  <br><br>
-
-
-
-<label>Black or White:</label><br>
-<input type="radio" id="white" name="color" value="white">
-<label for="white">white</label><br>
-<input type="radio" id="black" name="color" value="black">
-<label for="black">black</label> <br>
-
-
-
-
-<br> <br>
-<input type="password">
-<input type="email">
-<input type="file">
-<textarea name="" id=""></textarea>
-
-
-
-
-
-<form action="" style="background: blue; padding: 10px; display: flex; flex-direction: column;
- align-items: flex-start; border-radius: 10px; width: 320px; height: 500px;">
-    
-    <label for="name">What is your name:</label>
-    <input style="outline: none; border: 1px solid rgb(106, 106, 112); background: rgb(99, 99, 245); padding: 10px 15px; border-radius: 5px" type="text" placeholder="enter your name here"> <br>
-    <label for="number">Please provide your number:</label>
-    <input type="number" placeholder="takes number only" required> <br>
-    <input type="file" placeholder="upload your file here">
-
-
-     <label for="role">Role:</label>
-  <select>
-    <option value="student">Student</option>
-    <option value="teacher">Teacher</option>
-    <option value="partisan">partisan</option>
-    <option value="Doctor">Doctor</option>
-    <option value="Artist">Artist</option>
-    <option value="Designer">Designer</option>
-  </select>
-  <br><br>
-    <button>sumbmit</button>
-
-
-</form>
-
-</body>
+      <label for="role">Role:</label>
+      <select>
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+        <option value="partisan">partisan</option>
+        <option value="Doctor">Doctor</option>
+        <option value="Artist">Artist</option>
+        <option value="Designer">Designer</option>
+      </select>
+      <br /><br />
+      <button>sumbmit</button>
+    </form>
+  </body>
 </html>

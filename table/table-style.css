@@ -1,0 +1,125 @@
+/* General Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* Card Container */
+.table-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 850px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.table-header {
+  padding: 24px 30px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-header h2 {
+  font-size: 20px;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.table-header p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Responsive Table Scroll Wrapper */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Enables horizontal scroll on small devices */
+}
+
+/* Table Base Styling */
+table {
+  width: 100%;
+  border-collapse: collapse; /* Merges adjacent cell borders */
+  text-align: left;
+  font-size: 14px;
+}
+
+/* Header Cells */
+thead th {
+  background-color: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  padding: 14px 20px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Body Cells */
+tbody td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.student-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Zebra Striping for alternate rows */
+tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-warning {
+  background-color: #fef9c3;
+  color: #a16207;
+}
+
+.badge-danger {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Footer Styling */
+tfoot td {
+  padding: 16px 20px;
+  background-color: #f8fafc;
+  font-size: 14px;
+  color: #475569;
+  border-top: 2px solid #e2e8f0;
+}

@@ -1,0 +1,454 @@
+<!-- =========================================================
+     CHRIS MENE — CUSTOM HEADER (v2, sticky/solid)
+     For Elementor Header template (via HTML widget)
+     ---------------------------------------------------------
+     NOTE: If this still doesn't show styling/behavior after
+     publishing, open the page, right-click > Inspect, and
+     search for "cm-header" in the HTML. If you find the divs
+     but no <style> block above them, WordPress is stripping
+     <style>/<script> tags on save (this happens on many hosts
+     even for admin accounts). In that case, use a plugin built
+     for raw code (WPCode, or "Insert Headers and Footers")
+     instead of pasting this into the Elementor HTML widget.
+========================================================= -->
+
+<style>
+  .cm-header,
+  .cm-header * {
+    box-sizing: border-box;
+  }
+
+.cm-header {
+  position: sticky;
+  top: 0;
+  left: 50%;
+
+  /* Break out of Elementor's container */
+  width: 100vw;
+  margin-left: -50vw;
+
+  z-index: 9999;
+
+  background: #0b0d0d;
+
+  padding: 16px 42px;
+
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
+}
+  
+
+  .cm-header__inner {
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 35px;
+  }
+
+  /* ---------- LOGO ---------- */
+  .cm-header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 13px;
+    color: #fff;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .cm-header__mark {
+    position: relative;
+    width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 50%;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    font-style: italic;
+  }
+  .cm-header__mark::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    right: 2px;
+    top: 2px;
+    background: #b89652;
+    border-radius: 50%;
+  }
+  .cm-header__name {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .cm-header__name-main {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .cm-header__name-sub {
+    margin-top: 5px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  /* ---------- DESKTOP NAV ---------- */
+  .cm-header__nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-left: auto;
+  }
+  .cm-header__nav a {
+    position: relative;
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: color 0.25s ease;
+  }
+  .cm-header__nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -7px;
+    height: 1px;
+    background: #b89652;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+  }
+  .cm-header__nav a:hover {
+    color: #fff;
+  }
+  .cm-header__nav a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* ---------- CTA ---------- */
+  .cm-header__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 19px;
+    background: #fff;
+    color: #111;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease,
+      transform 0.3s ease;
+  }
+  .cm-header__cta span {
+    font-size: 16px;
+    line-height: 1;
+  }
+  .cm-header__cta:hover {
+    background: #b89652;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  /* ---------- MOBILE MENU BUTTON ---------- */
+  .cm-header__menu {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .cm-header__menu-line {
+    display: block;
+    width: 17px;
+    height: 1px;
+    background: #fff;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
+  }
+  .cm-header__menu.is-active .cm-header__menu-line:nth-child(1) {
+    transform: translateY(3px) rotate(45deg);
+  }
+  .cm-header__menu.is-active .cm-header__menu-line:nth-child(2) {
+    transform: translateY(-3px) rotate(-45deg);
+  }
+
+  /* ---------- MOBILE FULL MENU ---------- */
+  .cm-mobile-menu {
+    position: fixed;
+    z-index: 9998;
+    inset: 0;
+    background: #080909;
+    color: #fff;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-15px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0.35s ease;
+    padding: 105px 25px 35px;
+    overflow-y: auto;
+  }
+  .cm-mobile-menu.is-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .cm-mobile-menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .cm-mobile-menu__label {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #b89652;
+  }
+  .cm-mobile-menu__close {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+  }
+  .cm-mobile-menu__links {
+    margin: 35px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cm-mobile-menu__links li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  }
+  .cm-mobile-menu__links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    color: #fff;
+    text-decoration: none;
+    font-size: clamp(20px, 9vw, 38px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 400;
+  }
+  .cm-mobile-menu__links a span {
+    color: #b89652;
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 0.55em;
+  }
+  .cm-mobile-menu__links a:hover {
+    color: #d8c69e;
+  }
+  .cm-mobile-menu__bottom {
+    margin-top: 35px;
+  }
+  .cm-mobile-menu__bottom p {
+    margin: 0 0 15px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .cm-mobile-menu__cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px 20px;
+    background: #fff;
+    color: #111;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .cm-mobile-menu__cta span {
+    font-size: 20px;
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 900px) {
+    .cm-header {
+      padding: 14px 22px;
+    }
+    .cm-header__nav,
+    .cm-header__cta {
+      display: none;
+    }
+    .cm-header__menu {
+      display: flex;
+    }
+    .cm-header__name-main {
+      font-size: 14px;
+    }
+    .cm-header__name-sub {
+      font-size: 14px;
+    }
+  }
+  @media (max-width: 420px) {
+    .cm-header {
+      padding: 12px 16px;
+    }
+    .cm-header__mark {
+      width: 36px;
+      height: 36px;
+    }
+    .cm-header__name-main {
+      font-size: 14px;
+    }
+    .cm-header__name-sub {
+      display: none;
+    }
+    .cm-header__menu {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>
+
+<header class="cm-header" id="cmHeader">
+  <div class="cm-header__inner">
+    <a href="/" class="cm-header__brand" aria-label="Chris Mene Home">
+      <div class="cm-header__mark">CM</div>
+      <div class="cm-header__name">
+        <span class="cm-header__name-main">Chris Mene</span>
+        <span class="cm-header__name-sub"
+          >Faith &middot; Purpose &middot; People</span
+        >
+      </div>
+    </a>
+
+    <nav class="cm-header__nav" aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+      <a href="/stores/">Stores</a>
+      <a href="/resources/">Resources</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+
+    <a href="/contact/" class="cm-header__cta"
+      >Let's Connect <span>&#8594;</span></a
+    >
+
+    <button
+      class="cm-header__menu"
+      id="cmMenuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false"
+    >
+      <span class="cm-header__menu-line"></span>
+      <span class="cm-header__menu-line"></span>
+    </button>
+  </div>
+</header>
+
+<div class="cm-mobile-menu" id="cmMobileMenu" aria-hidden="true">
+  <div class="cm-mobile-menu__top">
+    <p class="cm-mobile-menu__label">Chris Mene</p>
+    <button
+      class="cm-mobile-menu__close"
+      id="cmMenuClose"
+      type="button"
+      aria-label="Close menu"
+    >
+      &times;
+    </button>
+  </div>
+
+  <ul class="cm-mobile-menu__links">
+    <li>
+      <a href="/">Home</a>
+    </li>
+    <li>
+      <a href="/about/">About</a>
+    </li>
+    <li>
+      <a href="/stores/">Stores</a>
+    </li>
+    <li>
+      <a href="/resources/">Resources</a>
+    </li>
+    <li>
+      <a href="/contact/">Contact</a>
+    </li>
+  </ul>
+
+  <div class="cm-mobile-menu__bottom">
+    <p>Faith &middot; Purpose &middot; People</p>
+    <a href="/contact/" class="cm-mobile-menu__cta"
+      >Let's Connect <span>&#8594;</span></a
+    >
+  </div>
+</div>
+
+<script>
+  (function () {
+    var menuButton = document.getElementById("cmMenuButton");
+    var menuClose = document.getElementById("cmMenuClose");
+    var mobileMenu = document.getElementById("cmMobileMenu");
+    if (!menuButton || !menuClose || !mobileMenu) return;
+
+    function openMenu() {
+      mobileMenu.classList.add("is-open");
+      mobileMenu.setAttribute("aria-hidden", "false");
+      menuButton.setAttribute("aria-expanded", "true");
+      menuButton.classList.add("is-active");
+      document.body.style.overflow = "hidden";
+    }
+    function closeMenu() {
+      mobileMenu.classList.remove("is-open");
+      mobileMenu.setAttribute("aria-hidden", "true");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.classList.remove("is-active");
+      document.body.style.overflow = "";
+    }
+
+    menuButton.addEventListener("click", openMenu);
+    menuClose.addEventListener("click", closeMenu);
+    mobileMenu.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", closeMenu);
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && mobileMenu.classList.contains("is-open"))
+        closeMenu();
+    });
+  })();
+</script>

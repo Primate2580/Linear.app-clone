@@ -1,0 +1,2782 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CSS Flexbox Learning Visualizer</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap");
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      code,
+      pre,
+      textarea,
+      .font-code {
+        font-family: "Fira Code", monospace;
+      }
+
+      textarea {
+        resize: vertical;
+      }
+
+      ::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 5px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+
+      input[type="range"] {
+        accent-color: #6366f1;
+      }
+
+      .lesson-item {
+        transition: all 0.2s ease;
+      }
+
+      .lesson-item:hover {
+        transform: translateX(2px);
+      }
+
+      .lesson-item.active {
+        background: rgba(79, 70, 229, 0.18);
+        border-color: rgba(99, 102, 241, 0.55);
+        color: white;
+      }
+
+      .lesson-item.completed .lesson-number {
+        background: #059669;
+        color: white;
+      }
+
+      .flex-item {
+        transition:
+          flex-grow 0.25s ease,
+          flex-shrink 0.25s ease,
+          flex-basis 0.25s ease,
+          align-self 0.25s ease,
+          transform 0.15s ease,
+          opacity 0.2s ease;
+      }
+
+      .flex-item.selected {
+        box-shadow:
+          0 0 0 2px #818cf8,
+          0 0 25px rgba(99, 102, 241, 0.3);
+        z-index: 10;
+      }
+
+      .axis-label {
+        position: absolute;
+        z-index: 30;
+        pointer-events: none;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .axis-line {
+        position: absolute;
+        z-index: 25;
+        pointer-events: none;
+        opacity: 0.65;
+      }
+
+      .axis-line.main {
+        background: rgba(245, 158, 11, 0.25);
+      }
+
+      .axis-line.cross {
+        background: rgba(16, 185, 129, 0.22);
+      }
+
+      .gap-marker {
+        position: absolute;
+        z-index: 35;
+        pointer-events: none;
+        font-size: 9px;
+        font-family: "Fira Code", monospace;
+        color: #c4b5fd;
+        background: rgba(30, 27, 75, 0.9);
+        border: 1px solid rgba(129, 140, 248, 0.4);
+        border-radius: 5px;
+        padding: 2px 5px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .show-gap .gap-marker {
+        opacity: 1;
+      }
+
+      .code-editor {
+        min-height: 210px;
+        line-height: 1.7;
+        tab-size: 2;
+        outline: none;
+      }
+
+      .code-editor:focus {
+        border-color: rgba(99, 102, 241, 0.8);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+      }
+
+      .explain-card {
+        animation: fadeIn 0.25s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .pulse-success {
+        animation: successPulse 0.5s ease;
+      }
+
+      @keyframes successPulse {
+        0% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.015);
+        }
+
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .challenge-success {
+        border-color: rgba(16, 185, 129, 0.6) !important;
+        background: rgba(6, 78, 59, 0.18) !important;
+      }
+
+      .challenge-fail {
+        border-color: rgba(244, 63, 94, 0.5) !important;
+        background: rgba(76, 5, 25, 0.18) !important;
+      }
+
+      .stage-grid-bg {
+        background-image:
+          linear-gradient(rgba(99, 102, 241, 0.055) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(99, 102, 241, 0.055) 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
+
+      .selected-badge {
+        animation: badgeIn 0.2s ease;
+      }
+
+      @keyframes badgeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .property-highlight {
+        color: #a5b4fc;
+        font-family: "Fira Code", monospace;
+      }
+
+      .value-highlight {
+        color: #6ee7b7;
+        font-family: "Fira Code", monospace;
+      }
+
+      @media (max-width: 1024px) {
+        .lesson-sidebar {
+          max-height: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white"
+  >
+    <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+    <header
+      class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800"
+    >
+      <div
+        class="max-w-[1900px] mx-auto px-4 md:px-6 py-3 flex flex-wrap items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20"
+          >
+            <i class="fa-solid fa-arrows-left-right text-white"></i>
+          </div>
+
+          <div>
+            <h1
+              class="font-bold text-lg md:text-xl bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent"
+            >
+              CSS Flexbox Learning Visualizer
+            </h1>
+
+            <p class="text-[11px] md:text-xs text-slate-400">
+              Learn → Experiment → Visualize → Explain → Challenge
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:block text-right">
+            <p class="text-[10px] uppercase tracking-wider text-slate-500">
+              Progress
+            </p>
+
+            <p id="progress-text" class="text-xs font-mono text-indigo-300">
+              Lesson 1 / 15
+            </p>
+          </div>
+
+          <div class="w-28 h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div
+              id="progress-bar"
+              class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all"
+              style="width: 6.66%"
+            ></div>
+          </div>
+
+          <button
+            onclick="resetEverything()"
+            class="px-3 py-2 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 hover:text-white transition"
+          >
+            <i class="fa-solid fa-rotate-left mr-1"></i>
+            Reset
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- =========================================================
+       MAIN
+  ========================================================== -->
+
+    <main class="max-w-[1900px] mx-auto w-full p-4 md:p-6">
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+        <!-- =====================================================
+           LESSON PATH
+      ====================================================== -->
+
+        <aside
+          class="lesson-sidebar xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl xl:max-h-[calc(100vh-115px)] xl:sticky xl:top-[95px] overflow-y-auto"
+        >
+          <div class="mb-4">
+            <p
+              class="text-[10px] uppercase tracking-widest font-bold text-indigo-400"
+            >
+              Flexbox Course
+            </p>
+
+            <h2 class="font-bold text-base mt-1">Lesson Path</h2>
+
+            <p class="text-[11px] text-slate-500 mt-1">
+              Work through each concept.
+            </p>
+          </div>
+
+          <div id="lesson-list" class="space-y-1.5"></div>
+        </aside>
+
+        <!-- =====================================================
+           MAIN LEARNING AREA
+      ====================================================== -->
+
+        <section class="xl:col-span-10 space-y-5">
+          <!-- ===================================================
+             LESSON HEADER
+        ==================================================== -->
+
+          <section
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 shadow-xl"
+          >
+            <div class="flex flex-wrap items-start justify-between gap-5">
+              <div class="max-w-4xl">
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                  <span
+                    id="lesson-badge"
+                    class="px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[10px] uppercase tracking-wider font-bold"
+                  >
+                    Lesson 01
+                  </span>
+
+                  <span
+                    id="lesson-property"
+                    class="px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-[10px] font-code"
+                  >
+                    display: flex
+                  </span>
+                </div>
+
+                <h2
+                  id="lesson-title"
+                  class="text-2xl md:text-3xl font-bold text-white"
+                >
+                  Flex Container
+                </h2>
+
+                <p
+                  id="lesson-description"
+                  class="text-sm text-slate-400 mt-2 leading-7 max-w-3xl"
+                >
+                  Flexbox begins when an element becomes a flex container.
+                </p>
+              </div>
+
+              <div
+                class="bg-slate-950 border border-slate-800 rounded-xl p-3 min-w-[210px]"
+              >
+                <p
+                  class="text-[10px] text-slate-500 uppercase tracking-wider mb-2"
+                >
+                  Syntax
+                </p>
+
+                <code
+                  id="lesson-syntax"
+                  class="text-xs text-indigo-300 whitespace-pre-wrap"
+                  >display: flex;</code
+                >
+              </div>
+            </div>
+
+            <!-- WHY -->
+
+            <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div
+                class="rounded-xl bg-indigo-950/20 border border-indigo-900/40 p-4"
+              >
+                <div class="flex items-center gap-2 mb-2">
+                  <span
+                    class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400"
+                  >
+                    <i class="fa-solid fa-lightbulb text-xs"></i>
+                  </span>
+
+                  <h3
+                    class="text-xs font-bold uppercase tracking-wider text-indigo-300"
+                  >
+                    Why?
+                  </h3>
+                </div>
+
+                <p id="lesson-why" class="text-xs text-slate-400 leading-6">
+                  Flexbox lets you arrange elements along one dimension.
+                </p>
+              </div>
+
+              <div
+                class="rounded-xl bg-emerald-950/20 border border-emerald-900/40 p-4"
+              >
+                <div class="flex items-center gap-2 mb-2">
+                  <span
+                    class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"
+                  >
+                    <i class="fa-solid fa-brain text-xs"></i>
+                  </span>
+
+                  <h3
+                    class="text-xs font-bold uppercase tracking-wider text-emerald-300"
+                  >
+                    Mental Model
+                  </h3>
+                </div>
+
+                <p id="lesson-model" class="text-xs text-slate-400 leading-6">
+                  Think of Flexbox as a one-dimensional layout system.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+             VISUALIZER
+        ==================================================== -->
+
+          <section
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-5 shadow-xl"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-eye text-indigo-400"></i>
+
+                  <h3 class="text-sm font-bold">Visualize</h3>
+                </div>
+
+                <p class="text-[11px] text-slate-500 mt-1">
+                  The diagram updates as you change the CSS.
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[10px]"
+                >
+                  <span
+                    class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1"
+                  ></span>
+                  Main Axis:
+                  <strong id="visual-main-axis">Horizontal</strong>
+                </span>
+
+                <span
+                  class="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px]"
+                >
+                  <span
+                    class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1"
+                  ></span>
+                  Cross Axis:
+                  <strong id="visual-cross-axis">Vertical</strong>
+                </span>
+              </div>
+            </div>
+
+            <!-- VISUAL STAGE -->
+
+            <div
+              id="visual-stage"
+              class="stage-grid-bg relative min-h-[420px] md:min-h-[470px] rounded-xl border border-slate-800 bg-slate-950 overflow-hidden p-5 md:p-8"
+            >
+              <!-- Main Axis -->
+
+              <div id="main-axis-line" class="axis-line main"></div>
+
+              <div
+                id="main-axis-label"
+                class="axis-label text-amber-300 bg-amber-950/70 border border-amber-500/30 rounded-full px-3 py-1"
+              >
+                Main Axis →
+              </div>
+
+              <!-- Cross Axis -->
+
+              <div id="cross-axis-line" class="axis-line cross"></div>
+
+              <div
+                id="cross-axis-label"
+                class="axis-label text-emerald-300 bg-emerald-950/70 border border-emerald-500/30 rounded-full px-3 py-1"
+              >
+                Cross Axis ↓
+              </div>
+
+              <!-- FLEX CONTAINER -->
+
+              <div
+                id="flex-container"
+                class="absolute inset-10 md:inset-14 rounded-xl border-2 border-indigo-500/40 bg-indigo-950/20 p-5 flex"
+              ></div>
+
+              <!-- Container Label -->
+
+              <div
+                class="absolute left-3 top-3 text-[10px] uppercase tracking-wider text-indigo-400 font-bold"
+              >
+                Flex Container
+              </div>
+
+              <!-- Gap -->
+
+              <div id="gap-marker" class="gap-marker">gap: 16px</div>
+
+              <!-- Selected Item Information -->
+
+              <div
+                id="selected-info"
+                class="selected-badge absolute bottom-3 left-3 right-3 md:left-auto md:right-3 md:w-auto bg-slate-900/95 border border-indigo-500/30 rounded-lg px-3 py-2 text-[10px] text-slate-300"
+              >
+                Selected:
+                <strong id="selected-info-item" class="text-indigo-300">
+                  Item 1
+                </strong>
+
+                <span class="mx-1 text-slate-600">•</span>
+
+                <span id="selected-info-style"> flex: 0 1 auto </span>
+              </div>
+            </div>
+
+            <!-- VISUAL DETAILS -->
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
+              <div class="bg-slate-950 border border-slate-800 rounded-lg p-3">
+                <p class="text-[9px] uppercase tracking-wider text-slate-500">
+                  Direction
+                </p>
+                <p
+                  id="visual-direction"
+                  class="font-code text-xs text-indigo-300 mt-1"
+                >
+                  row
+                </p>
+              </div>
+
+              <div class="bg-slate-950 border border-slate-800 rounded-lg p-3">
+                <p class="text-[9px] uppercase tracking-wider text-slate-500">
+                  Justify
+                </p>
+                <p
+                  id="visual-justify"
+                  class="font-code text-xs text-amber-300 mt-1"
+                >
+                  flex-start
+                </p>
+              </div>
+
+              <div class="bg-slate-950 border border-slate-800 rounded-lg p-3">
+                <p class="text-[9px] uppercase tracking-wider text-slate-500">
+                  Align
+                </p>
+                <p
+                  id="visual-align"
+                  class="font-code text-xs text-emerald-300 mt-1"
+                >
+                  stretch
+                </p>
+              </div>
+
+              <div class="bg-slate-950 border border-slate-800 rounded-lg p-3">
+                <p class="text-[9px] uppercase tracking-wider text-slate-500">
+                  Gap
+                </p>
+                <p
+                  id="visual-gap"
+                  class="font-code text-xs text-violet-300 mt-1"
+                >
+                  16px
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================================================
+             EXPERIMENT + EXPLAIN
+        ==================================================== -->
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <!-- EXPERIMENT -->
+
+            <section
+              class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl"
+            >
+              <div class="flex items-start justify-between gap-3 mb-4">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-400 flex items-center justify-center"
+                    >
+                      <i class="fa-solid fa-flask text-xs"></i>
+                    </span>
+
+                    <h3 class="text-sm font-bold">Experiment</h3>
+                  </div>
+
+                  <p class="text-[11px] text-slate-500 mt-1">
+                    Change the CSS and see what happens.
+                  </p>
+                </div>
+
+                <select
+                  id="editor-target"
+                  onchange="refreshEditor()"
+                  class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-[10px] text-slate-300 font-code outline-none"
+                >
+                  <option value="container">.flex-container</option>
+
+                  <option value="item">.item-1</option>
+                </select>
+              </div>
+
+              <textarea
+                id="code-editor"
+                class="code-editor w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-indigo-200"
+                spellcheck="false"
+              ></textarea>
+
+              <div class="flex flex-wrap gap-2 mt-3">
+                <button
+                  onclick="applyEditorCSS()"
+                  class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition"
+                >
+                  <i class="fa-solid fa-play mr-1"></i>
+                  Apply CSS
+                </button>
+
+                <button
+                  onclick="resetEditor()"
+                  class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs transition"
+                >
+                  Reset Editor
+                </button>
+              </div>
+
+              <div
+                id="editor-message"
+                class="hidden mt-3 rounded-lg p-3 text-[11px]"
+              ></div>
+            </section>
+
+            <!-- EXPLAIN -->
+
+            <section
+              class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl"
+            >
+              <div class="flex items-start gap-2 mb-4">
+                <span
+                  class="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center"
+                >
+                  <i class="fa-solid fa-comments text-xs"></i>
+                </span>
+
+                <div>
+                  <h3 class="text-sm font-bold">Explain</h3>
+
+                  <p class="text-[11px] text-slate-500 mt-1">
+                    Understand exactly what your CSS changed.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                id="dynamic-explanation"
+                class="explain-card rounded-xl bg-slate-950 border border-slate-800 p-4 text-xs text-slate-400 leading-7"
+              >
+                Start experimenting. The explanation will update when you apply
+                CSS.
+              </div>
+
+              <div
+                class="mt-4 rounded-xl bg-slate-950 border border-slate-800 p-4"
+              >
+                <p
+                  class="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-2"
+                >
+                  Current Mental Model
+                </p>
+
+                <p id="dynamic-model" class="text-xs text-slate-400 leading-6">
+                  Flexbox has two axes. The main axis follows
+                  <code class="text-indigo-300">flex-direction</code>.
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <!-- ===================================================
+             CHALLENGE
+        ==================================================== -->
+
+          <section
+            id="challenge-card"
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl"
+          >
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div class="flex gap-3">
+                <div
+                  class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fa-solid fa-bullseye"></i>
+                </div>
+
+                <div>
+                  <p
+                    class="text-[10px] uppercase tracking-wider font-bold text-amber-400"
+                  >
+                    Challenge
+                  </p>
+
+                  <h3 id="challenge-title" class="text-base font-bold mt-1">
+                    Activate Flexbox
+                  </h3>
+
+                  <p
+                    id="challenge-description"
+                    class="text-xs text-slate-400 mt-2 leading-6 max-w-3xl"
+                  >
+                    Turn the container into a flex container.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onclick="checkChallenge()"
+                class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition shadow-lg shadow-amber-900/20"
+              >
+                <i class="fa-solid fa-check mr-1"></i>
+                Check Answer
+              </button>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="rounded-xl bg-slate-950 border border-slate-800 p-4">
+                <p
+                  class="text-[10px] uppercase tracking-wider text-slate-500 mb-2"
+                >
+                  Requirements
+                </p>
+
+                <ul
+                  id="challenge-requirements"
+                  class="space-y-2 text-xs text-slate-400"
+                ></ul>
+              </div>
+
+              <div class="rounded-xl bg-slate-950 border border-slate-800 p-4">
+                <p
+                  class="text-[10px] uppercase tracking-wider text-slate-500 mb-2"
+                >
+                  Hint
+                </p>
+
+                <button
+                  id="hint-button"
+                  onclick="toggleHint()"
+                  class="text-xs text-indigo-300 hover:text-indigo-200"
+                >
+                  <i class="fa-solid fa-lightbulb mr-1"></i>
+                  Show hint
+                </button>
+
+                <p
+                  id="challenge-hint"
+                  class="hidden text-xs text-slate-500 mt-2 leading-6"
+                ></p>
+              </div>
+            </div>
+
+            <div
+              id="challenge-feedback"
+              class="hidden mt-4 rounded-xl p-4 text-xs leading-6"
+            ></div>
+          </section>
+
+          <!-- ===================================================
+             GENERATED CSS
+        ==================================================== -->
+
+          <section
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-code text-indigo-400"></i>
+
+                  <h3 class="text-sm font-bold">Generated CSS</h3>
+                </div>
+
+                <p class="text-[11px] text-slate-500 mt-1">
+                  The CSS currently powering the visualizer.
+                </p>
+              </div>
+
+              <button
+                onclick="copyCSS()"
+                class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition"
+              >
+                <i id="copy-icon" class="fa-regular fa-copy mr-1"></i>
+                <span id="copy-text">Copy CSS</span>
+              </button>
+            </div>
+
+            <pre
+              id="css-output"
+              class="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto text-xs text-indigo-200 leading-7"
+            ></pre>
+          </section>
+
+          <!-- ===================================================
+             PRESETS
+        ==================================================== -->
+
+          <section
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl"
+          >
+            <div class="flex items-center gap-2 mb-4">
+              <i class="fa-solid fa-wand-magic-sparkles text-violet-400"></i>
+
+              <h3 class="text-sm font-bold">Quick Experiments</h3>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <button
+                onclick="applyPreset('center')"
+                class="text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 transition"
+              >
+                <span class="text-xs font-bold text-white">
+                  Center Everything
+                </span>
+
+                <span class="block text-[10px] text-slate-500 mt-1">
+                  justify-content + align-items
+                </span>
+              </button>
+
+              <button
+                onclick="applyPreset('navbar')"
+                class="text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 transition"
+              >
+                <span class="text-xs font-bold text-white">
+                  Navigation Bar
+                </span>
+
+                <span class="block text-[10px] text-slate-500 mt-1">
+                  space-between + center
+                </span>
+              </button>
+
+              <button
+                onclick="applyPreset('wrap')"
+                class="text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 transition"
+              >
+                <span class="text-xs font-bold text-white">
+                  Wrapping Cards
+                </span>
+
+                <span class="block text-[10px] text-slate-500 mt-1">
+                  wrap + gap
+                </span>
+              </button>
+
+              <button
+                onclick="applyPreset('column')"
+                class="text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500/50 transition"
+              >
+                <span class="text-xs font-bold text-white">
+                  Vertical Stack
+                </span>
+
+                <span class="block text-[10px] text-slate-500 mt-1">
+                  column direction
+                </span>
+              </button>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+
+    <footer
+      class="border-t border-slate-800 bg-slate-900 px-6 py-4 text-center text-[11px] text-slate-500"
+    >
+      CSS Flexbox Teaching Visualizer • Learn the concept, change the CSS,
+      understand the result.
+    </footer>
+
+    <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
+
+    <script>
+      /* ============================================================
+       FLEXBOX LESSONS
+    ============================================================ */
+
+      const lessons = [
+        {
+          id: 1,
+          title: "Flex Container",
+          property: "display: flex",
+          syntax: "display: flex;",
+          description:
+            "Flexbox begins when an element becomes a flex container. Its direct children automatically become flex items.",
+          why: "The parent controls the layout of its direct children. This is the foundation of every Flexbox layout.",
+          model:
+            "Think: parent = flex container, children = flex items. Most Flexbox properties belong to one of these two levels.",
+          challenge: {
+            title: "Activate Flexbox",
+            description: "Turn the container into a Flexbox container.",
+            requirements: [
+              "The container must use display: flex.",
+              "Do not change the direction.",
+            ],
+            hint: "The property that activates Flexbox is display.",
+            check: () => state.container.display === "flex",
+          },
+        },
+
+        {
+          id: 2,
+          title: "Main Axis & Cross Axis",
+          property: "flex-direction",
+          syntax: "flex-direction: row;",
+          description:
+            "Flexbox always has two axes. The main axis is controlled by flex-direction. The cross axis runs perpendicular to it.",
+          why: "Understanding the axes makes justify-content and align-items much easier to understand.",
+          model:
+            "row → main axis is horizontal. column → main axis is vertical. The cross axis is always perpendicular.",
+          challenge: {
+            title: "Turn the Main Axis Vertical",
+            description:
+              "Change the flex direction so the main axis runs from top to bottom.",
+            requirements: [
+              "Use flex-direction: column.",
+              "Keep the items inside the same container.",
+            ],
+            hint: "A vertical main axis uses the column value.",
+            check: () => state.container.direction === "column",
+          },
+        },
+
+        {
+          id: 3,
+          title: "flex-direction",
+          property: "flex-direction",
+          syntax:
+            "flex-direction: row;\n/* row | row-reverse | column | column-reverse */",
+          description:
+            "flex-direction determines the direction in which flex items are laid out.",
+          why: "Changing direction changes the meaning of the main axis.",
+          model:
+            "row = left → right. row-reverse = right → left. column = top → bottom. column-reverse = bottom → top.",
+          challenge: {
+            title: "Reverse the Row",
+            description: "Make the items flow horizontally from right to left.",
+            requirements: [
+              "Use flex-direction: row-reverse.",
+              "Do not use transforms.",
+            ],
+            hint: "There is a reverse version of row.",
+            check: () => state.container.direction === "row-reverse",
+          },
+        },
+
+        {
+          id: 4,
+          title: "justify-content",
+          property: "justify-content",
+          syntax: "justify-content: center;",
+          description:
+            "justify-content distributes free space along the main axis.",
+          why: "When you want to move a group of flex items horizontally in a row, justify-content is usually the property you need.",
+          model:
+            "Ask: 'Where is the main axis?' Then use justify-content to control how items are positioned along that axis.",
+          challenge: {
+            title: "Center the Items",
+            description: "Center all flex items along the main axis.",
+            requirements: [
+              "Use justify-content: center.",
+              "Do not change align-items.",
+            ],
+            hint: "justify-content controls the main axis.",
+            check: () => state.container.justifyContent === "center",
+          },
+        },
+
+        {
+          id: 5,
+          title: "align-items",
+          property: "align-items",
+          syntax: "align-items: center;",
+          description:
+            "align-items controls how flex items are aligned along the cross axis.",
+          why: "This is one of the most useful properties for vertically centering content inside a row.",
+          model: "justify-content → main axis. align-items → cross axis.",
+          challenge: {
+            title: "Cross-Axis Centering",
+            description:
+              "Keep the current direction, but center the items on the cross axis.",
+            requirements: [
+              "Use align-items: center.",
+              "Do not change flex-direction.",
+            ],
+            hint: "The cross axis is controlled by align-items.",
+            check: () => state.container.alignItems === "center",
+          },
+        },
+
+        {
+          id: 6,
+          title: "flex-wrap",
+          property: "flex-wrap",
+          syntax: "flex-wrap: wrap;",
+          description:
+            "flex-wrap determines whether flex items stay on one line or are allowed to move onto multiple lines.",
+          why: "Without wrapping, items can become cramped or overflow when there is not enough room.",
+          model:
+            "nowrap = one line. wrap = create additional lines. wrap-reverse = additional lines in the opposite cross-axis direction.",
+          challenge: {
+            title: "Make the Cards Wrap",
+            description: "Allow the cards to move onto multiple lines.",
+            requirements: [
+              "Use flex-wrap: wrap.",
+              "Keep the direction as row.",
+            ],
+            hint: "The property is literally called flex-wrap.",
+            check: () => state.container.flexWrap === "wrap",
+          },
+        },
+
+        {
+          id: 7,
+          title: "align-content",
+          property: "align-content",
+          syntax: "align-content: space-between;",
+          description:
+            "align-content distributes multiple flex lines along the cross axis.",
+          why: "align-items aligns items inside a line. align-content controls the collection of lines when wrapping creates more than one line.",
+          model:
+            "Important: align-content has an effect when there are multiple flex lines and extra cross-axis space.",
+          challenge: {
+            title: "Separate the Lines",
+            description:
+              "Create multiple flex lines and distribute those lines using space-between.",
+            requirements: [
+              "Use flex-wrap: wrap.",
+              "Use align-content: space-between.",
+            ],
+            hint: "First you need multiple lines. Then align-content can distribute them.",
+            check: () =>
+              state.container.flexWrap === "wrap" &&
+              state.container.alignContent === "space-between",
+          },
+        },
+
+        {
+          id: 8,
+          title: "gap",
+          property: "gap",
+          syntax: "gap: 20px;",
+          description:
+            "gap creates consistent spacing between flex items without needing margins.",
+          why: "gap is cleaner than adding margins to individual children because the container owns the spacing.",
+          model:
+            "Think of gap as the empty space between neighboring flex items.",
+          challenge: {
+            title: "Create a 32px Gap",
+            description: "Set the spacing between flex items to 32px.",
+            requirements: [
+              "Use gap: 32px.",
+              "Do not add margins to the items.",
+            ],
+            hint: "gap accepts a length such as 8px, 16px or 32px.",
+            check: () => Number(state.container.gap) === 32,
+          },
+        },
+
+        {
+          id: 9,
+          title: "flex-grow",
+          property: "flex-grow",
+          syntax: "flex-grow: 1;",
+          description:
+            "flex-grow determines how a flex item receives available free space.",
+          why: "It lets some items grow more than others when extra space exists.",
+          model:
+            "flex-grow values act like ratios. If item 1 has grow 1 and item 2 has grow 2, item 2 receives twice the share of free space.",
+          challenge: {
+            title: "Let Item 1 Grow",
+            description: "Make Item 1 absorb available free space.",
+            requirements: [
+              "Select Item 1.",
+              "Set flex-grow to 1.",
+              "Leave the other items at 0.",
+            ],
+            hint: "flex-grow belongs to the flex item, not the container.",
+            check: () => state.items[0] && Number(state.items[0].grow) === 1,
+          },
+        },
+
+        {
+          id: 10,
+          title: "flex-shrink",
+          property: "flex-shrink",
+          syntax: "flex-shrink: 1;",
+          description:
+            "flex-shrink controls how a flex item participates when the items need to become smaller to fit.",
+          why: "It determines how much an item is allowed to shrink when there is negative free space.",
+          model: "grow handles extra space. shrink handles insufficient space.",
+          challenge: {
+            title: "Prevent Item 1 From Shrinking",
+            description: "Make Item 1 refuse to shrink.",
+            requirements: ["Select Item 1.", "Set flex-shrink to 0."],
+            hint: "A shrink value of 0 means the item does not shrink.",
+            check: () => state.items[0] && Number(state.items[0].shrink) === 0,
+          },
+        },
+
+        {
+          id: 11,
+          title: "flex-basis",
+          property: "flex-basis",
+          syntax: "flex-basis: 200px;",
+          description:
+            "flex-basis establishes the initial main-size of a flex item before free space is distributed.",
+          why: "It gives you control over the starting size of an item along the main axis.",
+          model:
+            "basis is the starting point. grow and shrink then participate in resolving the final size.",
+          challenge: {
+            title: "Give Item 1 a Basis",
+            description: "Set Item 1's initial main size to 200px.",
+            requirements: ["Select Item 1.", "Use flex-basis: 200px."],
+            hint: "flex-basis accepts a size such as 100px, 200px or auto.",
+            check: () => state.items[0] && state.items[0].basis === "200px",
+          },
+        },
+
+        {
+          id: 12,
+          title: "flex",
+          property: "flex",
+          syntax: "flex: 1;",
+          description:
+            "The flex shorthand combines flex-grow, flex-shrink and flex-basis.",
+          why: "Instead of writing three properties separately, the flex shorthand lets you describe an item's flexibility in one declaration.",
+          model:
+            "flex: grow shrink basis. For example, flex: 1 commonly behaves like 1 1 0%.",
+          challenge: {
+            title: "Build an Expanding Item",
+            description:
+              "Make Item 1 flexible so it can consume available space.",
+            requirements: [
+              "Select Item 1.",
+              "Set grow to 1.",
+              "Keep shrink at 1.",
+              "Use a zero basis.",
+            ],
+            hint: "The shorthand flex: 1 represents a common flexible-item pattern.",
+            check: () =>
+              state.items[0] &&
+              Number(state.items[0].grow) === 1 &&
+              Number(state.items[0].shrink) === 1 &&
+              state.items[0].basis === "0px",
+          },
+        },
+
+        {
+          id: 13,
+          title: "align-self",
+          property: "align-self",
+          syntax: "align-self: flex-end;",
+          description:
+            "align-self lets one flex item override the container's align-items setting.",
+          why: "You can align one item differently without changing every item.",
+          model:
+            "align-items controls the group. align-self overrides that rule for one specific item.",
+          challenge: {
+            title: "Move Item 1 to the End",
+            description: "Override the cross-axis alignment of Item 1.",
+            requirements: ["Select Item 1.", "Use align-self: flex-end."],
+            hint: "align-self belongs to the child.",
+            check: () =>
+              state.items[0] && state.items[0].alignSelf === "flex-end",
+          },
+        },
+
+        {
+          id: 14,
+          title: "Combining Flexbox",
+          property: "Multiple properties",
+          syntax:
+            "display: flex;\njustify-content: space-between;\nalign-items: center;\ngap: 16px;",
+          description:
+            "Real interfaces rarely use one Flexbox property. You combine direction, alignment, wrapping, spacing and item sizing.",
+          why: "The power of Flexbox comes from understanding how the properties work together.",
+          model:
+            "Start with the parent. Establish direction. Position the group. Align the items. Add wrapping and spacing. Then customize individual children.",
+          challenge: {
+            title: "Build a Navigation Layout",
+            description: "Create the basic structure of a navigation bar.",
+            requirements: [
+              "Use row direction.",
+              "Use space-between.",
+              "Center items on the cross axis.",
+              "Use a 16px gap.",
+            ],
+            hint: "A common navigation pattern uses row + space-between + center.",
+            check: () =>
+              state.container.direction === "row" &&
+              state.container.justifyContent === "space-between" &&
+              state.container.alignItems === "center" &&
+              Number(state.container.gap) === 16,
+          },
+        },
+
+        {
+          id: 15,
+          title: "Real Layout Challenge",
+          property: "Flexbox System",
+          syntax:
+            ".navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}",
+          description:
+            "Now combine what you have learned to build a practical Flexbox layout.",
+          why: "Knowing individual properties is different from being able to choose the correct combination for a real interface.",
+          model:
+            "Do not memorize random combinations. Look at the layout problem, identify the axis, then choose the property that controls that axis.",
+          challenge: {
+            title: "Build the Final Flex Layout",
+            description: "Create a responsive card-style Flexbox arrangement.",
+            requirements: [
+              "Use row direction.",
+              "Allow wrapping.",
+              "Use a 20px gap.",
+              "Center items on the cross axis.",
+              "Make Item 1 grow.",
+            ],
+            hint: "Think: direction → wrapping → spacing → alignment → item sizing.",
+            check: () =>
+              state.container.direction === "row" &&
+              state.container.flexWrap === "wrap" &&
+              Number(state.container.gap) === 20 &&
+              state.container.alignItems === "center" &&
+              state.items[0] &&
+              Number(state.items[0].grow) === 1,
+          },
+        },
+      ];
+
+      /* ============================================================
+       STATE
+    ============================================================ */
+
+      const initialItems = [
+        {
+          id: 1,
+          grow: 0,
+          shrink: 1,
+          basis: "auto",
+          alignSelf: "auto",
+        },
+        {
+          id: 2,
+          grow: 0,
+          shrink: 1,
+          basis: "auto",
+          alignSelf: "auto",
+        },
+        {
+          id: 3,
+          grow: 0,
+          shrink: 1,
+          basis: "auto",
+          alignSelf: "auto",
+        },
+        {
+          id: 4,
+          grow: 0,
+          shrink: 1,
+          basis: "auto",
+          alignSelf: "auto",
+        },
+      ];
+
+      const state = {
+        currentLesson: 1,
+
+        completedLessons: [],
+
+        container: {
+          display: "flex",
+          direction: "row",
+          justifyContent: "flex-start",
+          alignItems: "stretch",
+          flexWrap: "nowrap",
+          alignContent: "normal",
+          gap: 16,
+        },
+
+        selectedItemIndex: 0,
+
+        items: JSON.parse(JSON.stringify(initialItems)),
+      };
+
+      /* ============================================================
+       ITEM COLORS
+    ============================================================ */
+
+      const itemColors = [
+        {
+          bg: "rgba(79,70,229,.28)",
+          border: "#6366f1",
+          text: "#c7d2fe",
+        },
+
+        {
+          bg: "rgba(124,58,237,.28)",
+          border: "#8b5cf6",
+          text: "#ddd6fe",
+        },
+
+        {
+          bg: "rgba(5,150,105,.28)",
+          border: "#10b981",
+          text: "#a7f3d0",
+        },
+
+        {
+          bg: "rgba(217,119,6,.28)",
+          border: "#f59e0b",
+          text: "#fde68a",
+        },
+
+        {
+          bg: "rgba(225,29,72,.28)",
+          border: "#f43f5e",
+          text: "#fecdd3",
+        },
+
+        {
+          bg: "rgba(8,145,178,.28)",
+          border: "#06b6d4",
+          text: "#a5f3fc",
+        },
+
+        {
+          bg: "rgba(192,38,211,.28)",
+          border: "#d946ef",
+          text: "#f5d0fe",
+        },
+      ];
+
+      /* ============================================================
+       DOM HELPERS
+    ============================================================ */
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      /* ============================================================
+       LESSON PATH
+    ============================================================ */
+
+      function renderLessonList() {
+        const list = $("lesson-list");
+
+        list.innerHTML = lessons
+          .map((lesson) => {
+            const active = lesson.id === state.currentLesson;
+
+            const completed = state.completedLessons.includes(lesson.id);
+
+            return `
+          <button
+            onclick="goToLesson(${lesson.id})"
+            class="
+              lesson-item
+              w-full
+              flex
+              items-center
+              gap-2.5
+              text-left
+              px-2.5
+              py-2
+              rounded-lg
+              border
+              border-transparent
+              ${
+                active
+                  ? "active"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/70"
+              }
+            "
+          >
+
+            <span
+              class="
+                lesson-number
+                w-6
+                h-6
+                rounded-md
+                flex
+                items-center
+                justify-center
+                text-[9px]
+                font-bold
+                flex-shrink-0
+                ${
+                  completed
+                    ? "bg-emerald-600 text-white"
+                    : active
+                      ? "bg-indigo-500 text-white"
+                      : "bg-slate-800 text-slate-500"
+                }
+              "
+            >
+              ${
+                completed
+                  ? '<i class="fa-solid fa-check text-[8px]"></i>'
+                  : String(lesson.id).padStart(2, "0")
+              }
+            </span>
+
+            <span class="min-w-0">
+
+              <span
+                class="
+                  block
+                  text-[10px]
+                  font-semibold
+                  truncate
+                  ${active ? "text-white" : ""}
+                "
+              >
+                ${lesson.title}
+              </span>
+
+              <span
+                class="
+                  block
+                  text-[8px]
+                  font-code
+                  truncate
+                  mt-0.5
+                  ${active ? "text-indigo-300" : "text-slate-600"}
+                "
+              >
+                ${lesson.property}
+              </span>
+
+            </span>
+
+          </button>
+        `;
+          })
+          .join("");
+      }
+
+      function goToLesson(id) {
+        state.currentLesson = id;
+
+        const lesson = lessons.find((item) => item.id === id);
+
+        if (!lesson) return;
+
+        renderLesson();
+
+        updateProgress();
+
+        refreshEditor();
+
+        updateExplanation(
+          `You are now learning <strong>${lesson.title}</strong>. Experiment with the CSS and watch the Flexbox model respond.`,
+          lesson.model,
+        );
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+
+      function renderLesson() {
+        const lesson = lessons.find((item) => item.id === state.currentLesson);
+
+        if (!lesson) return;
+
+        $("lesson-badge").textContent =
+          `Lesson ${String(lesson.id).padStart(2, "0")}`;
+
+        $("lesson-property").textContent = lesson.property;
+
+        $("lesson-title").textContent = lesson.title;
+
+        $("lesson-description").textContent = lesson.description;
+
+        $("lesson-syntax").textContent = lesson.syntax;
+
+        $("lesson-why").textContent = lesson.why;
+
+        $("lesson-model").textContent = lesson.model;
+
+        $("challenge-title").textContent = lesson.challenge.title;
+
+        $("challenge-description").textContent = lesson.challenge.description;
+
+        $("challenge-requirements").innerHTML = lesson.challenge.requirements
+          .map(
+            (requirement) => `
+              <li class="flex gap-2">
+                <i class="fa-solid fa-circle-check text-amber-500 text-[9px] mt-1"></i>
+                <span>${requirement}</span>
+              </li>
+            `,
+          )
+          .join("");
+
+        $("challenge-hint").textContent = lesson.challenge.hint;
+
+        $("challenge-hint").classList.add("hidden");
+
+        $("hint-button").innerHTML =
+          '<i class="fa-solid fa-lightbulb mr-1"></i> Show hint';
+
+        const feedback = $("challenge-feedback");
+
+        feedback.className = "hidden mt-4 rounded-xl p-4 text-xs leading-6";
+
+        renderLessonList();
+      }
+
+      function updateProgress() {
+        const current = state.currentLesson;
+
+        const total = lessons.length;
+
+        const percent = (current / total) * 100;
+
+        $("progress-text").textContent = `Lesson ${current} / ${total}`;
+
+        $("progress-bar").style.width = `${percent}%`;
+      }
+
+      /* ============================================================
+       CONTAINER CONTROLS
+    ============================================================ */
+
+      function setContainerProp(prop, value) {
+        if (prop === "gap") {
+          state.container.gap = Number(value);
+        } else {
+          state.container[prop] = value;
+        }
+
+        updateApp();
+      }
+
+      /* ============================================================
+       ITEM SELECTION
+    ============================================================ */
+
+      function selectItem(index) {
+        if (index < 0 || index >= state.items.length) {
+          return;
+        }
+
+        state.selectedItemIndex = index;
+
+        $("editor-target").value = "item";
+
+        updateApp();
+
+        refreshEditor();
+      }
+
+      /* ============================================================
+       ADD ITEM
+    ============================================================ */
+
+      function addItem() {
+        if (state.items.length >= 10) {
+          return;
+        }
+
+        const id = state.items.length
+          ? Math.max(...state.items.map((item) => item.id)) + 1
+          : 1;
+
+        state.items.push({
+          id,
+          grow: 0,
+          shrink: 1,
+          basis: "auto",
+          alignSelf: "auto",
+        });
+
+        state.selectedItemIndex = state.items.length - 1;
+
+        updateApp();
+      }
+
+      /* ============================================================
+       REMOVE ITEM
+    ============================================================ */
+
+      function removeItem() {
+        if (state.items.length <= 1) {
+          return;
+        }
+
+        state.items.pop();
+
+        if (state.selectedItemIndex >= state.items.length) {
+          state.selectedItemIndex = state.items.length - 1;
+        }
+
+        updateApp();
+      }
+
+      /* ============================================================
+       UPDATE ITEM
+    ============================================================ */
+
+      function updateSelectedItemProp(prop, value) {
+        const item = state.items[state.selectedItemIndex];
+
+        if (!item) return;
+
+        if (prop === "grow" || prop === "shrink") {
+          item[prop] = Number(value) || 0;
+        } else {
+          item[prop] = value;
+        }
+
+        updateApp();
+      }
+
+      /* ============================================================
+       RENDER FLEX ITEMS
+    ============================================================ */
+
+      function renderItems() {
+        const container = $("flex-container");
+
+        container.innerHTML = "";
+
+        state.items.forEach((item, index) => {
+          const scheme = itemColors[index % itemColors.length];
+
+          const element = document.createElement("div");
+
+          element.className =
+            "flex-item rounded-xl border-2 flex items-center justify-center cursor-pointer relative min-w-[70px] min-h-[65px] p-3";
+
+          if (index === state.selectedItemIndex) {
+            element.classList.add("selected");
+          }
+
+          element.style.background = scheme.bg;
+
+          element.style.borderColor = scheme.border;
+
+          element.style.color = scheme.text;
+
+          element.style.flexGrow = item.grow;
+
+          element.style.flexShrink = item.shrink;
+
+          element.style.flexBasis = item.basis;
+
+          element.style.alignSelf = item.alignSelf;
+
+          element.onclick = function (event) {
+            event.stopPropagation();
+
+            selectItem(index);
+          };
+
+          element.innerHTML = `
+
+            <div class="text-center">
+
+              <div
+                class="text-sm font-bold"
+              >
+                Item ${index + 1}
+              </div>
+
+              <div
+                class="font-code text-[8px] text-slate-400 mt-1"
+              >
+                grow:${item.grow}
+                •
+                shrink:${item.shrink}
+              </div>
+
+              <div
+                class="font-code text-[8px] text-slate-500 mt-0.5"
+              >
+                basis:${item.basis}
+              </div>
+
+            </div>
+
+            ${
+              index === state.selectedItemIndex
+                ? `
+                  <span
+                    class="
+                      absolute
+                      -top-2
+                      left-1/2
+                      -translate-x-1/2
+                      px-2
+                      py-0.5
+                      rounded
+                      bg-indigo-500
+                      text-white
+                      text-[8px]
+                      font-bold
+                      whitespace-nowrap
+                    "
+                  >
+                    SELECTED
+                  </span>
+                `
+                : ""
+            }
+
+          `;
+
+          container.appendChild(element);
+        });
+      }
+
+      /* ============================================================
+       UPDATE FLEX CONTAINER
+    ============================================================ */
+
+      function updateCanvas() {
+        const container = $("flex-container");
+
+        container.style.display = state.container.display;
+
+        container.style.flexDirection = state.container.direction;
+
+        container.style.justifyContent = state.container.justifyContent;
+
+        container.style.alignItems = state.container.alignItems;
+
+        container.style.flexWrap = state.container.flexWrap;
+
+        container.style.alignContent = state.container.alignContent;
+
+        container.style.gap = `${state.container.gap}px`;
+
+        updateAxisVisuals();
+
+        $("visual-direction").textContent = state.container.direction;
+
+        $("visual-justify").textContent = state.container.justifyContent;
+
+        $("visual-align").textContent = state.container.alignItems;
+
+        $("visual-gap").textContent = `${state.container.gap}px`;
+
+        const isColumn = state.container.direction.includes("column");
+
+        $("visual-main-axis").textContent = isColumn
+          ? "Vertical"
+          : "Horizontal";
+
+        $("visual-cross-axis").textContent = isColumn
+          ? "Horizontal"
+          : "Vertical";
+
+        const item = state.items[state.selectedItemIndex];
+
+        if (item) {
+          $("selected-info-item").textContent =
+            `Item ${state.selectedItemIndex + 1}`;
+
+          $("selected-info-style").textContent =
+            `flex: ${item.grow} ${item.shrink} ${item.basis}`;
+        }
+
+        $("gap-marker").textContent = `gap: ${state.container.gap}px`;
+      }
+
+      /* ============================================================
+       AXIS VISUALIZATION
+    ============================================================ */
+
+      function updateAxisVisuals() {
+        const stage = $("visual-stage");
+
+        const mainLine = $("main-axis-line");
+
+        const crossLine = $("cross-axis-line");
+
+        const mainLabel = $("main-axis-label");
+
+        const crossLabel = $("cross-axis-label");
+
+        const isColumn = state.container.direction.includes("column");
+
+        const isReverse = state.container.direction.includes("reverse");
+
+        if (!isColumn) {
+          /*
+          MAIN AXIS = HORIZONTAL
+        */
+
+          mainLine.style.left = "9%";
+          mainLine.style.right = "9%";
+          mainLine.style.top = "50%";
+          mainLine.style.height = "2px";
+          mainLine.style.width = "auto";
+
+          mainLabel.style.left = "50%";
+          mainLabel.style.top = "18px";
+          mainLabel.style.transform = "translateX(-50%)";
+
+          mainLabel.textContent = isReverse ? "Main Axis ←" : "Main Axis →";
+
+          /*
+          CROSS AXIS = VERTICAL
+        */
+
+          crossLine.style.top = "10%";
+          crossLine.style.bottom = "10%";
+          crossLine.style.left = "50%";
+          crossLine.style.width = "2px";
+          crossLine.style.height = "auto";
+
+          crossLabel.style.left = "calc(50% + 8px)";
+          crossLabel.style.top = "50%";
+          crossLabel.style.transform = "translateY(-50%)";
+
+          crossLabel.textContent = "Cross Axis ↓";
+        } else {
+          /*
+          MAIN AXIS = VERTICAL
+        */
+
+          mainLine.style.top = "9%";
+          mainLine.style.bottom = "9%";
+          mainLine.style.left = "50%";
+          mainLine.style.width = "2px";
+          mainLine.style.height = "auto";
+
+          mainLabel.style.top = "50%";
+          mainLabel.style.left = "18px";
+          mainLabel.style.transform = "translateY(-50%)";
+
+          mainLabel.textContent = isReverse ? "Main Axis ↑" : "Main Axis ↓";
+
+          /*
+          CROSS AXIS = HORIZONTAL
+        */
+
+          crossLine.style.left = "10%";
+          crossLine.style.right = "10%";
+          crossLine.style.top = "50%";
+          crossLine.style.height = "2px";
+          crossLine.style.width = "auto";
+
+          crossLabel.style.left = "50%";
+          crossLabel.style.top = "calc(50% + 8px)";
+          crossLabel.style.transform = "translateX(-50%)";
+
+          crossLabel.textContent = "Cross Axis →";
+        }
+      }
+
+      /* ============================================================
+       ITEM CONTROLS
+    ============================================================ */
+
+      function updateItemControls() {
+  const item = state.items[state.selectedItemIndex];
+
+  if (!item) return;
+
+  const number = state.selectedItemIndex + 1;
+
+  const itemCount = $("item-count");
+
+  if (itemCount) {
+    itemCount.textContent = state.items.length;
+  }
+
+
+        /*
+        The original sidebar controls
+        are not displayed anymore,
+        but these values are used
+        by the editor and explanation
+        system.
+      */
+      }
+
+      /* ============================================================
+       GENERATE CSS
+    ============================================================ */
+
+      function generateCSS() {
+        let css = `.flex-container {
+  display: flex;
+  flex-direction: ${state.container.direction};
+  justify-content: ${state.container.justifyContent};
+  align-items: ${state.container.alignItems};
+  flex-wrap: ${state.container.flexWrap};
+  gap: ${state.container.gap}px;`;
+
+        if (state.container.alignContent !== "normal") {
+          css += `\n  align-content: ${state.container.alignContent};`;
+        }
+
+        css += `\n}`;
+
+        state.items.forEach((item, index) => {
+          if (
+            item.grow !== 0 ||
+            item.shrink !== 1 ||
+            item.basis !== "auto" ||
+            item.alignSelf !== "auto"
+          ) {
+            css += `\n\n.item-${index + 1} {`;
+
+            if (item.grow !== 0) {
+              css += `\n  flex-grow: ${item.grow};`;
+            }
+
+            if (item.shrink !== 1) {
+              css += `\n  flex-shrink: ${item.shrink};`;
+            }
+
+            if (item.basis !== "auto") {
+              css += `\n  flex-basis: ${item.basis};`;
+            }
+
+            if (item.alignSelf !== "auto") {
+              css += `\n  align-self: ${item.alignSelf};`;
+            }
+
+            css += `\n}`;
+          }
+        });
+
+        $("css-output").textContent = css;
+      }
+
+      /* ============================================================
+       EDITOR
+    ============================================================ */
+
+      function refreshEditor() {
+        const target = $("editor-target").value;
+
+        if (target === "container") {
+          $("code-editor").value = `.flex-container {
+  display: flex;
+  flex-direction: ${state.container.direction};
+  justify-content: ${state.container.justifyContent};
+  align-items: ${state.container.alignItems};
+  flex-wrap: ${state.container.flexWrap};
+  gap: ${state.container.gap}px;
+}`;
+        } else {
+          const item = state.items[state.selectedItemIndex];
+
+          if (!item) return;
+
+          $("code-editor").value = `.item-${state.selectedItemIndex + 1} {
+  flex-grow: ${item.grow};
+  flex-shrink: ${item.shrink};
+  flex-basis: ${item.basis};
+  align-self: ${item.alignSelf};
+}`;
+        }
+
+        $("editor-message").className =
+          "hidden mt-3 rounded-lg p-3 text-[11px]";
+      }
+
+      function resetEditor() {
+        refreshEditor();
+      }
+
+      /* ============================================================
+       PARSE CSS DECLARATIONS
+    ============================================================ */
+
+      function parseDeclarations(css) {
+        const result = {};
+
+        const blockMatch = css.match(/\{([\s\S]*)\}/);
+
+        if (!blockMatch) {
+          return null;
+        }
+
+        const declarations = blockMatch[1]
+          .split(";")
+          .map((item) => item.trim())
+          .filter(Boolean);
+
+        declarations.forEach((declaration) => {
+          const separator = declaration.indexOf(":");
+
+          if (separator === -1) {
+            return;
+          }
+
+          const property = declaration.slice(0, separator).trim();
+
+          const value = declaration.slice(separator + 1).trim();
+
+          if (property && value) {
+            result[property] = value;
+          }
+        });
+
+        return result;
+      }
+
+      /* ============================================================
+       APPLY EDITOR CSS
+    ============================================================ */
+
+      function applyEditorCSS() {
+        const css = $("code-editor").value;
+
+        const declarations = parseDeclarations(css);
+
+        const message = $("editor-message");
+
+        if (!declarations) {
+          message.className =
+            "mt-3 rounded-lg p-3 text-[11px] bg-rose-950/50 border border-rose-900 text-rose-300";
+
+          message.textContent =
+            "I couldn't find a valid CSS block. Use .flex-container { ... } or .item-1 { ... }.";
+
+          return;
+        }
+
+        const before = snapshotState();
+
+        const target = $("editor-target").value;
+
+        if (target === "container") {
+          applyContainerDeclarations(declarations);
+        } else {
+          applyItemDeclarations(declarations);
+        }
+
+        updateApp();
+
+        const after = snapshotState();
+
+        const explanation = explainChanges(before, after);
+
+        updateExplanation(explanation, getCurrentMentalModel());
+
+        message.className =
+          "mt-3 rounded-lg p-3 text-[11px] bg-emerald-950/50 border border-emerald-900 text-emerald-300";
+
+        message.innerHTML =
+          '<i class="fa-solid fa-check mr-1"></i> CSS applied successfully.';
+      }
+
+      /* ============================================================
+       APPLY CONTAINER DECLARATIONS
+    ============================================================ */
+
+      function applyContainerDeclarations(declarations) {
+        if (declarations["display"]) {
+          if (declarations["display"] === "flex") {
+            state.container.display = "flex";
+          }
+        }
+
+        if (declarations["flex-direction"]) {
+          const value = declarations["flex-direction"];
+
+          if (
+            ["row", "row-reverse", "column", "column-reverse"].includes(value)
+          ) {
+            state.container.direction = value;
+          }
+        }
+
+        if (declarations["justify-content"]) {
+          const allowed = [
+            "flex-start",
+            "flex-end",
+            "center",
+            "space-between",
+            "space-around",
+            "space-evenly",
+          ];
+
+          if (allowed.includes(declarations["justify-content"])) {
+            state.container.justifyContent = declarations["justify-content"];
+          }
+        }
+
+        if (declarations["align-items"]) {
+          const allowed = [
+            "stretch",
+            "flex-start",
+            "flex-end",
+            "center",
+            "baseline",
+          ];
+
+          if (allowed.includes(declarations["align-items"])) {
+            state.container.alignItems = declarations["align-items"];
+          }
+        }
+
+        if (declarations["flex-wrap"]) {
+          const allowed = ["nowrap", "wrap", "wrap-reverse"];
+
+          if (allowed.includes(declarations["flex-wrap"])) {
+            state.container.flexWrap = declarations["flex-wrap"];
+          }
+        }
+
+        if (declarations["align-content"]) {
+          state.container.alignContent = declarations["align-content"];
+        }
+
+        if (declarations["gap"]) {
+          const value = parseInt(declarations["gap"]);
+
+          if (!Number.isNaN(value)) {
+            state.container.gap = Math.max(0, Math.min(100, value));
+          }
+        }
+      }
+
+      /* ============================================================
+       APPLY ITEM DECLARATIONS
+    ============================================================ */
+
+      function applyItemDeclarations(declarations) {
+        const item = state.items[state.selectedItemIndex];
+
+        if (!item) return;
+
+        if (declarations["flex-grow"] !== undefined) {
+          const value = Number(declarations["flex-grow"]);
+
+          if (Number.isFinite(value)) {
+            item.grow = Math.max(0, value);
+          }
+        }
+
+        if (declarations["flex-shrink"] !== undefined) {
+          const value = Number(declarations["flex-shrink"]);
+
+          if (Number.isFinite(value)) {
+            item.shrink = Math.max(0, value);
+          }
+        }
+
+        if (declarations["flex-basis"]) {
+          const allowed = ["auto", "0px", "100px", "150px", "200px", "300px"];
+
+          if (allowed.includes(declarations["flex-basis"])) {
+            item.basis = declarations["flex-basis"];
+          }
+        }
+
+        if (declarations["align-self"]) {
+          const allowed = [
+            "auto",
+            "stretch",
+            "flex-start",
+            "flex-end",
+            "center",
+            "baseline",
+          ];
+
+          if (allowed.includes(declarations["align-self"])) {
+            item.alignSelf = declarations["align-self"];
+          }
+        }
+
+        /*
+        flex shorthand support
+      */
+
+        if (declarations["flex"]) {
+          const value = declarations["flex"].trim();
+
+          if (value === "1") {
+            item.grow = 1;
+            item.shrink = 1;
+            item.basis = "0px";
+          } else if (value === "auto") {
+            item.grow = 1;
+            item.shrink = 1;
+            item.basis = "auto";
+          } else {
+            const parts = value.split(/\s+/);
+
+            if (parts.length >= 1 && !Number.isNaN(Number(parts[0]))) {
+              item.grow = Number(parts[0]);
+            }
+
+            if (parts.length >= 2 && !Number.isNaN(Number(parts[1]))) {
+              item.shrink = Number(parts[1]);
+            }
+
+            if (parts.length >= 3) {
+              item.basis = parts[2];
+            }
+          }
+        }
+      }
+
+      /* ============================================================
+       STATE SNAPSHOT
+    ============================================================ */
+
+      function snapshotState() {
+        return JSON.parse(
+          JSON.stringify({
+            container: state.container,
+
+            items: state.items,
+          }),
+        );
+      }
+
+      /* ============================================================
+       EXPLAIN CHANGES
+    ============================================================ */
+
+      function explainChanges(before, after) {
+        const changes = [];
+
+        const b = before.container;
+
+        const a = after.container;
+
+        if (b.direction !== a.direction) {
+          changes.push(
+            `You changed <span class="property-highlight">flex-direction</span> from <span class="value-highlight">${b.direction}</span> to <span class="value-highlight">${a.direction}</span>.`,
+          );
+        }
+
+        if (b.justifyContent !== a.justifyContent) {
+          changes.push(
+            `You changed <span class="property-highlight">justify-content</span> to <span class="value-highlight">${a.justifyContent}</span>. This changes how free space is distributed along the main axis.`,
+          );
+        }
+
+        if (b.alignItems !== a.alignItems) {
+          changes.push(
+            `You changed <span class="property-highlight">align-items</span> to <span class="value-highlight">${a.alignItems}</span>. This changes the position of flex items along the cross axis.`,
+          );
+        }
+
+        if (b.flexWrap !== a.flexWrap) {
+          changes.push(
+            `You changed <span class="property-highlight">flex-wrap</span> to <span class="value-highlight">${a.flexWrap}</span>. The items can now ${a.flexWrap === "nowrap" ? "stay on one line" : "create additional flex lines"}.`,
+          );
+        }
+
+        if (b.alignContent !== a.alignContent) {
+          changes.push(
+            `You changed <span class="property-highlight">align-content</span> to <span class="value-highlight">${a.alignContent}</span>. This affects the distribution of multiple flex lines on the cross axis.`,
+          );
+        }
+
+        if (b.gap !== a.gap) {
+          changes.push(
+            `You changed <span class="property-highlight">gap</span> from <span class="value-highlight">${b.gap}px</span> to <span class="value-highlight">${a.gap}px</span>. This changes the space between neighboring flex items.`,
+          );
+        }
+
+        const index = state.selectedItemIndex;
+
+        const beforeItem = before.items[index];
+
+        const afterItem = after.items[index];
+
+        if (beforeItem && afterItem) {
+          if (beforeItem.grow !== afterItem.grow) {
+            changes.push(
+              `Item ${index + 1}: <span class="property-highlight">flex-grow</span> changed to <span class="value-highlight">${afterItem.grow}</span>. It can now receive a ${afterItem.grow === 0 ? "no" : "share of"} available free space.`,
+            );
+          }
+
+          if (beforeItem.shrink !== afterItem.shrink) {
+            changes.push(
+              `Item ${index + 1}: <span class="property-highlight">flex-shrink</span> changed to <span class="value-highlight">${afterItem.shrink}</span>.`,
+            );
+          }
+
+          if (beforeItem.basis !== afterItem.basis) {
+            changes.push(
+              `Item ${index + 1}: <span class="property-highlight">flex-basis</span> changed to <span class="value-highlight">${afterItem.basis}</span>. This changes its initial main-axis size.`,
+            );
+          }
+
+          if (beforeItem.alignSelf !== afterItem.alignSelf) {
+            changes.push(
+              `Item ${index + 1}: <span class="property-highlight">align-self</span> is now <span class="value-highlight">${afterItem.alignSelf}</span>. This overrides the container's cross-axis alignment for this item.`,
+            );
+          }
+        }
+
+        if (changes.length === 0) {
+          return `
+          <strong class="text-white">
+            No visible Flexbox property changed.
+          </strong>
+
+          <br>
+
+          Check the property names and values in your CSS.
+        `;
+        }
+
+        return changes
+          .map(
+            (change) => `
+            <div class="mb-2 last:mb-0">
+              <i class="fa-solid fa-arrow-right text-indigo-400 mr-2"></i>
+              ${change}
+            </div>
+          `,
+          )
+          .join("");
+      }
+
+      /* ============================================================
+       MENTAL MODEL
+    ============================================================ */
+
+      function getCurrentMentalModel() {
+        const direction = state.container.direction;
+
+        if (direction.includes("column")) {
+          return `
+          Your main axis is <strong class="text-indigo-300">vertical</strong>
+          because the container uses
+          <code class="text-indigo-300">flex-direction: ${direction}</code>.
+          Therefore
+          <code class="text-amber-300">justify-content</code>
+          works vertically and
+          <code class="text-emerald-300">align-items</code>
+          works horizontally.
+        `;
+        }
+
+        return `
+        Your main axis is <strong class="text-indigo-300">horizontal</strong>
+        because the container uses
+        <code class="text-indigo-300">flex-direction: ${direction}</code>.
+        Therefore
+        <code class="text-amber-300">justify-content</code>
+        works horizontally and
+        <code class="text-emerald-300">align-items</code>
+        works vertically.
+      `;
+      }
+
+      function updateExplanation(html, model) {
+        $("dynamic-explanation").innerHTML = html;
+
+        $("dynamic-model").innerHTML = model;
+      }
+
+      /* ============================================================
+       CHALLENGE
+    ============================================================ */
+
+      function checkChallenge() {
+        const lesson = lessons.find((item) => item.id === state.currentLesson);
+
+        if (!lesson) return;
+
+        const passed = lesson.challenge.check();
+
+        const feedback = $("challenge-feedback");
+
+        const card = $("challenge-card");
+
+        feedback.classList.remove("hidden");
+
+        if (passed) {
+          if (!state.completedLessons.includes(state.currentLesson)) {
+            state.completedLessons.push(state.currentLesson);
+          }
+
+          feedback.className =
+            "mt-4 rounded-xl p-4 text-xs leading-6 challenge-success text-emerald-300";
+
+          feedback.innerHTML = `
+          <div class="flex gap-3">
+
+            <i class="fa-solid fa-circle-check text-lg mt-1"></i>
+
+            <div>
+
+              <strong class="text-emerald-200">
+                Challenge complete.
+              </strong>
+
+              <p class="mt-1">
+                Your CSS satisfies the requirements.
+                You are not just changing properties —
+                you are understanding what they do.
+              </p>
+
+              ${
+                state.currentLesson < lessons.length
+                  ? `
+                    <button
+                      onclick="nextLesson()"
+                      class="mt-3 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold"
+                    >
+                      Next Lesson
+                      <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                  `
+                  : `
+                    <p class="mt-3 font-semibold text-emerald-200">
+                      🎉 You completed the Flexbox path.
+                    </p>
+                  `
+              }
+
+            </div>
+
+          </div>
+        `;
+
+          card.classList.add("pulse-success");
+
+          setTimeout(() => card.classList.remove("pulse-success"), 500);
+
+          renderLessonList();
+        } else {
+          feedback.className =
+            "mt-4 rounded-xl p-4 text-xs leading-6 challenge-fail text-rose-300";
+
+          feedback.innerHTML = `
+          <div class="flex gap-3">
+
+            <i class="fa-solid fa-circle-xmark text-lg mt-1"></i>
+
+            <div>
+
+              <strong class="text-rose-200">
+                Not quite yet.
+              </strong>
+
+              <p class="mt-1">
+                Your current Flexbox configuration does not satisfy
+                all of the challenge requirements.
+              </p>
+
+              <p class="mt-2 text-slate-400">
+                Read the requirements again and experiment with
+                the visualizer.
+              </p>
+
+            </div>
+
+          </div>
+        `;
+        }
+      }
+
+      function nextLesson() {
+        if (state.currentLesson < lessons.length) {
+          state.currentLesson++;
+
+          renderLesson();
+
+          updateProgress();
+
+          refreshEditor();
+
+          updateExplanation(
+            `
+            <strong class="text-white">
+              New lesson unlocked.
+            </strong>
+
+            Start with the concept above, then change the CSS
+            and watch the visualizer.
+          `,
+            getCurrentMentalModel(),
+          );
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }
+      }
+
+      function toggleHint() {
+        const hint = $("challenge-hint");
+
+        const button = $("hint-button");
+
+        if (hint.classList.contains("hidden")) {
+          hint.classList.remove("hidden");
+
+          button.innerHTML =
+            '<i class="fa-solid fa-eye-slash mr-1"></i> Hide hint';
+        } else {
+          hint.classList.add("hidden");
+
+          button.innerHTML =
+            '<i class="fa-solid fa-lightbulb mr-1"></i> Show hint';
+        }
+      }
+
+      /* ============================================================
+       PRESETS
+    ============================================================ */
+
+      function applyPreset(type) {
+        if (type === "center") {
+          state.container.direction = "row";
+
+          state.container.justifyContent = "center";
+
+          state.container.alignItems = "center";
+
+          state.container.flexWrap = "nowrap";
+
+          state.container.alignContent = "normal";
+
+          state.container.gap = 20;
+        }
+
+        if (type === "navbar") {
+          state.container.direction = "row";
+
+          state.container.justifyContent = "space-between";
+
+          state.container.alignItems = "center";
+
+          state.container.flexWrap = "nowrap";
+
+          state.container.alignContent = "normal";
+
+          state.container.gap = 16;
+        }
+
+        if (type === "wrap") {
+          state.container.direction = "row";
+
+          state.container.justifyContent = "flex-start";
+
+          state.container.alignItems = "stretch";
+
+          state.container.flexWrap = "wrap";
+
+          state.container.alignContent = "flex-start";
+
+          state.container.gap = 16;
+        }
+
+        if (type === "column") {
+          state.container.direction = "column";
+
+          state.container.justifyContent = "flex-start";
+
+          state.container.alignItems = "stretch";
+
+          state.container.flexWrap = "nowrap";
+
+          state.container.alignContent = "normal";
+
+          state.container.gap = 16;
+        }
+
+        updateApp();
+
+        refreshEditor();
+
+        updateExplanation(
+          `
+          <strong class="text-white">
+            Preset applied.
+          </strong>
+
+          <br>
+
+          Experiment with the generated values to understand
+          why this layout works.
+        `,
+          getCurrentMentalModel(),
+        );
+      }
+
+      /* ============================================================
+       COPY CSS
+    ============================================================ */
+
+      async function copyCSS() {
+        const code = $("css-output").textContent;
+
+        try {
+          await navigator.clipboard.writeText(code);
+        } catch {
+          const textarea = document.createElement("textarea");
+
+          textarea.value = code;
+
+          document.body.appendChild(textarea);
+
+          textarea.select();
+
+          document.execCommand("copy");
+
+          textarea.remove();
+        }
+
+        $("copy-text").textContent = "Copied!";
+
+        $("copy-icon").className = "fa-solid fa-check mr-1";
+
+        setTimeout(() => {
+          $("copy-text").textContent = "Copy CSS";
+
+          $("copy-icon").className = "fa-regular fa-copy mr-1";
+        }, 1800);
+      }
+
+      /* ============================================================
+       RESET
+    ============================================================ */
+
+      function resetEverything() {
+        state.currentLesson = 1;
+
+        state.completedLessons = [];
+
+        state.container = {
+          display: "flex",
+          direction: "row",
+          justifyContent: "flex-start",
+          alignItems: "stretch",
+          flexWrap: "nowrap",
+          alignContent: "normal",
+          gap: 16,
+        };
+
+        state.selectedItemIndex = 0;
+
+        state.items = JSON.parse(JSON.stringify(initialItems));
+
+        $("editor-target").value = "container";
+
+        renderLesson();
+
+        updateProgress();
+
+        updateApp();
+
+        refreshEditor();
+
+        updateExplanation(
+          `
+          <strong class="text-white">
+            Flexbox reset.
+          </strong>
+
+          <br>
+
+          Start with
+          <code class="text-indigo-300">
+            display: flex
+          </code>
+          and work through the lesson path.
+        `,
+          getCurrentMentalModel(),
+        );
+      }
+
+      /* ============================================================
+       MAIN UPDATE
+    ============================================================ */
+
+      function updateApp() {
+        updateCanvas();
+
+        renderItems();
+
+        updateItemControls();
+
+        generateCSS();
+
+        renderLessonList();
+      }
+
+      /* ============================================================
+       INITIALIZE
+    ============================================================ */
+
+      window.addEventListener("DOMContentLoaded", () => {
+        renderLesson();
+
+        updateProgress();
+
+        updateApp();
+
+        refreshEditor();
+
+        updateExplanation(
+          `
+            <strong class="text-white">
+              Start here.
+            </strong>
+
+            <br>
+
+            The container is already using
+            <code class="text-indigo-300">
+              display: flex
+            </code>.
+            Change the CSS in the Experiment panel and apply it.
+          `,
+          getCurrentMentalModel(),
+        );
+      });
+    </script>
+
+    <script src="flex-lab-upgrade.js"></script>
+  </body>
+</html>

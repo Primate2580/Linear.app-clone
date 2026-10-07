@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Box Model Visualizer & Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      code,
+      pre {
+        font-family: "Fira Code", monospace;
+      }
+
+      /* DevTools Standard Color Coding */
+      .margin-layer {
+        background-color: rgba(246, 178, 107, 0.45);
+        border: 1.5px dashed rgba(230, 140, 50, 0.8);
+      }
+
+      .border-layer {
+        background-color: rgba(255, 229, 153, 0.65);
+        border: 1.5px dashed rgba(210, 170, 40, 0.9);
+      }
+
+      .padding-layer {
+        background-color: rgba(182, 215, 168, 0.55);
+        border: 1.5px dashed rgba(120, 180, 90, 0.85);
+      }
+
+      .content-layer {
+        background-color: rgba(164, 194, 244, 0.65);
+        border: 1.5px dashed rgba(80, 130, 220, 0.9);
+      }
+
+      /* Custom Scrollbar for Controls */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e293b;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+
+      /* Custom range slider thumb styling */
+      input[type="range"] {
+        accent-color: #6366f1;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white"
+  >
+    <header
+      class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-50"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20"
+        >
+          <i class="fa-solid font-bold text-lg text-white">📦</i>
+        </div>
+        <div>
+          <h1
+            class="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent"
+          >
+            Box Model Visualizer & Calculator
+          </h1>
+          <p class="text-xs text-slate-400">
+            Interactive DevTools-standard box model explorer
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400 font-medium mr-1 hidden sm:inline"
+          >Presets:</span
+        >
+        <button
+          onclick="applyPreset('card')"
+          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700"
+        >
+          Standard Card
+        </button>
+        <button
+          onclick="applyPreset('button')"
+          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700"
+        >
+          Button
+        </button>
+        <button
+          onclick="applyPreset('badge')"
+          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700"
+        >
+          Pill Badge
+        </button>
+      </div>
+    </header>
+
+    <main
+      class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 max-w-[1800px] w-full mx-auto"
+    >
+      <!-- LEFT PANEL: Controls (5 Cols) -->
+      <section
+        class="lg:col-span-5 xl:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-6 shadow-xl overflow-y-auto max-h-[85vh]"
+      >
+        <!-- Box Sizing Mode Toggle -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+          <label
+            class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 block flex items-center justify-between"
+          >
+            <span>Box Sizing Mode</span>
+            <i
+              class="fa-solid fa-circle-info text-slate-500 hover:text-indigo-400 cursor-pointer"
+              title="Box-sizing determines how total width and height are calculated."
+            ></i>
+          </label>
+          <div
+            class="grid grid-cols-2 gap-2 p-1 bg-slate-900 rounded-lg border border-slate-800"
+          >
+            <button
+              id="btn-border-box"
+              onclick="setBoxSizing('border-box')"
+              class="py-2.5 px-3 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-md"
+            >
+              <i class="fa-solid fa-shield-halved"></i> border-box
+            </button>
+            <button
+              id="btn-content-box"
+              onclick="setBoxSizing('content-box')"
+              class="py-2.5 px-3 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white"
+            >
+              <i class="fa-solid fa-vector-square"></i> content-box
+            </button>
+          </div>
+        </div>
+
+        <!-- Dimension Controls Section -->
+        <div class="space-y-5">
+          <!-- Content Dimensions -->
+          <div
+            class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-blue-900/30"
+          >
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-sm font-semibold text-blue-400 flex items-center gap-2"
+              >
+                <span class="w-2 h-2 rounded-full bg-blue-400"></span> Content
+                Dimensions
+              </h3>
+              <span
+                id="content-dim-badge"
+                class="text-xs font-mono text-blue-300 bg-blue-950 px-2 py-0.5 rounded border border-blue-800/50"
+                >200px × 120px</span
+              >
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="flex justify-between text-xs text-slate-400 mb-1">
+                  <span>Width (px)</span>
+                  <span id="val-width" class="font-mono text-slate-200"
+                    >200</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="input-width"
+                  min="60"
+                  max="400"
+                  value="200"
+                  oninput="updateValues()"
+                  class="w-full"
+                />
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-slate-400 mb-1">
+                  <span>Height (px)</span>
+                  <span id="val-height" class="font-mono text-slate-200"
+                    >120</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="input-height"
+                  min="40"
+                  max="300"
+                  value="120"
+                  oninput="updateValues()"
+                  class="w-full"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Padding Controls -->
+          <div
+            class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-emerald-900/30"
+          >
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-sm font-semibold text-emerald-400 flex items-center gap-2"
+              >
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                Padding (px)
+              </h3>
+              <button
+                onclick="toggleLink('padding')"
+                id="link-padding-btn"
+                class="text-xs px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition"
+              >
+                <i
+                  id="link-padding-icon"
+                  class="fa-solid fa-link text-indigo-400"
+                ></i>
+                Linked
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Top</span>
+                <input
+                  type="number"
+                  id="pad-top"
+                  value="20"
+                  min="0"
+                  max="100"
+                  oninput="handlePaddingChange('top')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-emerald-300 text-center"
+                />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Right</span>
+                <input
+                  type="number"
+                  id="pad-right"
+                  value="20"
+                  min="0"
+                  max="100"
+                  oninput="handlePaddingChange('right')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-emerald-300 text-center"
+                />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1"
+                  >Bottom</span
+                >
+                <input
+                  type="number"
+                  id="pad-bottom"
+                  value="20"
+                  min="0"
+                  max="100"
+                  oninput="handlePaddingChange('bottom')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-emerald-300 text-center"
+                />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Left</span>
+                <input
+                  type="number"
+                  id="pad-left"
+                  value="20"
+                  min="0"
+                  max="100"
+                  oninput="handlePaddingChange('left')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-emerald-300 text-center"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Border Controls -->
+          <div
+            class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-amber-900/30"
+          >
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-sm font-semibold text-amber-400 flex items-center gap-2"
+              >
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Border
+                Properties
+              </h3>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1"
+                  >Width (px)</span
+                >
+                <input
+                  type="number"
+                  id="border-width"
+                  value="10"
+                  min="0"
+                  max="50"
+                  oninput="updateValues()"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-amber-300 text-center"
+                />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Style</span>
+                <select
+                  id="border-style"
+                  onchange="updateValues()"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-xs text-slate-200"
+                >
+                  <option value="solid" selected>solid</option>
+                  <option value="dashed">dashed</option>
+                  <option value="dotted">dotted</option>
+                  <option value="double">double</option>
+                </select>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Color</span>
+                <input
+                  type="color"
+                  id="border-color"
+                  value="#f59e0b"
+                  oninput="updateValues()"
+                  class="w-full h-7 bg-slate-900 border border-slate-700 rounded cursor-pointer p-0.5"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Margin Controls -->
+          <div
+            class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-orange-900/30"
+          >
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-sm font-semibold text-orange-400 flex items-center gap-2"
+              >
+                <span class="w-2 h-2 rounded-full bg-orange-400"></span> Margin
+                (px)
+              </h3>
+              <button
+                onclick="toggleLink('margin')"
+                id="link-margin-btn"
+                class="text-xs px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition"
+              >
+                <i
+                  id="link-margin-icon"
+                  class="fa-solid fa-link text-indigo-400"
+                ></i>
+                Linked
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Top</span>
+                <input
+                  type="number"
+                  id="mar-top"
+                  value="25"
+                  min="0"
+                  max="100"
+                  oninput="handleMarginChange('top')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-orange-300 text-center"
+                />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Right</span>
+                <input
+                  type="number"
+                  id="mar-right"
+                  value="25"
+                  min="0"
+                  max="100"
+                  oninput="handleMarginChange('right')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-orange-300 text-center"
+                />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1"
+                  >Bottom</span
+                >
+                <input
+                  type="number"
+                  id="mar-bottom"
+                  value="25"
+                  min="0"
+                  max="100"
+                  oninput="handleMarginChange('bottom')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-orange-300 text-center"
+                />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block mb-1">Left</span>
+                <input
+                  type="number"
+                  id="mar-left"
+                  value="25"
+                  min="0"
+                  max="100"
+                  oninput="handleMarginChange('left')"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-orange-300 text-center"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Content Label -->
+          <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400 block mb-1"
+              >Inner Element Text</span
+            >
+            <input
+              type="text"
+              id="inner-text"
+              value="Box Content"
+              oninput="updateValues()"
+              class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 outline-none"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: Visual Stage + Calculations & Code Generator (7 Cols) -->
+      <section class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
+        <!-- Interactive Visualizer Stage -->
+        <div
+          class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[420px] relative overflow-hidden shadow-xl"
+        >
+          <!-- Legend Bar -->
+          <div
+            class="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 text-[11px] font-medium bg-slate-950/80 backdrop-blur-md px-3 py-2 rounded-xl border border-slate-800/80 z-10"
+          >
+            <div class="flex items-center gap-4 flex-wrap">
+              <span class="flex items-center gap-1.5"
+                ><span
+                  class="w-3 h-3 rounded bg-amber-500/50 border border-amber-600"
+                ></span>
+                Margin</span
+              >
+              <span class="flex items-center gap-1.5"
+                ><span
+                  class="w-3 h-3 rounded bg-yellow-300/60 border border-yellow-500"
+                ></span>
+                Border</span
+              >
+              <span class="flex items-center gap-1.5"
+                ><span
+                  class="w-3 h-3 rounded bg-emerald-400/50 border border-emerald-600"
+                ></span>
+                Padding</span
+              >
+              <span class="flex items-center gap-1.5"
+                ><span
+                  class="w-3 h-3 rounded bg-blue-400/60 border border-blue-600"
+                ></span>
+                Content</span
+              >
+            </div>
+            <span class="text-slate-400 font-mono" id="stage-scale-indicator"
+              >100% Render Scale</span
+            >
+          </div>
+
+          <!-- Canvas Area -->
+          <div
+            class="w-full flex-1 flex items-center justify-center pt-8 pb-4 px-2 overflow-auto"
+          >
+            <!-- MARGIN LAYER -->
+            <div
+              id="layer-margin"
+              class="margin-layer transition-all duration-150 rounded-lg p-2 flex flex-col items-center justify-center relative"
+            >
+              <span
+                class="text-[10px] font-mono text-orange-950 font-bold uppercase tracking-wider absolute top-1 left-2"
+                >margin</span
+              >
+              <span
+                id="lbl-margin-top"
+                class="text-[10px] font-mono font-bold text-orange-900 absolute top-1"
+                >25</span
+              >
+              <span
+                id="lbl-margin-bottom"
+                class="text-[10px] font-mono font-bold text-orange-900 absolute bottom-1"
+                >25</span
+              >
+              <span
+                id="lbl-margin-left"
+                class="text-[10px] font-mono font-bold text-orange-900 absolute left-1"
+                >25</span
+              >
+              <span
+                id="lbl-margin-right"
+                class="text-[10px] font-mono font-bold text-orange-900 absolute right-1"
+                >25</span
+              >
+
+              <!-- BORDER LAYER -->
+              <div
+                id="layer-border"
+                class="border-layer transition-all duration-150 rounded p-2 flex flex-col items-center justify-center relative"
+              >
+                <span
+                  class="text-[10px] font-mono text-amber-950 font-bold uppercase tracking-wider absolute top-1 left-2"
+                  >border</span
+                >
+                <span
+                  id="lbl-border-val"
+                  class="text-[10px] font-mono font-bold text-amber-900 absolute top-1"
+                  >10</span
+                >
+
+                <!-- PADDING LAYER -->
+                <div
+                  id="layer-padding"
+                  class="padding-layer transition-all duration-150 rounded p-2 flex flex-col items-center justify-center relative"
+                >
+                  <span
+                    class="text-[10px] font-mono text-emerald-950 font-bold uppercase tracking-wider absolute top-1 left-2"
+                    >padding</span
+                  >
+                  <span
+                    id="lbl-padding-top"
+                    class="text-[10px] font-mono font-bold text-emerald-900 absolute top-1"
+                    >20</span
+                  >
+                  <span
+                    id="lbl-padding-bottom"
+                    class="text-[10px] font-mono font-bold text-emerald-900 absolute bottom-1"
+                    >20</span
+                  >
+                  <span
+                    id="lbl-padding-left"
+                    class="text-[10px] font-mono font-bold text-emerald-900 absolute left-1"
+                    >20</span
+                  >
+                  <span
+                    id="lbl-padding-right"
+                    class="text-[10px] font-mono font-bold text-emerald-900 absolute right-1"
+                    >20</span
+                  >
+
+                  <!-- CONTENT LAYER -->
+                  <div
+                    id="layer-content"
+                    class="content-layer transition-all duration-150 rounded flex flex-col items-center justify-center relative min-w-[60px] min-h-[40px] shadow-inner"
+                  >
+                    <span
+                      class="text-[10px] font-mono text-blue-950 font-bold uppercase tracking-wider absolute top-1 left-2"
+                      >content</span
+                    >
+                    <span
+                      id="display-inner-text"
+                      class="text-xs font-semibold text-blue-950 text-center px-2 z-10 truncate max-w-full"
+                      >Box Content</span
+                    >
+                    <span
+                      id="lbl-content-dim"
+                      class="text-[11px] font-mono font-bold text-blue-900 mt-1"
+                      >200 × 120</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Metrics Breakdown Box -->
+          <div
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between"
+          >
+            <div>
+              <h3
+                class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between"
+              >
+                <span>Rendered Size Calculation</span>
+                <span
+                  id="sizing-formula-tag"
+                  class="text-[10px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800"
+                  >border-box</span
+                >
+              </h3>
+
+              <!-- Formula Banner -->
+              <div
+                id="formula-explanation"
+                class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-300 mb-4 font-mono leading-relaxed"
+              >
+                <!-- Dynamically populated formula -->
+              </div>
+
+              <!-- Total Size Metrics Callouts -->
+              <div class="grid grid-cols-2 gap-3">
+                <div
+                  class="bg-indigo-950/40 border border-indigo-900/50 p-3 rounded-xl text-center"
+                >
+                  <span
+                    class="text-[10px] font-medium text-slate-400 block mb-0.5"
+                    >Rendered Width</span
+                  >
+                  <span
+                    id="total-rendered-width"
+                    class="text-xl font-bold font-mono text-indigo-300"
+                    >200px</span
+                  >
+                </div>
+                <div
+                  class="bg-indigo-950/40 border border-indigo-900/50 p-3 rounded-xl text-center"
+                >
+                  <span
+                    class="text-[10px] font-medium text-slate-400 block mb-0.5"
+                    >Rendered Height</span
+                  >
+                  <span
+                    id="total-rendered-height"
+                    class="text-xl font-bold font-mono text-indigo-300"
+                    >120px</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Total Space Occupied (Including Margin) -->
+            <div
+              class="mt-4 pt-3 border-t border-slate-800 flex justify-between text-xs text-slate-400 font-mono"
+            >
+              <span>Outer Layout Footprint (+Margin):</span>
+              <span id="total-footprint" class="font-bold text-orange-300"
+                >250px × 170px</span
+              >
+            </div>
+          </div>
+
+          <!-- Generated CSS Code Block -->
+          <div
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between"
+          >
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <h3
+                  class="text-xs font-semibold uppercase tracking-wider text-slate-400"
+                >
+                  Generated CSS
+                </h3>
+                <button
+                  onclick="copyCSS()"
+                  class="text-xs px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition flex items-center gap-1.5 shadow"
+                >
+                  <i id="copy-icon" class="fa-regular fa-copy"></i>
+                  <span id="copy-text">Copy CSS</span>
+                </button>
+              </div>
+
+              <pre
+                id="css-output"
+                class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-xs text-indigo-200 overflow-x-auto font-mono leading-relaxed max-h-[160px]"
+              >
+.my-box {
+  box-sizing: border-box;
+  width: 200px;
+  height: 120px;
+  padding: 20px;
+  border: 10px solid #f59e0b;
+  margin: 25px;
+}</pre
+              >
+            </div>
+
+            <!-- Notification Toast Box -->
+            <div
+              id="toast"
+              class="hidden mt-2 p-2 bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs rounded-lg text-center font-medium"
+            >
+              <i class="fa-solid fa-check mr-1"></i> CSS snippet copied to
+              clipboard!
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="bg-slate-900 border-t border-slate-800 py-3 px-6 text-center text-xs text-slate-500"
+    >
+      CSS Box Model Teaching Tool • W3C Standard DevTools Color Mapping (Margin:
+      Amber, Border: Yellow, Padding: Green, Content: Blue)
+    </footer>
+
+    <script>
+      // App State Management
+      const state = {
+        boxSizing: "border-box",
+        width: 200,
+        height: 120,
+        padding: { top: 20, right: 20, bottom: 20, left: 20 },
+        paddingLinked: true,
+        borderWidth: 10,
+        borderStyle: "solid",
+        borderColor: "#f59e0b",
+        margin: { top: 25, right: 25, bottom: 25, left: 25 },
+        marginLinked: true,
+        innerText: "Box Content",
+      };
+
+      // Toggle Box Sizing Mode
+      function setBoxSizing(mode) {
+        state.boxSizing = mode;
+
+        const btnBorder = document.getElementById("btn-border-box");
+        const btnContent = document.getElementById("btn-content-box");
+
+        if (mode === "border-box") {
+          btnBorder.className =
+            "py-2.5 px-3 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-md";
+          btnContent.className =
+            "py-2.5 px-3 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white";
+        } else {
+          btnContent.className =
+            "py-2.5 px-3 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-md";
+          btnBorder.className =
+            "py-2.5 px-3 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white";
+        }
+
+        updateValues();
+      }
+
+      // Toggle Link for Paddings/Margins
+      function toggleLink(type) {
+        if (type === "padding") {
+          state.paddingLinked = !state.paddingLinked;
+          const icon = document.getElementById("link-padding-icon");
+          const btn = document.getElementById("link-padding-btn");
+          if (state.paddingLinked) {
+            icon.className = "fa-solid fa-link text-indigo-400";
+            btn.classList.add("border-indigo-500/50");
+          } else {
+            icon.className = "fa-solid fa-link-slash text-slate-500";
+            btn.classList.remove("border-indigo-500/50");
+          }
+        } else {
+          state.marginLinked = !state.marginLinked;
+          const icon = document.getElementById("link-margin-icon");
+          const btn = document.getElementById("link-margin-btn");
+          if (state.marginLinked) {
+            icon.className = "fa-solid fa-link text-indigo-400";
+            btn.classList.add("border-indigo-500/50");
+          } else {
+            icon.className = "fa-solid fa-link-slash text-slate-500";
+            btn.classList.remove("border-indigo-500/50");
+          }
+        }
+      }
+
+      // Linked Input Handlers
+      function handlePaddingChange(side) {
+        const val = parseInt(document.getElementById(`pad-${side}`).value) || 0;
+        if (state.paddingLinked) {
+          ["top", "right", "bottom", "left"].forEach((s) => {
+            document.getElementById(`pad-${s}`).value = val;
+            state.padding[s] = val;
+          });
+        } else {
+          state.padding[side] = val;
+        }
+        updateValues();
+      }
+
+      function handleMarginChange(side) {
+        const val = parseInt(document.getElementById(`mar-${side}`).value) || 0;
+        if (state.marginLinked) {
+          ["top", "right", "bottom", "left"].forEach((s) => {
+            document.getElementById(`mar-${s}`).value = val;
+            state.margin[s] = val;
+          });
+        } else {
+          state.margin[side] = val;
+        }
+        updateValues();
+      }
+
+      // Preset Applicator
+      function applyPreset(preset) {
+        if (preset === "card") {
+          state.width = 240;
+          state.height = 130;
+          state.padding = { top: 20, right: 20, bottom: 20, left: 20 };
+          state.borderWidth = 2;
+          state.borderStyle = "solid";
+          state.borderColor = "#6366f1";
+          state.margin = { top: 20, right: 20, bottom: 20, left: 20 };
+          state.innerText = "Product Card";
+        } else if (preset === "button") {
+          state.width = 140;
+          state.height = 40;
+          state.padding = { top: 10, right: 20, bottom: 10, left: 20 };
+          state.borderWidth = 2;
+          state.borderStyle = "solid";
+          state.borderColor = "#10b981";
+          state.margin = { top: 15, right: 15, bottom: 15, left: 15 };
+          state.innerText = "Click Me";
+        } else if (preset === "badge") {
+          state.width = 90;
+          state.height = 30;
+          state.padding = { top: 4, right: 10, bottom: 4, left: 10 };
+          state.borderWidth = 1;
+          state.borderStyle = "solid";
+          state.borderColor = "#ec4899";
+          state.margin = { top: 10, right: 10, bottom: 10, left: 10 };
+          state.innerText = "New Badge";
+        }
+
+        // Sync form DOM
+        document.getElementById("input-width").value = state.width;
+        document.getElementById("input-height").value = state.height;
+        ["top", "right", "bottom", "left"].forEach((s) => {
+          document.getElementById(`pad-${s}`).value = state.padding[s];
+          document.getElementById(`mar-${s}`).value = state.margin[s];
+        });
+        document.getElementById("border-width").value = state.borderWidth;
+        document.getElementById("border-style").value = state.borderStyle;
+        document.getElementById("border-color").value = state.borderColor;
+        document.getElementById("inner-text").value = state.innerText;
+
+        updateValues();
+      }
+
+      // Main Update Loop
+      function updateValues() {
+        // Read Inputs
+        state.width = parseInt(document.getElementById("input-width").value);
+        state.height = parseInt(document.getElementById("input-height").value);
+        state.borderWidth =
+          parseInt(document.getElementById("border-width").value) || 0;
+        state.borderStyle = document.getElementById("border-style").value;
+        state.borderColor = document.getElementById("border-color").value;
+        state.innerText = document.getElementById("inner-text").value;
+
+        ["top", "right", "bottom", "left"].forEach((s) => {
+          state.padding[s] =
+            parseInt(document.getElementById(`pad-${s}`).value) || 0;
+          state.margin[s] =
+            parseInt(document.getElementById(`mar-${s}`).value) || 0;
+        });
+
+        // Update Slider Value Labels
+        document.getElementById("val-width").textContent = state.width;
+        document.getElementById("val-height").textContent = state.height;
+        document.getElementById("content-dim-badge").textContent =
+          `${state.width}px × ${state.height}px`;
+
+        // Perform Box Model Mathematics
+        const padHorizontal = state.padding.left + state.padding.right;
+        const padVertical = state.padding.top + state.padding.bottom;
+        const borderHorizontal = state.borderWidth * 2;
+        const borderVertical = state.borderWidth * 2;
+        const marHorizontal = state.margin.left + state.margin.right;
+        const marVertical = state.margin.top + state.margin.bottom;
+
+        let renderedWidth, renderedHeight, contentBoxWidth, contentBoxHeight;
+
+        if (state.boxSizing === "border-box") {
+          // In border-box, width/height is the total rendered element size
+          renderedWidth = state.width;
+          renderedHeight = state.height;
+          // Inner content shrinks to fit
+          contentBoxWidth = Math.max(
+            0,
+            state.width - padHorizontal - borderHorizontal,
+          );
+          contentBoxHeight = Math.max(
+            0,
+            state.height - padVertical - borderVertical,
+          );
+        } else {
+          // In content-box, width/height applies strictly to content box
+          contentBoxWidth = state.width;
+          contentBoxHeight = state.height;
+          // Total rendered size grows
+          renderedWidth = state.width + padHorizontal + borderHorizontal;
+          renderedHeight = state.height + padVertical + borderVertical;
+        }
+
+        const totalFootprintWidth = renderedWidth + marHorizontal;
+        const totalFootprintHeight = renderedHeight + marVertical;
+
+        // Update Calculated Dimension Displays
+        document.getElementById("total-rendered-width").textContent =
+          `${renderedWidth}px`;
+        document.getElementById("total-rendered-height").textContent =
+          `${renderedHeight}px`;
+        document.getElementById("total-footprint").textContent =
+          `${totalFootprintWidth}px × ${totalFootprintHeight}px`;
+
+        // Formula Explanation Text
+        const formulaBox = document.getElementById("formula-explanation");
+        const formulaTag = document.getElementById("sizing-formula-tag");
+        formulaTag.textContent = state.boxSizing;
+
+        if (state.boxSizing === "border-box") {
+          formulaBox.innerHTML = `
+          <div class="text-indigo-300 font-bold mb-1">border-box Formula:</div>
+          <div>Rendered Width = Specified Width (<span class="text-white">${state.width}px</span>)</div>
+          <div class="text-slate-400 text-[11px] mt-1">Inner Content = ${state.width}px - padding(${padHorizontal}px) - border(${borderHorizontal}px) = <span class="text-blue-300 font-bold">${contentBoxWidth}px</span></div>
+        `;
+        } else {
+          formulaBox.innerHTML = `
+          <div class="text-indigo-300 font-bold mb-1">content-box Formula:</div>
+          <div>Rendered Width = Content(${state.width}px) + Padding(${padHorizontal}px) + Border(${borderHorizontal}px) = <span class="text-indigo-300 font-bold">${renderedWidth}px</span></div>
+        `;
+        }
+
+        // Update Stage Canvas Elements
+        const layerMargin = document.getElementById("layer-margin");
+        const layerBorder = document.getElementById("layer-border");
+        const layerPadding = document.getElementById("layer-padding");
+        const layerContent = document.getElementById("layer-content");
+
+        // Set explicit padding/margins to visualize proportional scaling
+        layerMargin.style.padding = `${state.margin.top}px ${state.margin.right}px ${state.margin.bottom}px ${state.margin.left}px`;
+        layerPadding.style.padding = `${state.padding.top}px ${state.padding.right}px ${state.padding.bottom}px ${state.padding.left}px`;
+        layerBorder.style.padding = `${state.borderWidth}px`;
+
+        // Content Box Dimensions
+        layerContent.style.width = `${contentBoxWidth}px`;
+        layerContent.style.height = `${contentBoxHeight}px`;
+
+        // Labels on Visual Layers
+        document.getElementById("lbl-margin-top").textContent =
+          state.margin.top;
+        document.getElementById("lbl-margin-bottom").textContent =
+          state.margin.bottom;
+        document.getElementById("lbl-margin-left").textContent =
+          state.margin.left;
+        document.getElementById("lbl-margin-right").textContent =
+          state.margin.right;
+
+        document.getElementById("lbl-border-val").textContent =
+          state.borderWidth;
+
+        document.getElementById("lbl-padding-top").textContent =
+          state.padding.top;
+        document.getElementById("lbl-padding-bottom").textContent =
+          state.padding.bottom;
+        document.getElementById("lbl-padding-left").textContent =
+          state.padding.left;
+        document.getElementById("lbl-padding-right").textContent =
+          state.padding.right;
+
+        document.getElementById("lbl-content-dim").textContent =
+          `${contentBoxWidth} × ${contentBoxHeight}`;
+        document.getElementById("display-inner-text").textContent =
+          state.innerText || "Box Content";
+
+        // Update CSS Output
+        generateCSSCode();
+      }
+
+      // Dynamic CSS Code Snippet Generation
+      function generateCSSCode() {
+        const paddingStr =
+          state.padding.top === state.padding.right &&
+          state.padding.right === state.padding.bottom &&
+          state.padding.bottom === state.padding.left
+            ? `${state.padding.top}px`
+            : `${state.padding.top}px ${state.padding.right}px ${state.padding.bottom}px ${state.padding.left}px`;
+
+        const marginStr =
+          state.margin.top === state.margin.right &&
+          state.margin.right === state.margin.bottom &&
+          state.margin.bottom === state.margin.left
+            ? `${state.margin.top}px`
+            : `${state.margin.top}px ${state.margin.right}px ${state.margin.bottom}px ${state.margin.left}px`;
+
+        const css = `.my-box {
+  box-sizing: ${state.boxSizing};
+  width: ${state.width}px;
+  height: ${state.height}px;
+  padding: ${paddingStr};
+  border: ${state.borderWidth}px ${state.borderStyle} ${state.borderColor};
+  margin: ${marginStr};
+}`;
+
+        document.getElementById("css-output").textContent = css;
+      }
+
+      // Copy CSS Snippet
+      function copyCSS() {
+        const code = document.getElementById("css-output").textContent;
+
+        // Fallback robust copy implementation
+        const textarea = document.createElement("textarea");
+        textarea.value = code;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+
+        // UI Toast feedback
+        const toast = document.getElementById("toast");
+        const copyText = document.getElementById("copy-text");
+        const copyIcon = document.getElementById("copy-icon");
+
+        toast.classList.remove("hidden");
+        copyText.textContent = "Copied!";
+        copyIcon.className = "fa-solid fa-check";
+
+        setTimeout(() => {
+          toast.classList.add("hidden");
+          copyText.textContent = "Copy CSS";
+          copyIcon.className = "fa-regular fa-copy";
+        }, 2000);
+      }
+
+      // Initialize application on page load
+      window.onload = function () {
+        updateValues();
+      };
+    </script>
+  </body>
+</html>

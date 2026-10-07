@@ -1,0 +1,4236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CSS Box Model Learning Visualizer</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #08090b;
+      --panel: #101216;
+      --panel-2: #151820;
+      --border: #252936;
+      --muted: #8b92a3;
+      --text: #f5f7fb;
+      --accent: #8b5cf6;
+      --accent-2: #a78bfa;
+
+      --margin-color: rgba(245, 158, 11, 0.18);
+      --border-color: rgba(239, 68, 68, 0.35);
+      --padding-color: rgba(59, 130, 246, 0.25);
+      --content-color: rgba(34, 197, 94, 0.28);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(
+          circle at 15% 0%,
+          rgba(139, 92, 246, 0.10),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 90% 20%,
+          rgba(59, 130, 246, 0.07),
+          transparent 30%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, sans-serif;
+    }
+
+    code,
+    pre,
+    textarea,
+    .mono {
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    ::selection {
+      background: rgba(139, 92, 246, 0.35);
+    }
+
+    .glass {
+      background: rgba(16, 18, 22, 0.86);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .subtle {
+      color: var(--muted);
+    }
+
+    .lesson-btn {
+      width: 100%;
+      text-align: left;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #aeb4c2;
+      transition: 0.18s ease;
+    }
+
+    .lesson-btn:hover {
+      background: #171a21;
+      color: white;
+    }
+
+    .lesson-btn.active {
+      background: rgba(139, 92, 246, 0.13);
+      border-color: rgba(139, 92, 246, 0.35);
+      color: white;
+    }
+
+    .lesson-btn.completed .lesson-number {
+      background: #22c55e;
+      color: #06110a;
+    }
+
+    .lesson-number {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #20232c;
+      color: #9ba1af;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .code-editor {
+      width: 100%;
+      min-height: 270px;
+      resize: vertical;
+      background: #090a0d;
+      color: #d9dee9;
+      border: 1px solid #292d37;
+      border-radius: 12px;
+      padding: 16px;
+      line-height: 1.65;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .code-editor:focus {
+      border-color: rgba(139, 92, 246, 0.7);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
+    }
+
+    .control-input {
+      width: 100%;
+      background: #0b0d11;
+      border: 1px solid #292d37;
+      color: white;
+      border-radius: 9px;
+      padding: 8px 10px;
+      outline: none;
+    }
+
+    .control-input:focus {
+      border-color: rgba(139, 92, 246, 0.7);
+    }
+
+    .small-label {
+      display: block;
+      color: #8e95a5;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .btn {
+      border: 1px solid #303440;
+      background: #181b22;
+      color: #dfe3eb;
+      padding: 9px 13px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+
+    .btn:hover {
+      background: #20242d;
+      border-color: #454a58;
+    }
+
+    .btn-primary {
+      background: #7c3aed;
+      border-color: #8b5cf6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #8b5cf6;
+    }
+
+    .btn-success {
+      background: #166534;
+      border-color: #22c55e;
+      color: #dcfce7;
+    }
+
+    .btn-danger {
+      background: #35151a;
+      border-color: #6f252d;
+      color: #fecaca;
+    }
+
+    .dimension-card {
+      border: 1px solid #292d37;
+      background: #0c0e12;
+      border-radius: 11px;
+      padding: 12px;
+    }
+
+    .dimension-value {
+      font-size: 19px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .layer-row {
+      display: grid;
+      grid-template-columns: 14px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #20232b;
+    }
+
+    .layer-row:last-child {
+      border-bottom: 0;
+    }
+
+    .layer-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .formula {
+      background: #0a0c10;
+      border: 1px solid #292d37;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: "JetBrains Mono", monospace;
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .highlight {
+      color: #c4b5fd;
+    }
+
+    .box-stage {
+      position: relative;
+      min-height: 470px;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 75px;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 25px 25px;
+      border-radius: 16px;
+    }
+
+    .box-visual {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+      transition: width .25s ease, height .25s ease;
+      flex-shrink: 0;
+    }
+
+    .margin-layer {
+      position: relative;
+      background: var(--margin-color);
+      border: 1px dashed rgba(245, 158, 11, 0.7);
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .border-layer {
+      position: relative;
+      background: var(--border-color);
+      border-style: solid;
+      border-color: rgba(239, 68, 68, 0.85);
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .padding-layer {
+      position: relative;
+      background: var(--padding-color);
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .content-layer {
+      position: relative;
+      background: var(--content-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .content-inner {
+      padding: 12px;
+      max-width: 100%;
+    }
+
+    .layer-label {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.62);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .margin-label {
+      color: #fbbf24;
+    }
+
+    .border-label {
+      color: #fca5a5;
+    }
+
+    .padding-label {
+      color: #93c5fd;
+    }
+
+    .content-label {
+      color: #86efac;
+    }
+
+    .measure {
+      position: absolute;
+      z-index: 20;
+      color: #d6dae3;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .measure.horizontal {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .measure.vertical {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .measure-line {
+      position: absolute;
+      background: #707786;
+    }
+
+    .measure-line.horizontal {
+      height: 1px;
+      left: 0;
+      right: 0;
+    }
+
+    .measure-line.vertical {
+      width: 1px;
+      top: 0;
+      bottom: 0;
+    }
+
+    .axis {
+      position: absolute;
+      color: #646b79;
+      font-size: 10px;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .axis-x {
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .axis-y {
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+    }
+
+    .inspector {
+      border: 1px solid #2a2e38;
+      background: #0b0d11;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .inspector-header {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px;
+      padding: 9px 12px;
+      color: #737b8a;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      border-bottom: 1px solid #20232b;
+    }
+
+    .inspector-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #20232b;
+      font-size: 12px;
+    }
+
+    .inspector-row:last-child {
+      border-bottom: 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #303440;
+      background: #151820;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      color: #b8becb;
+    }
+
+    .challenge-option {
+      padding: 12px;
+      border: 1px solid #292d37;
+      border-radius: 10px;
+      background: #0d0f13;
+    }
+
+    .challenge-option.success {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .challenge-option.fail {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.07);
+    }
+
+    .progress-track {
+      height: 6px;
+      background: #20232b;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      border-radius: inherit;
+      transition: width .3s ease;
+    }
+
+    .lesson-content p {
+      color: #aeb5c2;
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .lesson-content strong {
+      color: #f2f4f8;
+    }
+
+    .mistake {
+      border-left: 3px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.07);
+      padding: 12px 14px;
+      border-radius: 0 9px 9px 0;
+    }
+
+    @media (max-width: 1100px) {
+      .app-grid {
+        grid-template-columns: 220px 1fr !important;
+      }
+
+      .right-column {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-grid {
+        display: block !important;
+      }
+
+      aside {
+        display: none;
+      }
+
+      .box-stage {
+        min-height: 380px;
+        padding: 45px;
+      }
+
+      .inspector-header,
+      .inspector-row {
+        grid-template-columns: 1fr 80px 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <header class="glass sticky top-0 z-50">
+    <div class="max-w-[1600px] mx-auto px-4 md:px-6">
+      <div class="h-16 flex items-center justify-between gap-4">
+
+        <div class="flex items-center gap-3 min-w-0">
+          <div
+            class="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-300"
+          >
+            <i class="fa-solid fa-cube"></i>
+          </div>
+
+          <div class="min-w-0">
+            <h1 class="font-bold truncate">
+              CSS Box Model Visualizer
+            </h1>
+            <p class="text-xs subtle hidden sm:block">
+              Learn it. Change it. Calculate it. Understand it.
+            </p>
+          </div>
+        </div>
+
+        <div class="hidden md:flex items-center gap-3">
+          <span class="text-xs subtle">Progress</span>
+
+          <div class="w-36 progress-track">
+            <div
+              id="header-progress"
+              class="progress-fill"
+              style="width:0%"
+            ></div>
+          </div>
+
+          <span id="progress-text" class="text-xs font-semibold">
+            0%
+          </span>
+        </div>
+
+        <button
+          id="reset-app"
+          class="btn"
+          title="Reset visualizer"
+        >
+          <i class="fa-solid fa-rotate-left"></i>
+          <span class="hidden sm:inline ml-1">Reset</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+
+  <!-- =========================================================
+       MAIN APP
+  ========================================================== -->
+
+  <main class="max-w-[1600px] mx-auto px-4 md:px-6 py-6">
+
+    <div
+      class="app-grid grid grid-cols-[250px_minmax(0,1fr)_320px] gap-5"
+    >
+
+      <!-- =====================================================
+           LEFT SIDEBAR
+      ====================================================== -->
+
+      <aside class="panel p-3 h-fit sticky top-[84px]">
+
+        <div class="px-2 py-2 mb-2">
+          <div class="text-xs font-bold uppercase tracking-wider subtle">
+            Box Model Course
+          </div>
+          <div class="text-xs subtle mt-1">
+            <span id="lesson-count">0</span>/18 lessons
+          </div>
+        </div>
+
+        <div id="lesson-list" class="space-y-1"></div>
+
+      </aside>
+
+
+      <!-- =====================================================
+           CENTER
+      ====================================================== -->
+
+      <section class="space-y-5 min-w-0">
+
+        <!-- Lesson header -->
+
+        <div class="panel p-5">
+
+          <div class="flex flex-wrap items-start justify-between gap-4">
+
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span id="lesson-number" class="tag">
+                  Lesson 1
+                </span>
+
+                <span id="lesson-property" class="tag mono">
+                  box-model
+                </span>
+              </div>
+
+              <h2
+                id="lesson-title"
+                class="text-2xl md:text-3xl font-extrabold"
+              >
+                What is the CSS Box Model?
+              </h2>
+
+              <p
+                id="lesson-intro"
+                class="subtle mt-2 max-w-3xl text-sm leading-6"
+              ></p>
+            </div>
+
+            <button
+              id="complete-lesson"
+              class="btn-success"
+            >
+              <i class="fa-solid fa-check mr-1"></i>
+              Mark Complete
+            </button>
+
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-3 mt-5">
+
+            <div class="dimension-card">
+              <div class="small-label">Property</div>
+              <div id="lesson-property-large" class="mono text-sm">
+                box-sizing
+              </div>
+            </div>
+
+            <div class="dimension-card">
+              <div class="small-label">Syntax</div>
+              <div id="lesson-syntax" class="mono text-sm">
+                box-sizing: border-box;
+              </div>
+            </div>
+
+            <div class="dimension-card">
+              <div class="small-label">Mental Model</div>
+              <div id="lesson-model" class="text-sm">
+                Every element is a rectangle.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             VISUALIZER
+        ================================================== -->
+
+        <div class="panel overflow-hidden">
+
+          <div
+            class="px-5 py-4 border-b border-[#252936] flex flex-wrap items-center justify-between gap-3"
+          >
+
+            <div>
+              <h3 class="font-bold">
+                <i class="fa-solid fa-eye text-violet-400 mr-2"></i>
+                Live Box Model
+              </h3>
+
+              <p class="text-xs subtle mt-1">
+                The visual layers represent the actual CSS box model.
+              </p>
+            </div>
+
+            <div class="flex gap-2 flex-wrap">
+
+              <span class="tag">
+                <span
+                  class="w-2 h-2 rounded-full"
+                  style="background:#f59e0b"
+                ></span>
+                Margin
+              </span>
+
+              <span class="tag">
+                <span
+                  class="w-2 h-2 rounded-full"
+                  style="background:#ef4444"
+                ></span>
+                Border
+              </span>
+
+              <span class="tag">
+                <span
+                  class="w-2 h-2 rounded-full"
+                  style="background:#3b82f6"
+                ></span>
+                Padding
+              </span>
+
+              <span class="tag">
+                <span
+                  class="w-2 h-2 rounded-full"
+                  style="background:#22c55e"
+                ></span>
+                Content
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="box-stage">
+
+            <span class="axis axis-x">
+              ← horizontal axis →
+            </span>
+
+            <span class="axis axis-y">
+              ← vertical axis →
+            </span>
+
+            <div id="box-visual" class="box-visual">
+
+              <div id="margin-layer" class="margin-layer">
+
+                <span class="layer-label margin-label">
+                  MARGIN
+                </span>
+
+                <div id="margin-top-measure" class="measure horizontal"></div>
+                <div id="margin-left-measure" class="measure vertical"></div>
+
+                <div id="border-layer" class="border-layer">
+
+                  <span class="layer-label border-label">
+                    BORDER
+                  </span>
+
+                  <div id="border-top-measure" class="measure horizontal"></div>
+                  <div id="border-left-measure" class="measure vertical"></div>
+
+                  <div id="padding-layer" class="padding-layer">
+
+                    <span class="layer-label padding-label">
+                      PADDING
+                    </span>
+
+                    <div id="padding-top-measure" class="measure horizontal"></div>
+                    <div id="padding-left-measure" class="measure vertical"></div>
+
+                    <div id="content-layer" class="content-layer">
+
+                      <span class="layer-label content-label">
+                        CONTENT
+                      </span>
+
+                      <div class="content-inner">
+
+                        <div class="text-green-300 font-bold text-sm">
+                          Your content lives here
+                        </div>
+
+                        <div
+                          id="content-size-display"
+                          class="mono text-[11px] text-slate-400 mt-2"
+                        >
+                          300 × 180
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             BOX MATH
+        ================================================== -->
+
+        <div class="grid lg:grid-cols-2 gap-5">
+
+          <div class="panel p-5">
+
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-bold">
+                  <i class="fa-solid fa-calculator text-violet-400 mr-2"></i>
+                  Box Math — Width
+                </h3>
+
+                <p class="text-xs subtle mt-1">
+                  See exactly how the browser calculates the width.
+                </p>
+              </div>
+
+              <span id="width-box-sizing" class="tag">
+                content-box
+              </span>
+            </div>
+
+            <div class="formula" id="width-formula"></div>
+
+          </div>
+
+
+          <div class="panel p-5">
+
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-bold">
+                  <i class="fa-solid fa-ruler-vertical text-violet-400 mr-2"></i>
+                  Box Math — Height
+                </h3>
+
+                <p class="text-xs subtle mt-1">
+                  Height follows the same box-model rules.
+                </p>
+              </div>
+
+              <span id="height-box-sizing" class="tag">
+                content-box
+              </span>
+            </div>
+
+            <div class="formula" id="height-formula"></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             INSPECTOR
+        ================================================== -->
+
+        <div class="panel p-5">
+
+          <div class="mb-4">
+            <h3 class="font-bold">
+              <i class="fa-solid fa-list-check text-violet-400 mr-2"></i>
+              Browser-Style Box Inspector
+            </h3>
+
+            <p class="text-xs subtle mt-1">
+              Think of this like the box information you see in DevTools.
+            </p>
+          </div>
+
+          <div class="inspector">
+
+            <div class="inspector-header">
+              <span>Layer</span>
+              <span>Width</span>
+              <span>Height</span>
+            </div>
+
+            <div class="inspector-row">
+              <span class="text-amber-300">Margin box</span>
+              <span id="inspect-margin-width">—</span>
+              <span id="inspect-margin-height">—</span>
+            </div>
+
+            <div class="inspector-row">
+              <span class="text-red-300">Border box</span>
+              <span id="inspect-border-width">—</span>
+              <span id="inspect-border-height">—</span>
+            </div>
+
+            <div class="inspector-row">
+              <span class="text-blue-300">Padding box</span>
+              <span id="inspect-padding-width">—</span>
+              <span id="inspect-padding-height">—</span>
+            </div>
+
+            <div class="inspector-row">
+              <span class="text-green-300">Content box</span>
+              <span id="inspect-content-width">—</span>
+              <span id="inspect-content-height">—</span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             LESSON EXPLANATION
+        ================================================== -->
+
+        <div class="panel p-5 lesson-content">
+
+          <div class="flex items-center gap-2 mb-4">
+            <i class="fa-solid fa-graduation-cap text-violet-400"></i>
+            <h3 class="font-bold">
+              Understand the Concept
+            </h3>
+          </div>
+
+          <div id="lesson-explanation"></div>
+
+        </div>
+
+
+        <!-- =================================================
+             CHALLENGE
+        ================================================== -->
+
+        <div class="panel p-5">
+
+          <div class="flex items-start justify-between gap-4">
+
+            <div>
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bullseye text-amber-400"></i>
+                <h3 class="font-bold">
+                  Challenge
+                </h3>
+              </div>
+
+              <p
+                id="challenge-description"
+                class="text-sm subtle mt-2 leading-6"
+              ></p>
+            </div>
+
+            <span class="tag">
+              Practice
+            </span>
+
+          </div>
+
+          <div
+            id="challenge-requirements"
+            class="space-y-2 mt-4"
+          ></div>
+
+          <div class="mistake mt-4">
+            <div class="text-xs font-bold text-amber-300 mb-1">
+              <i class="fa-solid fa-lightbulb mr-1"></i>
+              Hint
+            </div>
+
+            <div
+              id="challenge-hint"
+              class="text-sm text-slate-300"
+            ></div>
+          </div>
+
+          <div
+            id="challenge-feedback"
+            class="hidden mt-4 p-3 rounded-lg text-sm"
+          ></div>
+
+          <button
+            id="check-challenge"
+            class="btn btn-primary mt-4"
+          >
+            <i class="fa-solid fa-check-double mr-1"></i>
+            Check Challenge
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           RIGHT SIDEBAR
+      ====================================================== -->
+
+      <aside class="right-column space-y-5">
+
+        <!-- Controls -->
+
+        <div class="panel p-5">
+
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold">
+                Box Controls
+              </h3>
+              <p class="text-xs subtle mt-1">
+                Change the box without writing CSS.
+              </p>
+            </div>
+
+            <i class="fa-solid fa-sliders text-violet-400"></i>
+          </div>
+
+
+          <div class="space-y-4">
+
+            <div>
+              <label class="small-label">
+                Width
+              </label>
+
+              <input
+                id="ctrl-width"
+                class="control-input"
+                type="number"
+                min="20"
+                max="600"
+              />
+            </div>
+
+            <div>
+              <label class="small-label">
+                Height
+              </label>
+
+              <input
+                id="ctrl-height"
+                class="control-input"
+                type="number"
+                min="20"
+                max="500"
+              />
+            </div>
+
+
+            <div>
+              <label class="small-label">
+                Box Sizing
+              </label>
+
+              <select
+                id="ctrl-box-sizing"
+                class="control-input"
+              >
+                <option value="content-box">content-box</option>
+                <option value="border-box">border-box</option>
+              </select>
+            </div>
+
+
+            <div class="pt-2 border-t border-[#252936]">
+              <div class="small-label mb-2">
+                Padding
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+
+                <input
+                  id="ctrl-padding-top"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Top"
+                />
+
+                <input
+                  id="ctrl-padding-right"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Right"
+                />
+
+                <input
+                  id="ctrl-padding-bottom"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Bottom"
+                />
+
+                <input
+                  id="ctrl-padding-left"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Left"
+                />
+
+              </div>
+            </div>
+
+
+            <div class="pt-2 border-t border-[#252936]">
+
+              <div class="small-label mb-2">
+                Border Width
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+
+                <input
+                  id="ctrl-border-top"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Top"
+                />
+
+                <input
+                  id="ctrl-border-right"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Right"
+                />
+
+                <input
+                  id="ctrl-border-bottom"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Bottom"
+                />
+
+                <input
+                  id="ctrl-border-left"
+                  class="control-input"
+                  type="number"
+                  min="0"
+                  placeholder="Left"
+                />
+
+              </div>
+
+            </div>
+
+
+            <div class="pt-2 border-t border-[#252936]">
+
+              <div class="small-label mb-2">
+                Margin
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+
+                <input
+                  id="ctrl-margin-top"
+                  class="control-input"
+                  type="number"
+                  placeholder="Top"
+                />
+
+                <input
+                  id="ctrl-margin-right"
+                  class="control-input"
+                  type="number"
+                  placeholder="Right"
+                />
+
+                <input
+                  id="ctrl-margin-bottom"
+                  class="control-input"
+                  type="number"
+                  placeholder="Bottom"
+                />
+
+                <input
+                  id="ctrl-margin-left"
+                  class="control-input"
+                  type="number"
+                  placeholder="Left"
+                />
+
+              </div>
+
+            </div>
+
+
+            <div class="pt-2 border-t border-[#252936]">
+
+              <label class="small-label">
+                Overflow
+              </label>
+
+              <select
+                id="ctrl-overflow"
+                class="control-input"
+              >
+                <option value="visible">visible</option>
+                <option value="hidden">hidden</option>
+                <option value="auto">auto</option>
+                <option value="scroll">scroll</option>
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CSS EDITOR
+        ================================================== -->
+
+        <div class="panel p-5">
+
+          <div class="flex items-center justify-between mb-4">
+
+            <div>
+              <h3 class="font-bold">
+                CSS Experiment
+              </h3>
+
+              <p class="text-xs subtle mt-1">
+                Write CSS and apply it to the box.
+              </p>
+            </div>
+
+            <i class="fa-solid fa-code text-violet-400"></i>
+
+          </div>
+
+          <textarea
+            id="css-editor"
+            class="code-editor"
+            spellcheck="false"
+          >.box {
+  width: 300px;
+  height: 180px;
+
+  padding: 20px;
+  border: 4px solid #ef4444;
+  margin: 20px;
+
+  box-sizing: content-box;
+}</textarea>
+
+          <div class="grid grid-cols-2 gap-2 mt-3">
+
+            <button
+              id="apply-css"
+              class="btn btn-primary"
+            >
+              <i class="fa-solid fa-play mr-1"></i>
+              Apply CSS
+            </button>
+
+            <button
+              id="copy-css"
+              class="btn"
+            >
+              <i class="fa-regular fa-copy mr-1"></i>
+              Copy
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             GENERATED CSS
+        ================================================== -->
+
+        <div class="panel p-5">
+
+          <div class="flex items-center justify-between mb-3">
+
+            <h3 class="font-bold">
+              Generated CSS
+            </h3>
+
+            <i class="fa-solid fa-terminal text-violet-400"></i>
+
+          </div>
+
+          <pre
+            id="generated-css"
+            class="text-[11px] leading-6 text-slate-300 whitespace-pre-wrap"
+          ></pre>
+
+        </div>
+
+
+        <!-- =================================================
+             QUICK EXPERIMENTS
+        ================================================== -->
+
+        <div class="panel p-5">
+
+          <h3 class="font-bold mb-3">
+            Quick Experiments
+          </h3>
+
+          <div class="space-y-2">
+
+            <button
+              class="btn w-full text-left"
+              data-preset="padding"
+            >
+              <i class="fa-solid fa-arrows-left-right mr-2 text-blue-400"></i>
+              Add huge padding
+            </button>
+
+            <button
+              class="btn w-full text-left"
+              data-preset="border-box"
+            >
+              <i class="fa-solid fa-expand mr-2 text-red-400"></i>
+              Switch to border-box
+            </button>
+
+            <button
+              class="btn w-full text-left"
+              data-preset="wide"
+            >
+              <i class="fa-solid fa-arrows-left-right mr-2 text-green-400"></i>
+              Make width 100%
+            </button>
+
+            <button
+              class="btn w-full text-left"
+              data-preset="overflow"
+            >
+              <i class="fa-solid fa-up-right-and-down-left-from-center mr-2 text-amber-400"></i>
+              Create overflow
+            </button>
+
+            <button
+              class="btn w-full text-left"
+              data-preset="asymmetric"
+            >
+              <i class="fa-solid fa-border-all mr-2 text-violet-400"></i>
+              Asymmetric box
+            </button>
+
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+
+<script>
+/* ============================================================
+   CSS BOX MODEL LEARNING VISUALIZER
+   ------------------------------------------------------------
+   Architecture:
+
+   1. State
+   2. Lesson data
+   3. DOM helpers
+   4. Box calculations
+   5. Rendering
+   6. CSS parser
+   7. Challenges
+   8. Events
+============================================================ */
+
+
+/* ============================================================
+   1. STATE
+============================================================ */
+
+const state = {
+
+  currentLesson: 1,
+
+  completedLessons: [],
+
+  box: {
+    width: 300,
+    height: 180,
+
+    boxSizing: "content-box",
+
+    paddingTop: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
+    paddingLeft: 20,
+
+    borderTop: 4,
+    borderRight: 4,
+    borderBottom: 4,
+    borderLeft: 4,
+
+    marginTop: 20,
+    marginRight: 20,
+    marginBottom: 20,
+    marginLeft: 20,
+
+    borderStyle: "solid",
+
+    overflow: "visible"
+  }
+
+};
+
+
+/* ============================================================
+   2. LESSON DATA
+============================================================ */
+
+const lessons = [
+
+  {
+    id: 1,
+    title: "What is the CSS Box Model?",
+    property: "box-model",
+    syntax: "content → padding → border → margin",
+    model: "Every HTML element is treated as a rectangular box.",
+
+    intro:
+      "Before learning individual properties, understand the four layers that make up every CSS box.",
+
+    explanation: `
+      <p>
+        The <strong>CSS Box Model</strong> is one of the most important
+        ideas in CSS.
+      </p>
+
+      <p>
+        Every HTML element is represented by a rectangular box.
+        That box has four conceptual layers:
+      </p>
+
+      <div class="grid sm:grid-cols-2 gap-3 my-4">
+
+        <div class="dimension-card">
+          <strong class="text-green-300">1. Content</strong>
+          <p class="!text-xs !mt-1">
+            The actual text, image, button, or child content.
+          </p>
+        </div>
+
+        <div class="dimension-card">
+          <strong class="text-blue-300">2. Padding</strong>
+          <p class="!text-xs !mt-1">
+            Space between the content and the border.
+          </p>
+        </div>
+
+        <div class="dimension-card">
+          <strong class="text-red-300">3. Border</strong>
+          <p class="!text-xs !mt-1">
+            The visible edge surrounding padding and content.
+          </p>
+        </div>
+
+        <div class="dimension-card">
+          <strong class="text-amber-300">4. Margin</strong>
+          <p class="!text-xs !mt-1">
+            Space outside the border separating this element from others.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="formula">
+        Margin → Border → Padding → Content
+      </div>
+
+      <p>
+        Notice something important:
+        <strong>margin is outside the element's border.</strong>
+        Padding is inside it.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Identify the four layers of the box model using the visualizer.",
+
+      requirements: [
+        "Content should exist in the center.",
+        "Padding should surround the content.",
+        "Border should surround the padding.",
+        "Margin should exist outside the border."
+      ],
+
+      hint:
+        "Look at the colored layers. Green = content, blue = padding, red = border, amber = margin.",
+
+      check: () => true
+    }
+  },
+
+
+  {
+    id: 2,
+    title: "Width and Height",
+    property: "width / height",
+    syntax: "width: 300px; height: 180px;",
+    model: "Width and height describe a box dimension — but box-sizing changes what they mean.",
+
+    intro:
+      "The width and height properties are deceptively simple. The important question is: what part of the box do they actually size?",
+
+    explanation: `
+      <p>
+        You can explicitly give an element dimensions:
+      </p>
+
+      <div class="formula">
+        width: 300px;<br>
+        height: 180px;
+      </div>
+
+      <p>
+        But those values do not automatically mean
+        <strong>the entire visible box is 300 × 180.</strong>
+      </p>
+
+      <p>
+        Under the default <strong>content-box</strong> model,
+        width and height describe the content area.
+      </p>
+
+      <p>
+        Padding and borders are then added around that content.
+      </p>
+
+      <div class="mistake">
+        <strong class="text-amber-300">Common mistake:</strong>
+        <p class="!text-xs !mt-1">
+          "I set width to 300px, so why is the element wider than 300px?"
+          Padding and borders may be adding to the declared width.
+        </p>
+      </div>
+    `,
+
+    challenge: {
+      description:
+        "Create a 300px wide and 180px high content area.",
+
+      requirements: [
+        "Width must be 300px.",
+        "Height must be 180px."
+      ],
+
+      hint:
+        "Use the Width and Height controls.",
+
+      check: () =>
+        state.box.width === 300 &&
+        state.box.height === 180
+    }
+  },
+
+
+  {
+    id: 3,
+    title: "Padding",
+    property: "padding",
+    syntax: "padding: 20px;",
+    model: "Padding creates internal breathing room.",
+
+    intro:
+      "Padding is the space between the content and the border.",
+
+    explanation: `
+      <p>
+        Think of padding as the <strong>inside cushion</strong> of an element.
+      </p>
+
+      <div class="formula">
+        padding: 20px;
+      </div>
+
+      <p>
+        This gives all four sides 20px of internal space.
+      </p>
+
+      <p>
+        Padding affects the space available to your content
+        and, under <strong>content-box</strong>, increases the total rendered size.
+      </p>
+
+      <div class="formula">
+        Content<br>
+        ↓<br>
+        20px padding<br>
+        ↓<br>
+        Border
+      </div>
+
+      <p>
+        Try increasing padding in the controls and watch the blue region grow.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Give the box 40px of padding on every side.",
+
+      requirements: [
+        "Top padding = 40px.",
+        "Right padding = 40px.",
+        "Bottom padding = 40px.",
+        "Left padding = 40px."
+      ],
+
+      hint:
+        "You can enter the same value into all four padding controls.",
+
+      check: () =>
+        state.box.paddingTop === 40 &&
+        state.box.paddingRight === 40 &&
+        state.box.paddingBottom === 40 &&
+        state.box.paddingLeft === 40
+    }
+  },
+
+
+  {
+    id: 4,
+    title: "Padding Shorthand",
+    property: "padding",
+    syntax: "padding: 10px 20px 30px 40px;",
+    model: "Four shorthand values map clockwise: top → right → bottom → left.",
+
+    intro:
+      "CSS gives you shorthand syntax so you don't have to write every side separately.",
+
+    explanation: `
+      <p>
+        When four values are used:
+      </p>
+
+      <div class="formula">
+        padding: top right bottom left;
+      </div>
+
+      <div class="formula mt-3">
+        padding: 10px 20px 30px 40px;<br><br>
+        top = 10px<br>
+        right = 20px<br>
+        bottom = 30px<br>
+        left = 40px
+      </div>
+
+      <p>
+        Remember the clockwise pattern:
+        <strong>TRBL</strong>.
+      </p>
+
+      <p>
+        A useful memory trick is:
+        <strong>Top Right Bottom Left</strong>.
+      </p>
+
+      <p>
+        With two values:
+      </p>
+
+      <div class="formula">
+        padding: 10px 20px;<br><br>
+        top/bottom = 10px<br>
+        left/right = 20px
+      </div>
+    `,
+
+    challenge: {
+      description:
+        "Create an asymmetric padding pattern.",
+
+      requirements: [
+        "Top = 10px.",
+        "Right = 20px.",
+        "Bottom = 30px.",
+        "Left = 40px."
+      ],
+
+      hint:
+        "Use the four individual controls to see exactly what the shorthand would represent.",
+
+      check: () =>
+        state.box.paddingTop === 10 &&
+        state.box.paddingRight === 20 &&
+        state.box.paddingBottom === 30 &&
+        state.box.paddingLeft === 40
+    }
+  },
+
+
+  {
+    id: 5,
+    title: "Border",
+    property: "border",
+    syntax: "border: 4px solid red;",
+    model: "Border is the visible boundary between padding and margin.",
+
+    intro:
+      "Borders surround the padding and content. Their thickness contributes to the rendered dimensions.",
+
+    explanation: `
+      <p>
+        A border normally has three important components:
+      </p>
+
+      <div class="grid sm:grid-cols-3 gap-3 my-4">
+
+        <div class="dimension-card">
+          <strong>Width</strong>
+          <p class="!text-xs !mt-1">How thick?</p>
+        </div>
+
+        <div class="dimension-card">
+          <strong>Style</strong>
+          <p class="!text-xs !mt-1">solid, dashed, etc.</p>
+        </div>
+
+        <div class="dimension-card">
+          <strong>Color</strong>
+          <p class="!text-xs !mt-1">What color?</p>
+        </div>
+
+      </div>
+
+      <div class="formula">
+        border: 4px solid red;
+      </div>
+
+      <p>
+        A 4px border on the left and 4px on the right adds
+        <strong>8px</strong> to the horizontal size under content-box.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Create a 10px border on every side.",
+
+      requirements: [
+        "Top border = 10px.",
+        "Right border = 10px.",
+        "Bottom border = 10px.",
+        "Left border = 10px."
+      ],
+
+      hint:
+        "Change the four Border Width controls.",
+
+      check: () =>
+        state.box.borderTop === 10 &&
+        state.box.borderRight === 10 &&
+        state.box.borderBottom === 10 &&
+        state.box.borderLeft === 10
+    }
+  },
+
+
+  {
+    id: 6,
+    title: "Margin",
+    property: "margin",
+    syntax: "margin: 20px;",
+    model: "Margin creates space outside the border.",
+
+    intro:
+      "Margin separates an element from surrounding elements.",
+
+    explanation: `
+      <p>
+        Margin is different from padding.
+      </p>
+
+      <div class="formula">
+        Padding = inside the border<br>
+        Margin = outside the border
+      </div>
+
+      <p>
+        If you give an element:
+      </p>
+
+      <div class="formula">
+        margin: 20px;
+      </div>
+
+      <p>
+        there will be 20px of outer space on all four sides.
+      </p>
+
+      <p>
+        Notice how changing margin does not change the content box itself.
+        It changes the element's <strong>outer footprint</strong>.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Give the box 30px of margin on all four sides.",
+
+      requirements: [
+        "Top margin = 30px.",
+        "Right margin = 30px.",
+        "Bottom margin = 30px.",
+        "Left margin = 30px."
+      ],
+
+      hint:
+        "Margin belongs outside the border.",
+
+      check: () =>
+        state.box.marginTop === 30 &&
+        state.box.marginRight === 30 &&
+        state.box.marginBottom === 30 &&
+        state.box.marginLeft === 30
+    }
+  },
+
+
+  {
+    id: 7,
+    title: "Margin Shorthand",
+    property: "margin",
+    syntax: "margin: 10px 20px 30px 40px;",
+    model: "Margin shorthand follows the same clockwise TRBL pattern.",
+
+    intro:
+      "Margin uses the exact same shorthand logic as padding.",
+
+    explanation: `
+      <p>
+        Four values:
+      </p>
+
+      <div class="formula">
+        margin: 10px 20px 30px 40px;<br><br>
+        top = 10px<br>
+        right = 20px<br>
+        bottom = 30px<br>
+        left = 40px
+      </div>
+
+      <p>
+        Two values:
+      </p>
+
+      <div class="formula">
+        margin: 10px 20px;<br><br>
+        top/bottom = 10px<br>
+        left/right = 20px
+      </div>
+    `,
+
+    challenge: {
+      description:
+        "Create asymmetric margins using the TRBL pattern.",
+
+      requirements: [
+        "Top = 10px.",
+        "Right = 20px.",
+        "Bottom = 30px.",
+        "Left = 40px."
+      ],
+
+      hint:
+        "Think clockwise from the top.",
+
+      check: () =>
+        state.box.marginTop === 10 &&
+        state.box.marginRight === 20 &&
+        state.box.marginBottom === 30 &&
+        state.box.marginLeft === 40
+    }
+  },
+
+
+  {
+    id: 8,
+    title: "The Default content-box",
+    property: "box-sizing",
+    syntax: "box-sizing: content-box;",
+    model: "width controls content; padding and border are added afterward.",
+
+    intro:
+      "This is the browser's traditional box-sizing behavior.",
+
+    explanation: `
+      <p>
+        With:
+      </p>
+
+      <div class="formula">
+        box-sizing: content-box;
+      </div>
+
+      <p>
+        your declared width refers to the
+        <strong>content area only</strong>.
+      </p>
+
+      <p>
+        Suppose:
+      </p>
+
+      <div class="formula">
+        width: 300px;<br>
+        padding: 20px;<br>
+        border: 4px;
+      </div>
+
+      <p>
+        Horizontal calculation:
+      </p>
+
+      <div class="formula">
+        300<br>
+        + 20 + 20 padding<br>
+        + 4 + 4 border<br>
+        = <strong>348px</strong>
+      </div>
+
+      <p>
+        So a box declared as 300px can actually occupy 348px.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Use content-box sizing.",
+
+      requirements: [
+        "box-sizing must be content-box."
+      ],
+
+      hint:
+        "Select content-box from Box Sizing.",
+
+      check: () =>
+        state.box.boxSizing === "content-box"
+    }
+  },
+
+
+  {
+    id: 9,
+    title: "The border-box Model",
+    property: "box-sizing",
+    syntax: "box-sizing: border-box;",
+    model: "width includes content + padding + border.",
+
+    intro:
+      "border-box makes declared dimensions represent the entire border box.",
+
+    explanation: `
+      <p>
+        Now switch to:
+      </p>
+
+      <div class="formula">
+        box-sizing: border-box;
+      </div>
+
+      <p>
+        If you declare:
+      </p>
+
+      <div class="formula">
+        width: 300px;
+      </div>
+
+      <p>
+        the <strong>entire border box remains 300px wide</strong>.
+      </p>
+
+      <p>
+        Padding and border are taken from the available content space instead
+        of being added outside the declared width.
+      </p>
+
+      <div class="formula">
+        content width =<br>
+        300 - padding - border
+      </div>
+
+      <p>
+        This is one of the reasons many developers use:
+      </p>
+
+      <div class="formula">
+        *, *::before, *::after {<br>
+        &nbsp;&nbsp;box-sizing: border-box;<br>
+        }
+      </div>
+    `,
+
+    challenge: {
+      description:
+        "Switch the box to border-box sizing.",
+
+      requirements: [
+        "box-sizing must be border-box.",
+        "Declared width should remain 300px."
+      ],
+
+      hint:
+        "Changing box-sizing changes how the browser interprets the 300px width.",
+
+      check: () =>
+        state.box.boxSizing === "border-box" &&
+        state.box.width === 300
+    }
+  },
+
+
+  {
+    id: 10,
+    title: "Content-box vs Border-box",
+    property: "box-sizing",
+    syntax: "content-box ↔ border-box",
+    model: "Same CSS width. Different meaning.",
+
+    intro:
+      "The most important box-model comparison is understanding what changes when box-sizing changes.",
+
+    explanation: `
+      <p>
+        Consider:
+      </p>
+
+      <div class="formula">
+        width: 300px;<br>
+        padding: 20px;<br>
+        border: 4px;
+      </div>
+
+      <p>
+        With <strong>content-box</strong>:
+      </p>
+
+      <div class="formula">
+        content = 300px<br>
+        padding = 40px total<br>
+        border = 8px total<br>
+        ----------------<br>
+        border box = <strong>348px</strong>
+      </div>
+
+      <p>
+        With <strong>border-box</strong>:
+      </p>
+
+      <div class="formula">
+        border box = 300px<br>
+        padding = 40px total<br>
+        border = 8px total<br>
+        ----------------<br>
+        content = <strong>252px</strong>
+      </div>
+
+      <p>
+        The declared width stayed at 300px.
+        What changed was <strong>which layer receives that 300px</strong>.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Set the box so that its border box is exactly 300px wide.",
+
+      requirements: [
+        "box-sizing = border-box.",
+        "width = 300px."
+      ],
+
+      hint:
+        "border-box makes the declared width represent the border box.",
+
+      check: () =>
+        state.box.boxSizing === "border-box" &&
+        state.box.width === 300
+    }
+  },
+
+
+  {
+    id: 11,
+    title: "Calculating Total Width",
+    property: "width",
+    syntax: "total = content + padding + border + margin",
+    model: "The outer footprint is larger than the content area.",
+
+    intro:
+      "Once you understand the box model, you can calculate the exact size of an element.",
+
+    explanation: `
+      <p>
+        For content-box:
+      </p>
+
+      <div class="formula">
+        border-box width =<br>
+        content width<br>
+        + left padding<br>
+        + right padding<br>
+        + left border<br>
+        + right border
+      </div>
+
+      <p>
+        If you also want the space occupied including margin:
+      </p>
+
+      <div class="formula">
+        margin-box width =<br>
+        border-box width<br>
+        + left margin<br>
+        + right margin
+      </div>
+
+      <p>
+        This is extremely useful when debugging layouts.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Build a box whose margin-box width is easy to calculate.",
+
+      requirements: [
+        "Width = 200px.",
+        "Padding left/right = 10px.",
+        "Border left/right = 5px.",
+        "Margin left/right = 20px.",
+        "Use content-box."
+      ],
+
+      hint:
+        "The final margin-box width should be 270px.",
+
+      check: () =>
+        state.box.width === 200 &&
+        state.box.paddingLeft === 10 &&
+        state.box.paddingRight === 10 &&
+        state.box.borderLeft === 5 &&
+        state.box.borderRight === 5 &&
+        state.box.marginLeft === 20 &&
+        state.box.marginRight === 20 &&
+        state.box.boxSizing === "content-box"
+    }
+  },
+
+
+  {
+    id: 12,
+    title: "Individual Sides",
+    property: "padding / margin / border",
+    syntax: "padding-left: 40px;",
+    model: "Every side can be controlled independently.",
+
+    intro:
+      "CSS lets you control top, right, bottom, and left independently.",
+
+    explanation: `
+      <p>
+        You are not restricted to symmetrical boxes.
+      </p>
+
+      <div class="formula">
+        padding-top<br>
+        padding-right<br>
+        padding-bottom<br>
+        padding-left
+      </div>
+
+      <p>
+        The same pattern applies to:
+      </p>
+
+      <div class="formula">
+        margin-*<br>
+        border-*-width
+      </div>
+
+      <p>
+        This is especially useful for cards, navigation bars,
+        buttons and responsive layouts.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Create a deliberately asymmetric box.",
+
+      requirements: [
+        "Padding top = 5px.",
+        "Padding right = 30px.",
+        "Padding bottom = 15px.",
+        "Padding left = 50px."
+      ],
+
+      hint:
+        "Change each padding side independently.",
+
+      check: () =>
+        state.box.paddingTop === 5 &&
+        state.box.paddingRight === 30 &&
+        state.box.paddingBottom === 15 &&
+        state.box.paddingLeft === 50
+    }
+  },
+
+
+  {
+    id: 13,
+    title: "Min and Max Width",
+    property: "min-width / max-width",
+    syntax: "max-width: 600px;",
+    model: "Constraints control how large or small an element is allowed to become.",
+
+    intro:
+      "Real layouts rarely use only width. Constraints make layouts more flexible.",
+
+    explanation: `
+      <p>
+        <strong>min-width</strong> prevents an element from becoming
+        smaller than a certain size.
+      </p>
+
+      <p>
+        <strong>max-width</strong> prevents an element from becoming
+        larger than a certain size.
+      </p>
+
+      <div class="formula">
+        width: 100%;<br>
+        max-width: 600px;
+      </div>
+
+      <p>
+        This pattern is extremely common for responsive containers.
+      </p>
+
+      <div class="formula">
+        .container {<br>
+        &nbsp;&nbsp;width: 100%;<br>
+        &nbsp;&nbsp;max-width: 1200px;<br>
+        &nbsp;&nbsp;margin-inline: auto;<br>
+        }
+      </div>
+    `,
+
+    challenge: {
+      description:
+        "Understand the role of a maximum width.",
+
+      requirements: [
+        "Set width to 100% conceptually using the editor.",
+        "Set max-width to 600px conceptually."
+      ],
+
+      hint:
+        "This visualizer focuses on the box model itself; use the CSS editor to experiment with min/max-width.",
+
+      check: () => true
+    }
+  },
+
+
+  {
+    id: 14,
+    title: "Overflow",
+    property: "overflow",
+    syntax: "overflow: hidden;",
+    model: "Overflow controls what happens when content does not fit.",
+
+    intro:
+      "A box has a finite content area. What happens when content is larger than that area?",
+
+    explanation: `
+      <p>
+        The <strong>overflow</strong> property controls content
+        that extends beyond the box.
+      </p>
+
+      <div class="grid sm:grid-cols-2 gap-3 my-4">
+
+        <div class="dimension-card">
+          <strong>visible</strong>
+          <p class="!text-xs !mt-1">
+            Content can extend outside.
+          </p>
+        </div>
+
+        <div class="dimension-card">
+          <strong>hidden</strong>
+          <p class="!text-xs !mt-1">
+            Extra content is clipped.
+          </p>
+        </div>
+
+        <div class="dimension-card">
+          <strong>auto</strong>
+          <p class="!text-xs !mt-1">
+            Browser adds scrolling when necessary.
+          </p>
+        </div>
+
+        <div class="dimension-card">
+          <strong>scroll</strong>
+          <p class="!text-xs !mt-1">
+            Scrolling mechanism is provided.
+          </p>
+        </div>
+
+      </div>
+    `,
+
+    challenge: {
+      description:
+        "Practice changing the overflow behavior.",
+
+      requirements: [
+        "Set overflow to hidden."
+      ],
+
+      hint:
+        "Use the Overflow dropdown.",
+
+      check: () =>
+        state.box.overflow === "hidden"
+    }
+  },
+
+
+  {
+    id: 15,
+    title: "The Box Model in Real Components",
+    property: "card layout",
+    syntax: "width + padding + border + margin",
+    model: "Real components are combinations of box-model decisions.",
+
+    intro:
+      "Cards, buttons, inputs, sections and navigation bars all depend on the box model.",
+
+    explanation: `
+      <p>
+        Consider a card:
+      </p>
+
+      <div class="formula">
+        .card {<br>
+        &nbsp;&nbsp;width: 320px;<br>
+        &nbsp;&nbsp;padding: 24px;<br>
+        &nbsp;&nbsp;border: 1px solid #ddd;<br>
+        &nbsp;&nbsp;border-radius: 12px;<br>
+        }
+      </div>
+
+      <p>
+        If the card uses content-box, the padding and border increase
+        the final width.
+      </p>
+
+      <p>
+        If it uses border-box, the declared width includes them.
+      </p>
+
+      <p>
+        This decision affects whether multiple cards fit beside one another.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Build a practical card-like box.",
+
+      requirements: [
+        "Width = 320px.",
+        "Padding = 24px on all sides.",
+        "Border = 1px on all sides.",
+        "Use border-box."
+      ],
+
+      hint:
+        "This is a very common real-world pattern.",
+
+      check: () =>
+        state.box.width === 320 &&
+        state.box.paddingTop === 24 &&
+        state.box.paddingRight === 24 &&
+        state.box.paddingBottom === 24 &&
+        state.box.paddingLeft === 24 &&
+        state.box.borderTop === 1 &&
+        state.box.borderRight === 1 &&
+        state.box.borderBottom === 1 &&
+        state.box.borderLeft === 1 &&
+        state.box.boxSizing === "border-box"
+    }
+  },
+
+
+  {
+    id: 16,
+    title: "Debugging Box Model Problems",
+    property: "debugging",
+    syntax: "Inspect → calculate → fix",
+    model: "Don't guess. Measure the layers.",
+
+    intro:
+      "Most box-model bugs become simple once you inspect each layer.",
+
+    explanation: `
+      <p>
+        When something looks too wide, ask:
+      </p>
+
+      <div class="formula">
+        1. What is the content width?<br>
+        2. How much padding exists?<br>
+        3. How thick is the border?<br>
+        4. Is box-sizing content-box or border-box?<br>
+        5. How much margin surrounds it?
+      </div>
+
+      <p>
+        Then calculate instead of guessing.
+      </p>
+
+      <div class="mistake">
+        <strong class="text-amber-300">
+          Developer habit:
+        </strong>
+
+        <p class="!text-xs !mt-1">
+          When a layout is unexpectedly large, inspect the box model
+          before changing random widths.
+        </p>
+      </div>
+    `,
+
+    challenge: {
+      description:
+        "Switch to border-box and inspect the dimensions.",
+
+      requirements: [
+        "Use border-box.",
+        "Observe how the content area changes.",
+        "Understand why the border box stays fixed."
+      ],
+
+      hint:
+        "Compare the Box Math panel before and after changing box-sizing.",
+
+      check: () =>
+        state.box.boxSizing === "border-box"
+    }
+  },
+
+
+  {
+    id: 17,
+    title: "Think Like the Browser",
+    property: "calculation",
+    syntax: "declared → calculated → rendered",
+    model: "CSS declarations become a calculated layout.",
+
+    intro:
+      "Advanced CSS becomes easier when you stop thinking only in declarations and start thinking in calculations.",
+
+    explanation: `
+      <p>
+        When you write CSS, the browser doesn't simply display the
+        numbers exactly as written.
+      </p>
+
+      <p>
+        It combines:
+      </p>
+
+      <div class="formula">
+        width<br>
+        + padding<br>
+        + border<br>
+        + margin<br>
+        + constraints<br>
+        + layout context
+      </div>
+
+      <p>
+        That produces the final geometry you see on screen.
+      </p>
+
+      <p>
+        The goal is not to memorize every result.
+        The goal is to understand <strong>why</strong> the result exists.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Use the inspector and explain the difference between content box and margin box.",
+
+      requirements: [
+        "Inspect all four layers.",
+        "Compare content width with margin-box width."
+      ],
+
+      hint:
+        "The margin box is the outermost footprint.",
+
+      check: () => true
+    }
+  },
+
+
+  {
+    id: 18,
+    title: "Final Box Model Challenge",
+    property: "mastery",
+    syntax: "Build → calculate → explain",
+    model: "You understand the box model when you can predict the result before seeing it.",
+
+    intro:
+      "This final challenge combines width, padding, border, margin and box-sizing.",
+
+    explanation: `
+      <p>
+        Your final task is to construct a realistic UI card.
+      </p>
+
+      <p>
+        Don't just make the values correct.
+        Try to calculate the resulting dimensions before looking
+        at the inspector.
+      </p>
+
+      <div class="formula">
+        width: 360px<br>
+        height: 220px<br>
+        padding: 24px<br>
+        border: 2px<br>
+        margin: 20px<br>
+        box-sizing: border-box
+      </div>
+
+      <p>
+        The important part is understanding that
+        <strong>360 × 220 is now the border-box size</strong>.
+      </p>
+    `,
+
+    challenge: {
+      description:
+        "Build the final card using the exact specifications.",
+
+      requirements: [
+        "Width = 360px.",
+        "Height = 220px.",
+        "Padding = 24px on all sides.",
+        "Border = 2px on all sides.",
+        "Margin = 20px on all sides.",
+        "box-sizing = border-box."
+      ],
+
+      hint:
+        "Set every value deliberately. Then inspect the resulting content dimensions.",
+
+      check: () =>
+        state.box.width === 360 &&
+        state.box.height === 220 &&
+
+        state.box.paddingTop === 24 &&
+        state.box.paddingRight === 24 &&
+        state.box.paddingBottom === 24 &&
+        state.box.paddingLeft === 24 &&
+
+        state.box.borderTop === 2 &&
+        state.box.borderRight === 2 &&
+        state.box.borderBottom === 2 &&
+        state.box.borderLeft === 2 &&
+
+        state.box.marginTop === 20 &&
+        state.box.marginRight === 20 &&
+        state.box.marginBottom === 20 &&
+        state.box.marginLeft === 20 &&
+
+        state.box.boxSizing === "border-box"
+    }
+  }
+
+];
+
+
+/* ============================================================
+   3. DOM HELPER
+============================================================ */
+
+const $ = (id) => document.getElementById(id);
+
+
+/* ============================================================
+   4. NUMBER HELPERS
+============================================================ */
+
+function num(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function clamp(value, min = 0) {
+  return Math.max(min, num(value));
+}
+
+
+/* ============================================================
+   5. BOX CALCULATIONS
+============================================================ */
+
+function calculateBox() {
+
+  const b = state.box;
+
+  const horizontalPadding =
+    b.paddingLeft + b.paddingRight;
+
+  const verticalPadding =
+    b.paddingTop + b.paddingBottom;
+
+  const horizontalBorder =
+    b.borderLeft + b.borderRight;
+
+  const verticalBorder =
+    b.borderTop + b.borderBottom;
+
+  let contentWidth;
+  let contentHeight;
+
+  let borderBoxWidth;
+  let borderBoxHeight;
+
+  if (b.boxSizing === "content-box") {
+
+    contentWidth = b.width;
+    contentHeight = b.height;
+
+    borderBoxWidth =
+      b.width +
+      horizontalPadding +
+      horizontalBorder;
+
+    borderBoxHeight =
+      b.height +
+      verticalPadding +
+      verticalBorder;
+
+  } else {
+
+    borderBoxWidth = b.width;
+    borderBoxHeight = b.height;
+
+    contentWidth = Math.max(
+      0,
+      b.width -
+      horizontalPadding -
+      horizontalBorder
+    );
+
+    contentHeight = Math.max(
+      0,
+      b.height -
+      verticalPadding -
+      verticalBorder
+    );
+  }
+
+  const paddingBoxWidth =
+    contentWidth + horizontalPadding;
+
+  const paddingBoxHeight =
+    contentHeight + verticalPadding;
+
+  const marginBoxWidth =
+    borderBoxWidth +
+    b.marginLeft +
+    b.marginRight;
+
+  const marginBoxHeight =
+    borderBoxHeight +
+    b.marginTop +
+    b.marginBottom;
+
+  return {
+    contentWidth,
+    contentHeight,
+
+    paddingBoxWidth,
+    paddingBoxHeight,
+
+    borderBoxWidth,
+    borderBoxHeight,
+
+    marginBoxWidth,
+    marginBoxHeight,
+
+    horizontalPadding,
+    verticalPadding,
+
+    horizontalBorder,
+    verticalBorder
+  };
+}
+
+
+/* ============================================================
+   6. LESSON RENDER
+============================================================ */
+
+function renderLessons() {
+
+  const list = $("lesson-list");
+
+  list.innerHTML = "";
+
+  lessons.forEach((lesson) => {
+
+    const completed =
+      state.completedLessons.includes(lesson.id);
+
+    const button = document.createElement("button");
+
+    button.className =
+      "lesson-btn flex items-center gap-3 " +
+      (lesson.id === state.currentLesson ? "active " : "") +
+      (completed ? "completed" : "");
+
+    button.innerHTML = `
+
+      <span class="lesson-number">
+        ${
+          completed
+            ? '<i class="fa-solid fa-check"></i>'
+            : lesson.id
+        }
+      </span>
+
+      <span class="min-w-0">
+
+        <span
+          class="block text-xs font-semibold truncate"
+        >
+          ${lesson.title}
+        </span>
+
+        <span
+          class="block text-[10px] subtle mt-0.5 truncate"
+        >
+          ${lesson.property}
+        </span>
+
+      </span>
+    `;
+
+    button.addEventListener("click", () => {
+
+      state.currentLesson = lesson.id;
+
+      render();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    });
+
+    list.appendChild(button);
+
+  });
+
+}
+
+
+/* ============================================================
+   7. LESSON HEADER
+============================================================ */
+
+function renderLessonHeader() {
+
+  const lesson =
+    lessons.find(
+      item => item.id === state.currentLesson
+    );
+
+  if (!lesson) return;
+
+  $("lesson-number").textContent =
+    `Lesson ${lesson.id}`;
+
+  $("lesson-property").textContent =
+    lesson.property;
+
+  $("lesson-title").textContent =
+    lesson.title;
+
+  $("lesson-intro").textContent =
+    lesson.intro;
+
+  $("lesson-property-large").textContent =
+    lesson.property;
+
+  $("lesson-syntax").textContent =
+    lesson.syntax;
+
+  $("lesson-model").textContent =
+    lesson.model;
+
+  $("lesson-explanation").innerHTML =
+    lesson.explanation;
+
+  $("challenge-description").textContent =
+    lesson.challenge.description;
+
+  $("challenge-hint").textContent =
+    lesson.challenge.hint;
+
+  const requirements =
+    $("challenge-requirements");
+
+  requirements.innerHTML = "";
+
+  lesson.challenge.requirements.forEach(
+    requirement => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "challenge-option flex items-center gap-3";
+
+      row.innerHTML = `
+        <i class="fa-regular fa-circle-check text-slate-500"></i>
+        <span class="text-sm text-slate-300">
+          ${requirement}
+        </span>
+      `;
+
+      requirements.appendChild(row);
+    }
+  );
+
+  $("challenge-feedback").classList.add("hidden");
+
+}
+
+
+/* ============================================================
+   8. CONTROL RENDER
+============================================================ */
+
+function renderControls() {
+
+  const b = state.box;
+
+  const values = {
+
+    "ctrl-width": b.width,
+    "ctrl-height": b.height,
+
+    "ctrl-box-sizing": b.boxSizing,
+
+    "ctrl-padding-top": b.paddingTop,
+    "ctrl-padding-right": b.paddingRight,
+    "ctrl-padding-bottom": b.paddingBottom,
+    "ctrl-padding-left": b.paddingLeft,
+
+    "ctrl-border-top": b.borderTop,
+    "ctrl-border-right": b.borderRight,
+    "ctrl-border-bottom": b.borderBottom,
+    "ctrl-border-left": b.borderLeft,
+
+    "ctrl-margin-top": b.marginTop,
+    "ctrl-margin-right": b.marginRight,
+    "ctrl-margin-bottom": b.marginBottom,
+    "ctrl-margin-left": b.marginLeft,
+
+    "ctrl-overflow": b.overflow
+
+  };
+
+  Object.entries(values).forEach(
+    ([id, value]) => {
+
+      const element = $(id);
+
+      if (!element) return;
+
+      element.value = value;
+    }
+  );
+
+}
+
+
+/* ============================================================
+   9. VISUALIZER RENDER
+============================================================ */
+
+function renderVisualizer() {
+
+  const b = state.box;
+  const calc = calculateBox();
+
+  const marginLayer = $("margin-layer");
+  const borderLayer = $("border-layer");
+  const paddingLayer = $("padding-layer");
+  const contentLayer = $("content-layer");
+
+  /*
+    Scale the visual representation so very large boxes
+    don't destroy the page layout.
+  */
+
+  const MAX_VISUAL = 500;
+
+  const scale =
+    Math.min(
+      1,
+      MAX_VISUAL / Math.max(
+        calc.marginBoxWidth,
+        calc.marginBoxHeight
+      )
+    );
+
+  const visualMarginWidth =
+    Math.max(
+      100,
+      calc.marginBoxWidth * scale
+    );
+
+  const visualMarginHeight =
+    Math.max(
+      90,
+      calc.marginBoxHeight * scale
+    );
+
+  const visualBorderWidth =
+    calc.borderBoxWidth * scale;
+
+  const visualBorderHeight =
+    calc.borderBoxHeight * scale;
+
+  const visualPaddingWidth =
+    calc.paddingBoxWidth * scale;
+
+  const visualPaddingHeight =
+    calc.paddingBoxHeight * scale;
+
+  const visualContentWidth =
+    calc.contentWidth * scale;
+
+  const visualContentHeight =
+    calc.contentHeight * scale;
+
+
+  $("box-visual").style.width =
+    `${visualMarginWidth}px`;
+
+  $("box-visual").style.height =
+    `${visualMarginHeight}px`;
+
+
+  marginLayer.style.padding =
+    `${b.marginTop * scale}px
+     ${b.marginRight * scale}px
+     ${b.marginBottom * scale}px
+     ${b.marginLeft * scale}px`;
+
+
+  borderLayer.style.width =
+    `${visualBorderWidth}px`;
+
+  borderLayer.style.height =
+    `${visualBorderHeight}px`;
+
+  borderLayer.style.borderTopWidth =
+    `${b.borderTop * scale}px`;
+
+  borderLayer.style.borderRightWidth =
+    `${b.borderRight * scale}px`;
+
+  borderLayer.style.borderBottomWidth =
+    `${b.borderBottom * scale}px`;
+
+  borderLayer.style.borderLeftWidth =
+    `${b.borderLeft * scale}px`;
+
+
+  paddingLayer.style.padding =
+    `${b.paddingTop * scale}px
+     ${b.paddingRight * scale}px
+     ${b.paddingBottom * scale}px
+     ${b.paddingLeft * scale}px`;
+
+
+  contentLayer.style.width =
+    `${visualContentWidth}px`;
+
+  contentLayer.style.height =
+    `${visualContentHeight}px`;
+
+
+  /*
+    Show dimensions.
+  */
+
+  $("margin-top-measure").textContent =
+    `margin-top: ${b.marginTop}px`;
+
+  $("margin-left-measure").textContent =
+    `margin-left: ${b.marginLeft}px`;
+
+  $("border-top-measure").textContent =
+    `border-top: ${b.borderTop}px`;
+
+  $("border-left-measure").textContent =
+    `border-left: ${b.borderLeft}px`;
+
+  $("padding-top-measure").textContent =
+    `padding-top: ${b.paddingTop}px`;
+
+  $("padding-left-measure").textContent =
+    `padding-left: ${b.paddingLeft}px`;
+
+  $("content-size-display").textContent =
+    `${Math.round(calc.contentWidth)} × ${Math.round(calc.contentHeight)}`;
+}
+
+
+/* ============================================================
+   10. BOX MATH RENDER
+============================================================ */
+
+function renderMath() {
+
+  const b = state.box;
+  const c = calculateBox();
+
+  $("width-box-sizing").textContent =
+    b.boxSizing;
+
+  $("height-box-sizing").textContent =
+    b.boxSizing;
+
+
+  if (b.boxSizing === "content-box") {
+
+    $("width-formula").innerHTML = `
+      <span class="highlight">Content width</span>
+      = ${b.width}px<br><br>
+
+      Border-box width =<br>
+      ${b.width}px
+      + ${b.paddingLeft}px left padding
+      + ${b.paddingRight}px right padding
+      + ${b.borderLeft}px left border
+      + ${b.borderRight}px right border
+      <br><br>
+
+      =
+      <strong>${c.borderBoxWidth}px</strong>
+    `;
+
+    $("height-formula").innerHTML = `
+      <span class="highlight">Content height</span>
+      = ${b.height}px<br><br>
+
+      Border-box height =<br>
+      ${b.height}px
+      + ${b.paddingTop}px top padding
+      + ${b.paddingBottom}px bottom padding
+      + ${b.borderTop}px top border
+      + ${b.borderBottom}px bottom border
+      <br><br>
+
+      =
+      <strong>${c.borderBoxHeight}px</strong>
+    `;
+
+  } else {
+
+    $("width-formula").innerHTML = `
+      <span class="highlight">Border-box width</span>
+      = ${b.width}px<br><br>
+
+      Content width =<br>
+      ${b.width}px
+      − ${c.horizontalPadding}px padding
+      − ${c.horizontalBorder}px border
+      <br><br>
+
+      =
+      <strong>${c.contentWidth}px</strong>
+    `;
+
+    $("height-formula").innerHTML = `
+      <span class="highlight">Border-box height</span>
+      = ${b.height}px<br><br>
+
+      Content height =<br>
+      ${b.height}px
+      − ${c.verticalPadding}px padding
+      − ${c.verticalBorder}px border
+      <br><br>
+
+      =
+      <strong>${c.contentHeight}px</strong>
+    `;
+  }
+
+}
+
+
+/* ============================================================
+   11. INSPECTOR RENDER
+============================================================ */
+
+function renderInspector() {
+
+  const c = calculateBox();
+
+  $("inspect-margin-width").textContent =
+    `${Math.round(c.marginBoxWidth)}px`;
+
+  $("inspect-margin-height").textContent =
+    `${Math.round(c.marginBoxHeight)}px`;
+
+  $("inspect-border-width").textContent =
+    `${Math.round(c.borderBoxWidth)}px`;
+
+  $("inspect-border-height").textContent =
+    `${Math.round(c.borderBoxHeight)}px`;
+
+  $("inspect-padding-width").textContent =
+    `${Math.round(c.paddingBoxWidth)}px`;
+
+  $("inspect-padding-height").textContent =
+    `${Math.round(c.paddingBoxHeight)}px`;
+
+  $("inspect-content-width").textContent =
+    `${Math.round(c.contentWidth)}px`;
+
+  $("inspect-content-height").textContent =
+    `${Math.round(c.contentHeight)}px`;
+}
+
+
+/* ============================================================
+   12. GENERATED CSS
+============================================================ */
+
+function renderGeneratedCSS() {
+
+  const b = state.box;
+
+  const css = `.box {
+  width: ${b.width}px;
+  height: ${b.height}px;
+
+  padding-top: ${b.paddingTop}px;
+  padding-right: ${b.paddingRight}px;
+  padding-bottom: ${b.paddingBottom}px;
+  padding-left: ${b.paddingLeft}px;
+
+  border-top: ${b.borderTop}px solid #ef4444;
+  border-right: ${b.borderRight}px solid #ef4444;
+  border-bottom: ${b.borderBottom}px solid #ef4444;
+  border-left: ${b.borderLeft}px solid #ef4444;
+
+  margin-top: ${b.marginTop}px;
+  margin-right: ${b.marginRight}px;
+  margin-bottom: ${b.marginBottom}px;
+  margin-left: ${b.marginLeft}px;
+
+  box-sizing: ${b.boxSizing};
+  overflow: ${b.overflow};
+}`;
+
+  $("generated-css").textContent = css;
+
+}
+
+
+/* ============================================================
+   13. PROGRESS
+============================================================ */
+
+function renderProgress() {
+
+  const total = lessons.length;
+
+  const completed =
+    state.completedLessons.length;
+
+  const percentage =
+    Math.round((completed / total) * 100);
+
+  $("header-progress").style.width =
+    `${percentage}%`;
+
+  $("progress-text").textContent =
+    `${percentage}%`;
+
+  $("lesson-count").textContent =
+    completed;
+}
+
+
+/* ============================================================
+   14. MARK COMPLETE
+============================================================ */
+
+function renderCompletionButton() {
+
+  const button = $("complete-lesson");
+
+  if (
+    state.completedLessons.includes(
+      state.currentLesson
+    )
+  ) {
+
+    button.innerHTML = `
+      <i class="fa-solid fa-circle-check mr-1"></i>
+      Completed
+    `;
+
+    button.className =
+      "btn btn-success";
+
+  } else {
+
+    button.innerHTML = `
+      <i class="fa-solid fa-check mr-1"></i>
+      Mark Complete
+    `;
+
+    button.className =
+      "btn btn-success";
+  }
+
+}
+
+
+/* ============================================================
+   15. MASTER RENDER
+============================================================ */
+
+function render() {
+
+  renderLessons();
+
+  renderLessonHeader();
+
+  renderControls();
+
+  renderVisualizer();
+
+  renderMath();
+
+  renderInspector();
+
+  renderGeneratedCSS();
+
+  renderProgress();
+
+  renderCompletionButton();
+
+}
+
+
+/* ============================================================
+   16. UPDATE BOX FROM CONTROL
+============================================================ */
+
+function updateBoxProperty(property, value) {
+
+  if (
+    property === "boxSizing" ||
+    property === "overflow"
+  ) {
+
+    state.box[property] = value;
+
+  } else {
+
+    state.box[property] =
+      clamp(value);
+
+  }
+
+  render();
+}
+
+
+/* ============================================================
+   17. CONTROL EVENT BINDINGS
+============================================================ */
+
+const controlMap = {
+
+  "ctrl-width": "width",
+  "ctrl-height": "height",
+
+  "ctrl-box-sizing": "boxSizing",
+
+  "ctrl-padding-top": "paddingTop",
+  "ctrl-padding-right": "paddingRight",
+  "ctrl-padding-bottom": "paddingBottom",
+  "ctrl-padding-left": "paddingLeft",
+
+  "ctrl-border-top": "borderTop",
+  "ctrl-border-right": "borderRight",
+  "ctrl-border-bottom": "borderBottom",
+  "ctrl-border-left": "borderLeft",
+
+  "ctrl-margin-top": "marginTop",
+  "ctrl-margin-right": "marginRight",
+  "ctrl-margin-bottom": "marginBottom",
+  "ctrl-margin-left": "marginLeft",
+
+  "ctrl-overflow": "overflow"
+};
+
+
+Object.entries(controlMap).forEach(
+  ([id, property]) => {
+
+    const control = $(id);
+
+    control.addEventListener(
+      "input",
+      () => {
+
+        updateBoxProperty(
+          property,
+          control.value
+        );
+
+      }
+    );
+
+    control.addEventListener(
+      "change",
+      () => {
+
+        updateBoxProperty(
+          property,
+          control.value
+        );
+
+      }
+    );
+
+  }
+);
+
+
+/* ============================================================
+   18. CSS PARSER
+============================================================ */
+
+function parseDeclarations(css) {
+
+  const match =
+    css.match(
+      /\.box\s*\{([\s\S]*?)\}/i
+    );
+
+  if (!match) {
+
+    throw new Error(
+      "Write your CSS inside .box { ... }"
+    );
+  }
+
+  const body = match[1];
+
+  const declarations = {};
+
+  body
+    .split(";")
+    .forEach(part => {
+
+      const colon =
+        part.indexOf(":");
+
+      if (colon === -1) return;
+
+      const property =
+        part
+          .slice(0, colon)
+          .trim()
+          .toLowerCase();
+
+      const value =
+        part
+          .slice(colon + 1)
+          .trim();
+
+      declarations[property] =
+        value;
+    });
+
+  return declarations;
+}
+
+
+/* ============================================================
+   19. CSS VALUE PARSER
+============================================================ */
+
+function px(value) {
+
+  const match =
+    String(value)
+      .trim()
+      .match(/^(-?\d+(?:\.\d+)?)px$/i);
+
+  if (!match) return null;
+
+  return Number(match[1]);
+}
+
+
+/* ============================================================
+   20. SHORTHAND PARSER
+============================================================ */
+
+function parseShorthand(value) {
+
+  const values =
+    String(value)
+      .trim()
+      .split(/\s+/)
+      .map(px)
+      .filter(v => v !== null);
+
+  if (values.length === 1) {
+
+    return {
+      top: values[0],
+      right: values[0],
+      bottom: values[0],
+      left: values[0]
+    };
+
+  }
+
+  if (values.length === 2) {
+
+    return {
+      top: values[0],
+      right: values[1],
+      bottom: values[0],
+      left: values[1]
+    };
+
+  }
+
+  if (values.length === 3) {
+
+    return {
+      top: values[0],
+      right: values[1],
+      bottom: values[2],
+      left: values[1]
+    };
+
+  }
+
+  if (values.length === 4) {
+
+    return {
+      top: values[0],
+      right: values[1],
+      bottom: values[2],
+      left: values[3]
+    };
+
+  }
+
+  return null;
+}
+
+
+/* ============================================================
+   21. BORDER SHORTHAND
+============================================================ */
+
+function parseBorder(value) {
+
+  const match =
+    String(value).match(
+      /(-?\d+(?:\.\d+)?)px/
+    );
+
+  if (!match) return null;
+
+  return Number(match[1]);
+}
+
+
+/* ============================================================
+   22. APPLY CSS
+============================================================ */
+
+function applyCSS() {
+
+  const editor =
+    $("css-editor");
+
+  try {
+
+    const declarations =
+      parseDeclarations(
+        editor.value
+      );
+
+
+    /*
+      Width
+    */
+
+    if (declarations.width) {
+
+      const value =
+        px(declarations.width);
+
+      if (value !== null)
+        state.box.width = clamp(value);
+    }
+
+
+    /*
+      Height
+    */
+
+    if (declarations.height) {
+
+      const value =
+        px(declarations.height);
+
+      if (value !== null)
+        state.box.height = clamp(value);
+    }
+
+
+    /*
+      Box sizing
+    */
+
+    if (
+      declarations["box-sizing"] ===
+      "border-box" ||
+
+      declarations["box-sizing"] ===
+      "content-box"
+    ) {
+
+      state.box.boxSizing =
+        declarations["box-sizing"];
+
+    }
+
+
+    /*
+      Overflow
+    */
+
+    if (
+      ["visible", "hidden", "auto", "scroll"]
+        .includes(declarations.overflow)
+    ) {
+
+      state.box.overflow =
+        declarations.overflow;
+
+    }
+
+
+    /*
+      Padding shorthand
+    */
+
+    if (declarations.padding) {
+
+      const parsed =
+        parseShorthand(
+          declarations.padding
+        );
+
+      if (parsed) {
+
+        state.box.paddingTop =
+          clamp(parsed.top);
+
+        state.box.paddingRight =
+          clamp(parsed.right);
+
+        state.box.paddingBottom =
+          clamp(parsed.bottom);
+
+        state.box.paddingLeft =
+          clamp(parsed.left);
+      }
+    }
+
+
+    /*
+      Individual padding
+    */
+
+    const paddingProperties = {
+
+      "padding-top": "paddingTop",
+      "padding-right": "paddingRight",
+      "padding-bottom": "paddingBottom",
+      "padding-left": "paddingLeft"
+
+    };
+
+
+    Object.entries(
+      paddingProperties
+    ).forEach(
+      ([cssProperty, stateProperty]) => {
+
+        if (
+          declarations[cssProperty] === undefined
+        ) return;
+
+        const value =
+          px(
+            declarations[cssProperty]
+          );
+
+        if (value !== null) {
+
+          state.box[stateProperty] =
+            clamp(value);
+        }
+
+      }
+    );
+
+
+    /*
+      Margin shorthand
+    */
+
+    if (declarations.margin) {
+
+      const parsed =
+        parseShorthand(
+          declarations.margin
+        );
+
+      if (parsed) {
+
+        state.box.marginTop =
+          parsed.top;
+
+        state.box.marginRight =
+          parsed.right;
+
+        state.box.marginBottom =
+          parsed.bottom;
+
+        state.box.marginLeft =
+          parsed.left;
+      }
+    }
+
+
+    /*
+      Individual margins
+    */
+
+    const marginProperties = {
+
+      "margin-top": "marginTop",
+      "margin-right": "marginRight",
+      "margin-bottom": "marginBottom",
+      "margin-left": "marginLeft"
+
+    };
+
+
+    Object.entries(
+      marginProperties
+    ).forEach(
+      ([cssProperty, stateProperty]) => {
+
+        if (
+          declarations[cssProperty] === undefined
+        ) return;
+
+        const value =
+          px(
+            declarations[cssProperty]
+          );
+
+        if (value !== null) {
+
+          state.box[stateProperty] =
+            value;
+        }
+
+      }
+    );
+
+
+    /*
+      Border shorthand
+    */
+
+    if (declarations.border) {
+
+      const border =
+        parseBorder(
+          declarations.border
+        );
+
+      if (border !== null) {
+
+        state.box.borderTop = border;
+        state.box.borderRight = border;
+        state.box.borderBottom = border;
+        state.box.borderLeft = border;
+      }
+    }
+
+
+    /*
+      Border width shorthand
+    */
+
+    if (declarations["border-width"]) {
+
+      const parsed =
+        parseShorthand(
+          declarations["border-width"]
+        );
+
+      if (parsed) {
+
+        state.box.borderTop =
+          clamp(parsed.top);
+
+        state.box.borderRight =
+          clamp(parsed.right);
+
+        state.box.borderBottom =
+          clamp(parsed.bottom);
+
+        state.box.borderLeft =
+          clamp(parsed.left);
+      }
+    }
+
+
+    /*
+      Individual borders
+    */
+
+    const borderProperties = {
+
+      "border-top-width": "borderTop",
+      "border-right-width": "borderRight",
+      "border-bottom-width": "borderBottom",
+      "border-left-width": "borderLeft"
+
+    };
+
+
+    Object.entries(
+      borderProperties
+    ).forEach(
+      ([cssProperty, stateProperty]) => {
+
+        if (
+          declarations[cssProperty] === undefined
+        ) return;
+
+        const value =
+          px(
+            declarations[cssProperty]
+          );
+
+        if (value !== null) {
+
+          state.box[stateProperty] =
+            clamp(value);
+        }
+
+      }
+    );
+
+
+    render();
+
+
+  } catch (error) {
+
+    alert(
+      error.message ||
+      "Could not parse the CSS."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   23. GENERATE CSS FROM STATE
+============================================================ */
+
+function syncEditorToState() {
+
+  const b = state.box;
+
+  $("css-editor").value = `.box {
+  width: ${b.width}px;
+  height: ${b.height}px;
+
+  padding: ${b.paddingTop}px ${b.paddingRight}px ${b.paddingBottom}px ${b.paddingLeft}px;
+
+  border-top: ${b.borderTop}px solid #ef4444;
+  border-right: ${b.borderRight}px solid #ef4444;
+  border-bottom: ${b.borderBottom}px solid #ef4444;
+  border-left: ${b.borderLeft}px solid #ef4444;
+
+  margin: ${b.marginTop}px ${b.marginRight}px ${b.marginBottom}px ${b.marginLeft}px;
+
+  box-sizing: ${b.boxSizing};
+  overflow: ${b.overflow};
+}`;
+
+}
+
+
+/* ============================================================
+   24. COPY CSS
+============================================================ */
+
+$("copy-css").addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      await navigator.clipboard.writeText(
+        $("generated-css").textContent
+      );
+
+      const button =
+        $("copy-css");
+
+      const original =
+        button.innerHTML;
+
+      button.innerHTML =
+        '<i class="fa-solid fa-check mr-1"></i> Copied';
+
+      setTimeout(
+        () => {
+          button.innerHTML = original;
+        },
+        1400
+      );
+
+    } catch {
+
+      alert(
+        "Clipboard access is unavailable. Select and copy the CSS manually."
+      );
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   25. APPLY CSS BUTTON
+============================================================ */
+
+$("apply-css").addEventListener(
+  "click",
+  applyCSS
+);
+
+
+/* ============================================================
+   26. COMPLETE LESSON
+============================================================ */
+
+$("complete-lesson").addEventListener(
+  "click",
+  () => {
+
+    if (
+      !state.completedLessons.includes(
+        state.currentLesson
+      )
+    ) {
+
+      state.completedLessons.push(
+        state.currentLesson
+      );
+
+    }
+
+    render();
+
+  }
+);
+
+
+/* ============================================================
+   27. CHECK CHALLENGE
+============================================================ */
+
+$("check-challenge").addEventListener(
+  "click",
+  () => {
+
+    const lesson =
+      lessons.find(
+        item =>
+          item.id === state.currentLesson
+      );
+
+    if (!lesson) return;
+
+    const passed =
+      lesson.challenge.check();
+
+    const feedback =
+      $("challenge-feedback");
+
+    feedback.classList.remove(
+      "hidden",
+      "bg-green-900/20",
+      "border",
+      "border-green-700",
+      "text-green-300",
+      "bg-red-900/20",
+      "border-red-700",
+      "text-red-300"
+    );
+
+    if (passed) {
+
+      feedback.classList.add(
+        "bg-green-900/20",
+        "border",
+        "border-green-700",
+        "text-green-300"
+      );
+
+      feedback.innerHTML = `
+        <i class="fa-solid fa-circle-check mr-2"></i>
+        Excellent. Your box matches the challenge.
+      `;
+
+      if (
+        !state.completedLessons.includes(
+          state.currentLesson
+        )
+      ) {
+
+        state.completedLessons.push(
+          state.currentLesson
+        );
+
+        renderProgress();
+        renderLessons();
+        renderCompletionButton();
+
+      }
+
+    } else {
+
+      feedback.classList.add(
+        "bg-red-900/20",
+        "border",
+        "border-red-700",
+        "text-red-300"
+      );
+
+      feedback.innerHTML = `
+        <i class="fa-solid fa-circle-xmark mr-2"></i>
+        Not quite yet. Check the requirements and try again.
+      `;
+    }
+
+  }
+);
+
+
+/* ============================================================
+   28. QUICK PRESETS
+============================================================ */
+
+document
+  .querySelectorAll("[data-preset]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const preset =
+          button.dataset.preset;
+
+        if (preset === "padding") {
+
+          state.box.paddingTop = 50;
+          state.box.paddingRight = 50;
+          state.box.paddingBottom = 50;
+          state.box.paddingLeft = 50;
+
+        }
+
+
+        if (preset === "border-box") {
+
+          state.box.boxSizing =
+            "border-box";
+
+        }
+
+
+        if (preset === "wide") {
+
+          state.box.width = 500;
+
+        }
+
+
+        if (preset === "overflow") {
+
+          state.box.width = 160;
+          state.box.height = 100;
+
+          state.box.paddingTop = 40;
+          state.box.paddingRight = 40;
+          state.box.paddingBottom = 40;
+          state.box.paddingLeft = 40;
+
+          state.box.overflow = "hidden";
+
+        }
+
+
+        if (preset === "asymmetric") {
+
+          state.box.paddingTop = 10;
+          state.box.paddingRight = 60;
+          state.box.paddingBottom = 30;
+          state.box.paddingLeft = 90;
+
+          state.box.marginTop = 10;
+          state.box.marginRight = 40;
+          state.box.marginBottom = 20;
+          state.box.marginLeft = 70;
+
+          state.box.borderTop = 2;
+          state.box.borderRight = 8;
+          state.box.borderBottom = 4;
+          state.box.borderLeft = 12;
+
+        }
+
+        syncEditorToState();
+
+        render();
+
+      }
+    );
+
+  });
+
+
+/* ============================================================
+   29. RESET
+============================================================ */
+
+$("reset-app").addEventListener(
+  "click",
+  () => {
+
+    state.currentLesson = 1;
+
+    state.completedLessons = [];
+
+    state.box = {
+
+      width: 300,
+      height: 180,
+
+      boxSizing: "content-box",
+
+      paddingTop: 20,
+      paddingRight: 20,
+      paddingBottom: 20,
+      paddingLeft: 20,
+
+      borderTop: 4,
+      borderRight: 4,
+      borderBottom: 4,
+      borderLeft: 4,
+
+      marginTop: 20,
+      marginRight: 20,
+      marginBottom: 20,
+      marginLeft: 20,
+
+      borderStyle: "solid",
+
+      overflow: "visible"
+    };
+
+    syncEditorToState();
+
+    render();
+
+  }
+);
+
+
+/* ============================================================
+   30. KEYBOARD SHORTCUT
+============================================================ */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    /*
+      Ctrl/Cmd + Enter
+      = Apply CSS
+    */
+
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.key === "Enter"
+    ) {
+
+      event.preventDefault();
+
+      applyCSS();
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   31. INITIALIZE
+============================================================ */
+
+syncEditorToState();
+
+render();
+
+</script>
+
+</body>
+</html>

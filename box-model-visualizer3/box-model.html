@@ -1,0 +1,3148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Box Model & Geometry Learning Visualizer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #08090b;
+        --panel: #101216;
+        --panel-2: #151820;
+        --border: #252936;
+        --muted: #8b92a3;
+        --text: #f5f7fb;
+        --accent: #8b5cf6;
+        --accent-2: #a78bfa;
+
+        --margin-color: rgba(245, 158, 11, 0.18);
+        --border-color: rgba(239, 68, 68, 0.35);
+        --padding-color: rgba(59, 130, 246, 0.25);
+        --content-color: rgba(34, 197, 94, 0.28);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at 15% 0%,
+            rgba(139, 92, 246, 0.12),
+            transparent 35%
+          ),
+          radial-gradient(
+            circle at 90% 20%,
+            rgba(59, 130, 246, 0.08),
+            transparent 35%
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family: Inter, sans-serif;
+        min-height: 100vh;
+      }
+
+      code,
+      pre,
+      textarea,
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      ::selection {
+        background: rgba(139, 92, 246, 0.35);
+      }
+
+      /* Custom scrollbars */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0d0f14;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #252936;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #3b82f6;
+      }
+
+      .glass {
+        background: rgba(16, 18, 22, 0.88);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+      }
+
+      .subtle {
+        color: var(--muted);
+      }
+
+      .lesson-btn {
+        width: 100%;
+        text-align: left;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: #aeb4c2;
+        transition: all 0.18s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .lesson-btn:hover {
+        background: #171a21;
+        color: white;
+      }
+
+      .lesson-btn.active {
+        background: rgba(139, 92, 246, 0.15);
+        border-color: rgba(139, 92, 246, 0.4);
+        color: white;
+        font-weight: 600;
+      }
+
+      .lesson-btn.completed .lesson-number {
+        background: #22c55e;
+        color: #06110a;
+      }
+
+      .lesson-number {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        background: #20232c;
+        color: #9ba1af;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .code-editor {
+        width: 100%;
+        min-height: 220px;
+        resize: vertical;
+        background: #090a0d;
+        color: #d9dee9;
+        border: 1px solid #292d37;
+        border-radius: 12px;
+        padding: 14px;
+        line-height: 1.6;
+        font-size: 12px;
+        outline: none;
+        tab-size: 2;
+      }
+
+      .code-editor:focus {
+        border-color: rgba(139, 92, 246, 0.7);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+      }
+
+      .control-input {
+        width: 100%;
+        background: #0b0d11;
+        border: 1px solid #292d37;
+        color: white;
+        border-radius: 9px;
+        padding: 7px 10px;
+        outline: none;
+        font-size: 13px;
+        transition: border-color 0.15s ease;
+      }
+
+      .control-input:focus {
+        border-color: rgba(139, 92, 246, 0.7);
+      }
+
+      .small-label {
+        display: block;
+        color: #8e95a5;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .btn {
+        border: 1px solid #303440;
+        background: #181b22;
+        color: #dfe3eb;
+        padding: 8px 14px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.18s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn:hover {
+        background: #20242d;
+        border-color: #454a58;
+        color: #ffffff;
+      }
+
+      .btn-primary {
+        background: #7c3aed;
+        border-color: #8b5cf6;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #8b5cf6;
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      }
+
+      .btn-success {
+        background: #15803d;
+        border-color: #22c55e;
+        color: #dcfce7;
+      }
+
+      .btn-success:hover {
+        background: #16a34a;
+      }
+
+      .dimension-card {
+        border: 1px solid #292d37;
+        background: #0c0e12;
+        border-radius: 11px;
+        padding: 12px;
+      }
+
+      .formula {
+        background: #0a0c10;
+        border: 1px solid #292d37;
+        border-radius: 10px;
+        padding: 12px;
+        font-family: "JetBrains Mono", monospace;
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.7;
+      }
+
+      .highlight {
+        color: #c4b5fd;
+        font-weight: 600;
+      }
+
+      .box-stage {
+        position: relative;
+        min-height: 480px;
+        overflow: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 24px 24px;
+        border-radius: 16px;
+      }
+
+      /* Box visual container */
+      .box-visual {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        transition:
+          width 0.2s ease,
+          height 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .margin-layer {
+        position: relative;
+        background: var(--margin-color);
+        border: 1px dashed rgba(245, 158, 11, 0.7);
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        transition: all 0.2s ease;
+      }
+
+      .border-layer {
+        position: relative;
+        background: var(--border-color);
+        border-style: solid;
+        border-color: rgba(239, 68, 68, 0.85);
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        transition: all 0.2s ease;
+      }
+
+      .padding-layer {
+        position: relative;
+        background: var(--padding-color);
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        transition: all 0.2s ease;
+      }
+
+      .content-layer {
+        position: relative;
+        background: var(--content-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        min-width: 0;
+        min-height: 0;
+        transition: all 0.2s ease;
+        width: 100%;
+        height: 100%;
+      }
+
+      .content-inner {
+        padding: 12px;
+        max-width: 100%;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .layer-label {
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 2px 6px;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+        border-radius: 4px;
+        background: rgba(8, 9, 11, 0.82);
+        z-index: 10;
+        pointer-events: none;
+        backdrop-filter: blur(4px);
+      }
+
+      .margin-label {
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+      .border-label {
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+      .padding-label {
+        color: #93c5fd;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+      }
+      .content-label {
+        color: #86efac;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #303440;
+        background: #151820;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 11px;
+        color: #b8becb;
+      }
+
+      .challenge-card {
+        padding: 14px;
+        border: 1px solid #292d37;
+        border-radius: 12px;
+        background: #0d0f13;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+
+      .challenge-card:hover {
+        border-color: #8b5cf6;
+        background: #13161f;
+      }
+
+      .challenge-card.selected {
+        border-color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.12);
+        box-shadow: 0 0 0 1px #8b5cf6;
+      }
+
+      .challenge-card.success {
+        border-color: #22c55e !important;
+        background: rgba(34, 197, 94, 0.12) !important;
+      }
+
+      .challenge-card.fail {
+        border-color: #ef4444 !important;
+        background: rgba(239, 68, 68, 0.12) !important;
+      }
+
+      .progress-track {
+        height: 6px;
+        background: #20232b;
+        border-radius: 99px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #7c3aed, #a78bfa);
+        border-radius: inherit;
+        transition: width 0.3s ease;
+      }
+
+      .lesson-content p {
+        color: #aeb5c2;
+        line-height: 1.75;
+        font-size: 14px;
+        margin-bottom: 0.75rem;
+      }
+
+      .lesson-content strong {
+        color: #f2f4f8;
+      }
+
+      .mistake {
+        border-left: 3px solid #f59e0b;
+        background: rgba(245, 158, 11, 0.08);
+        padding: 12px 14px;
+        border-radius: 0 9px 9px 0;
+      }
+
+      .tab-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        color: #94a3b8;
+        background: transparent;
+        border: 1px solid transparent;
+        transition: all 0.15s ease;
+      }
+
+      .tab-btn.active {
+        color: white;
+        background: #1e2330;
+        border-color: #333a4d;
+      }
+
+      /* Range slider custom style */
+      input[type="range"] {
+        accent-color: #8b5cf6;
+      }
+
+      @media (max-width: 1200px) {
+        .app-grid {
+          grid-template-columns: 240px minmax(0, 1fr) !important;
+        }
+        .right-column {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .app-grid {
+          display: flex !important;
+          flex-direction: column;
+        }
+        .box-stage {
+          min-height: 360px;
+          padding: 30px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="glass sticky top-0 z-50">
+      <div class="max-w-[1700px] mx-auto px-4 md:px-6">
+        <div class="h-16 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <div
+              class="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400"
+            >
+              <i class="fa-solid fa-cube text-lg"></i>
+            </div>
+
+            <div class="min-w-0">
+              <h1 class="font-bold text-base md:text-lg truncate">
+                CSS Box Model & Geometry Visualizer
+              </h1>
+              <p class="text-xs subtle hidden sm:block">
+                Interactive Masterclass: Box Model, Inner/Outer Radius, Clip
+                Path & Image Padding
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <!-- View Mode Switcher -->
+            <div
+              class="bg-[#0b0d11] p-1 rounded-xl border border-[#252936] flex gap-1"
+            >
+              <button id="mode-box" class="tab-btn active">
+                <i class="fa-solid fa-vector-square mr-1"></i> Box Mode
+              </button>
+              <button id="mode-image" class="tab-btn">
+                <i class="fa-regular fa-image mr-1"></i> Image / Media Mode
+              </button>
+            </div>
+
+            <!-- Progress bar -->
+            <div
+              class="hidden lg:flex items-center gap-3 border-l border-[#252936] pl-4"
+            >
+              <span class="text-xs subtle">Progress</span>
+              <div class="w-32 progress-track">
+                <div
+                  id="header-progress"
+                  class="progress-fill"
+                  style="width: 0%"
+                ></div>
+              </div>
+              <span id="progress-text" class="text-xs font-semibold mono"
+                >0%</span
+              >
+            </div>
+
+            <button
+              id="reset-app"
+              class="btn text-xs"
+              title="Reset Course Progress & Visualizer"
+            >
+              <i class="fa-solid fa-rotate-left mr-1.5"></i>
+              <span class="hidden sm:inline">Reset</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-[1700px] mx-auto px-4 md:px-6 py-6">
+      <div class="app-grid grid grid-cols-[260px_minmax(0,1fr)_340px] gap-6">
+        <!-- =====================================================
+            LEFT SIDEBAR: COURSE LESSONS
+      ====================================================== -->
+        <aside
+          class="panel p-3 h-fit sticky top-[84px] max-h-[calc(100vh-100px)] overflow-y-auto"
+        >
+          <div
+            class="px-2 py-2 mb-2 flex items-center justify-between border-b border-[#20232c] pb-3"
+          >
+            <div>
+              <div
+                class="text-xs font-bold uppercase tracking-wider text-violet-400"
+              >
+                Interactive Course
+              </div>
+              <div class="text-xs subtle mt-0.5">
+                <span
+                  id="lesson-completed-count"
+                  class="text-white font-semibold"
+                  >0</span
+                >/<span id="lesson-total-count">0</span> Completed
+              </div>
+            </div>
+            <i class="fa-solid fa-book-open text-slate-500"></i>
+          </div>
+
+          <div id="lesson-list" class="space-y-1">
+            <!-- Lesson buttons dynamic -->
+          </div>
+        </aside>
+
+        <!-- =====================================================
+            CENTER CONTENT & VISUALIZER
+      ====================================================== -->
+        <section class="space-y-6 min-w-0">
+          <!-- Lesson Header Card -->
+          <div class="panel p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <span id="lesson-number" class="tag font-mono text-xs"
+                    >Lesson 1</span
+                  >
+                  <span
+                    id="lesson-category"
+                    class="tag text-xs text-violet-300 bg-violet-950/40 border-violet-800/40"
+                    >Box Model Core</span
+                  >
+                  <span
+                    id="lesson-property"
+                    class="tag mono text-xs text-amber-300"
+                    >box-sizing</span
+                  >
+                </div>
+
+                <h2
+                  id="lesson-title"
+                  class="text-2xl md:text-3xl font-extrabold text-white"
+                >
+                  Loading lesson title...
+                </h2>
+
+                <p
+                  id="lesson-intro"
+                  class="subtle text-sm leading-relaxed max-w-3xl"
+                >
+                  Lesson description content will appear here.
+                </p>
+              </div>
+
+              <button id="complete-lesson" class="btn btn-success shrink-0">
+                <i class="fa-solid fa-check mr-1.5"></i>
+                <span>Mark Complete</span>
+              </button>
+            </div>
+
+            <!-- Quick specs bar -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5 pt-4 border-t border-[#20232b]"
+            >
+              <div class="dimension-card">
+                <div class="small-label">CSS Property</div>
+                <div
+                  id="lesson-property-large"
+                  class="mono text-xs text-violet-300 font-semibold truncate"
+                >
+                  box-sizing
+                </div>
+              </div>
+
+              <div class="dimension-card">
+                <div class="small-label">Syntax Example</div>
+                <div
+                  id="lesson-syntax"
+                  class="mono text-xs text-emerald-300 truncate"
+                >
+                  box-sizing: border-box;
+                </div>
+              </div>
+
+              <div class="dimension-card">
+                <div class="small-label">Mental Model</div>
+                <div id="lesson-model" class="text-xs text-slate-300 truncate">
+                  Every element is a nested set of boxes.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LIVE VISUALIZER STAGE -->
+          <div class="panel overflow-hidden">
+            <div
+              class="px-5 py-3.5 border-b border-[#252936] flex flex-wrap items-center justify-between gap-3 bg-[#0c0e12]"
+            >
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-eye text-violet-400"></i>
+                <h3 class="font-bold text-sm">Interactive Visualizer Box</h3>
+                <span
+                  id="active-mode-badge"
+                  class="tag text-[10px] text-emerald-400 bg-emerald-950/30 border-emerald-800/40 ml-2"
+                >
+                  Standard Box
+                </span>
+              </div>
+
+              <!-- Box Color Key -->
+              <div class="flex gap-2 flex-wrap text-xs">
+                <span class="tag text-[11px]">
+                  <span
+                    class="w-2.5 h-2.5 rounded-full"
+                    style="background: #f59e0b"
+                  ></span>
+                  Margin
+                </span>
+                <span class="tag text-[11px]">
+                  <span
+                    class="w-2.5 h-2.5 rounded-full"
+                    style="background: #ef4444"
+                  ></span>
+                  Border
+                </span>
+                <span class="tag text-[11px]">
+                  <span
+                    class="w-2.5 h-2.5 rounded-full"
+                    style="background: #3b82f6"
+                  ></span>
+                  Padding
+                </span>
+                <span class="tag text-[11px]">
+                  <span
+                    class="w-2.5 h-2.5 rounded-full"
+                    style="background: #22c55e"
+                  ></span>
+                  Content
+                </span>
+              </div>
+            </div>
+
+            <!-- Box Stage Canvas -->
+            <div class="box-stage">
+              <div id="box-visual" class="box-visual">
+                <!-- Margin Layer -->
+                <div id="margin-layer" class="margin-layer">
+                  <span class="layer-label margin-label">MARGIN</span>
+
+                  <!-- Border Layer -->
+                  <div id="border-layer" class="border-layer">
+                    <span class="layer-label border-label">BORDER</span>
+
+                    <!-- Padding Layer -->
+                    <div id="padding-layer" class="padding-layer">
+                      <span class="layer-label padding-label">PADDING</span>
+
+                      <!-- Content Layer -->
+                      <div id="content-layer" class="content-layer">
+                        <span class="layer-label content-label">CONTENT</span>
+
+                        <div class="content-inner" id="content-inner">
+                          <!-- Content text or Image preview -->
+                          <div
+                            id="box-content-text"
+                            class="text-green-300 font-bold text-sm"
+                          >
+                            Content Area
+                          </div>
+
+                          <!-- Image element for media mode -->
+                          <img
+                            id="box-media-image"
+                            src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80"
+                            alt="Demo Media Visualizer"
+                            class="hidden w-full h-full rounded transition-all duration-200"
+                          />
+
+                          <div
+                            id="content-size-display"
+                            class="mono text-[11px] text-slate-300 mt-1 bg-black/60 px-2 py-0.5 rounded"
+                          >
+                            300 × 180 px
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOX MATHEMATICS CALCULATOR SECTION -->
+          <div class="grid lg:grid-cols-2 gap-5">
+            <div class="panel p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-calculator text-violet-400"></i>
+                  Total Computed Width
+                </h3>
+                <span
+                  id="width-box-sizing"
+                  class="tag text-xs font-mono text-violet-300"
+                >
+                  content-box
+                </span>
+              </div>
+              <div class="formula" id="width-formula">Updating formula...</div>
+            </div>
+
+            <div class="panel p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-ruler-vertical text-violet-400"></i>
+                  Total Computed Height
+                </h3>
+                <span
+                  id="height-box-sizing"
+                  class="tag text-xs font-mono text-violet-300"
+                >
+                  content-box
+                </span>
+              </div>
+              <div class="formula" id="height-formula">Updating formula...</div>
+            </div>
+          </div>
+
+          <!-- BROWSER DEVTOOLS INSPECTOR -->
+          <div class="panel p-5">
+            <div class="mb-3 flex items-center justify-between">
+              <h3 class="font-bold text-sm flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-violet-400"></i>
+                DevTools Box Dimension Inspector
+              </h3>
+              <span class="text-xs subtle">Live pixels breakdown</span>
+            </div>
+
+            <div
+              class="border border-[#2a2e38] bg-[#0b0d11] rounded-xl overflow-hidden text-xs"
+            >
+              <div
+                class="grid grid-cols-4 px-4 py-2 bg-[#12151d] border-b border-[#20232b] font-semibold text-slate-400 uppercase tracking-wider text-[10px]"
+              >
+                <span>Layer</span>
+                <span>Width (px)</span>
+                <span>Height (px)</span>
+                <span>Curvature / Clip</span>
+              </div>
+
+              <div
+                class="grid grid-cols-4 px-4 py-2.5 border-b border-[#1e222c] items-center"
+              >
+                <span class="text-amber-400 font-medium">Margin Box</span>
+                <span id="inspect-margin-width" class="mono text-slate-200"
+                  >—</span
+                >
+                <span id="inspect-margin-height" class="mono text-slate-200"
+                  >—</span
+                >
+                <span class="text-slate-500 font-mono text-[10px]"
+                  >outer boundary</span
+                >
+              </div>
+
+              <div
+                class="grid grid-cols-4 px-4 py-2.5 border-b border-[#1e222c] items-center"
+              >
+                <span class="text-red-400 font-medium">Border Box</span>
+                <span id="inspect-border-width" class="mono text-slate-200"
+                  >—</span
+                >
+                <span id="inspect-border-height" class="mono text-slate-200"
+                  >—</span
+                >
+                <span
+                  id="inspect-border-radius"
+                  class="mono text-slate-300 text-[11px]"
+                  >0px</span
+                >
+              </div>
+
+              <div
+                class="grid grid-cols-4 px-4 py-2.5 border-b border-[#1e222c] items-center"
+              >
+                <span class="text-blue-400 font-medium">Padding Box</span>
+                <span id="inspect-padding-width" class="mono text-slate-200"
+                  >—</span
+                >
+                <span id="inspect-padding-height" class="mono text-slate-200"
+                  >—</span
+                >
+                <span
+                  id="inspect-inner-radius"
+                  class="mono text-violet-300 text-[11px]"
+                  >0px (Inner Curve)</span
+                >
+              </div>
+
+              <div class="grid grid-cols-4 px-4 py-2.5 items-center">
+                <span class="text-emerald-400 font-medium">Content Box</span>
+                <span id="inspect-content-width" class="mono text-slate-200"
+                  >—</span
+                >
+                <span id="inspect-content-height" class="mono text-slate-200"
+                  >—</span
+                >
+                <span
+                  id="inspect-clip-path"
+                  class="mono text-pink-300 text-[10px] truncate"
+                  >none</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- LESSON CONCEPT DETAILED EXPLANATION -->
+          <div class="panel p-6 lesson-content">
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-graduation-cap text-violet-400 text-lg"></i>
+              <h3 class="font-bold text-lg text-white">
+                Deep-Dive Lesson & Mental Model
+              </h3>
+            </div>
+            <div id="lesson-explanation" class="text-sm"></div>
+          </div>
+
+          <!-- INTERACTIVE PRACTICE & QUIZ CHALLENGES -->
+          <div class="panel p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3
+                  class="font-bold text-base text-white flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-bullseye text-amber-400"></i>
+                  Interactive Challenge & Knowledge Test
+                </h3>
+                <p id="challenge-description" class="subtle text-xs mt-1">
+                  Select the correct answer or adjust parameters to fulfill
+                  requirements.
+                </p>
+              </div>
+              <span
+                class="tag font-semibold text-xs text-amber-300 border-amber-800/40 bg-amber-950/20"
+              >
+                Interactive
+              </span>
+            </div>
+
+            <!-- Challenge Multiple Choice Options Container -->
+            <div
+              id="challenge-options-container"
+              class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"
+            >
+              <!-- Dynamic challenge cards generated here -->
+            </div>
+
+            <div class="mistake mb-4">
+              <div
+                class="text-xs font-bold text-amber-400 mb-1 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-lightbulb"></i>
+                Pro Tip / Hint
+              </div>
+              <div
+                id="challenge-hint"
+                class="text-xs text-slate-300 leading-relaxed"
+              >
+                Read the formula above carefully to deduce the exact answer.
+              </div>
+            </div>
+
+            <div
+              id="challenge-feedback"
+              class="hidden p-3.5 rounded-xl text-xs font-medium mb-4"
+            ></div>
+
+            <button
+              id="check-challenge"
+              class="btn btn-primary w-full sm:w-auto"
+            >
+              <i class="fa-solid fa-circle-check mr-2"></i>
+              Check Solution
+            </button>
+          </div>
+        </section>
+
+        <!-- =====================================================
+            RIGHT SIDEBAR: CONTROLS & LIVE EDITORS
+      ====================================================== -->
+        <aside class="right-column space-y-5">
+          <!-- CONTROLS PANEL -->
+          <div class="panel p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-bold text-sm text-white">Live Box Controls</h3>
+                <p class="text-xs subtle">Tweak geometry values</p>
+              </div>
+              <i class="fa-solid fa-sliders text-violet-400"></i>
+            </div>
+
+            <div class="space-y-4 text-xs">
+              <!-- Width / Height -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="small-label">Width (px)</label>
+                  <input
+                    id="ctrl-width"
+                    type="number"
+                    class="control-input"
+                    min="50"
+                    max="600"
+                    value="280"
+                  />
+                </div>
+                <div>
+                  <label class="small-label">Height (px)</label>
+                  <input
+                    id="ctrl-height"
+                    type="number"
+                    class="control-input"
+                    min="50"
+                    max="500"
+                    value="160"
+                  />
+                </div>
+              </div>
+
+              <!-- Box Sizing -->
+              <div>
+                <label class="small-label">Box Sizing Mode</label>
+                <select id="ctrl-box-sizing" class="control-input">
+                  <option value="content-box">
+                    content-box (Classic standard)
+                  </option>
+                  <option value="border-box">
+                    border-box (Modern web default)
+                  </option>
+                </select>
+              </div>
+
+              <!-- Padding -->
+              <div class="pt-2 border-t border-[#252936]">
+                <label class="small-label mb-2"
+                  >Padding Top / Right / Bottom / Left</label
+                >
+                <div class="grid grid-cols-4 gap-1.5">
+                  <input
+                    id="ctrl-padding-top"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="T"
+                    value="20"
+                  />
+                  <input
+                    id="ctrl-padding-right"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="R"
+                    value="20"
+                  />
+                  <input
+                    id="ctrl-padding-bottom"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="B"
+                    value="20"
+                  />
+                  <input
+                    id="ctrl-padding-left"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="L"
+                    value="20"
+                  />
+                </div>
+              </div>
+
+              <!-- Border Width -->
+              <div class="pt-2 border-t border-[#252936]">
+                <label class="small-label mb-2"
+                  >Border Width Top / Right / Bottom / Left</label
+                >
+                <div class="grid grid-cols-4 gap-1.5">
+                  <input
+                    id="ctrl-border-top"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="T"
+                    value="8"
+                  />
+                  <input
+                    id="ctrl-border-right"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="R"
+                    value="8"
+                  />
+                  <input
+                    id="ctrl-border-bottom"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="B"
+                    value="8"
+                  />
+                  <input
+                    id="ctrl-border-left"
+                    type="number"
+                    class="control-input text-center"
+                    min="0"
+                    placeholder="L"
+                    value="8"
+                  />
+                </div>
+              </div>
+
+              <!-- Margin -->
+              <div class="pt-2 border-t border-[#252936]">
+                <label class="small-label mb-2"
+                  >Margin Top / Right / Bottom / Left</label
+                >
+                <div class="grid grid-cols-4 gap-1.5">
+                  <input
+                    id="ctrl-margin-top"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="T"
+                    value="15"
+                  />
+                  <input
+                    id="ctrl-margin-right"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="R"
+                    value="15"
+                  />
+                  <input
+                    id="ctrl-margin-bottom"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="B"
+                    value="15"
+                  />
+                  <input
+                    id="ctrl-margin-left"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="L"
+                    value="15"
+                  />
+                </div>
+              </div>
+
+              <!-- BORDER RADIUS MODULE -->
+              <div class="pt-3 border-t border-[#252936]">
+                <div class="flex justify-between items-center mb-1">
+                  <label class="small-label text-violet-400"
+                    >Border Radius (Outer Curve)</label
+                  >
+                  <span
+                    id="radius-val-disp"
+                    class="mono text-[10px] text-slate-400"
+                    >16px</span
+                  >
+                </div>
+                <input
+                  id="ctrl-border-radius"
+                  type="range"
+                  min="0"
+                  max="80"
+                  value="16"
+                  class="w-full"
+                />
+
+                <div class="grid grid-cols-4 gap-1.5 mt-2">
+                  <input
+                    id="ctrl-radius-tl"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="TL"
+                    value="16"
+                    min="0"
+                  />
+                  <input
+                    id="ctrl-radius-tr"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="TR"
+                    value="16"
+                    min="0"
+                  />
+                  <input
+                    id="ctrl-radius-br"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="BR"
+                    value="16"
+                    min="0"
+                  />
+                  <input
+                    id="ctrl-radius-bl"
+                    type="number"
+                    class="control-input text-center"
+                    placeholder="BL"
+                    value="16"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <!-- CLIP PATH MODULE -->
+              <div class="pt-3 border-t border-[#252936]">
+                <label class="small-label text-pink-400"
+                  >Clip-Path Shape Preset</label
+                >
+                <select id="ctrl-clip-preset" class="control-input">
+                  <option value="none">none (Full rectangle)</option>
+                  <option value="circle(45% at 50% 50%)">
+                    circle(45% at 50% 50%)
+                  </option>
+                  <option value="ellipse(50% 40% at 50% 50%)">
+                    ellipse(50% 40% at 50% 50%)
+                  </option>
+                  <option
+                    value="polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"
+                  >
+                    polygon (Pentagon)
+                  </option>
+                  <option value="polygon(50% 0%, 100% 100%, 0% 100%)">
+                    polygon (Triangle)
+                  </option>
+                  <option value="polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)">
+                    polygon (Trapezoid)
+                  </option>
+                  <option value="inset(10% 15% 10% 15% round 12px)">
+                    inset (Inset Frame)
+                  </option>
+                </select>
+
+                <label class="small-label mt-2">Custom Clip Path String</label>
+                <input
+                  id="ctrl-clip-custom"
+                  type="text"
+                  class="control-input mono text-[11px]"
+                  placeholder="e.g. circle(40%)"
+                  value="none"
+                />
+              </div>
+
+              <!-- MEDIA FIT & IMAGE SELECTION (Image Mode Controls) -->
+              <div
+                id="image-controls-group"
+                class="pt-3 border-t border-[#252936] space-y-3 hidden"
+              >
+                <div>
+                  <label class="small-label text-emerald-400"
+                    >Image Source</label
+                  >
+                  <select id="ctrl-image-preset" class="control-input">
+                    <option
+                      value="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80"
+                    >
+                      Preset 1: Art Painting
+                    </option>
+                    <option
+                      value="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80"
+                    >
+                      Preset 2: Cosmic Aurora
+                    </option>
+                    <option
+                      value="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80"
+                    >
+                      Preset 3: Ocean Horizon
+                    </option>
+                    <option value="custom" disabled id="custom-img-option">
+                      Custom Uploaded Image
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="small-label text-emerald-400"
+                    >Upload Custom Image</label
+                  >
+                  <label
+                    for="ctrl-image-file"
+                    class="btn text-xs w-full cursor-pointer flex items-center justify-center gap-2 bg-[#121620] hover:bg-[#1a202c] border border-[#2d3342] text-violet-300"
+                  >
+                    <i class="fa-solid fa-cloud-arrow-up text-violet-400"></i>
+                    <span id="file-upload-label">Choose Image File...</span>
+                  </label>
+                  <input
+                    id="ctrl-image-file"
+                    type="file"
+                    accept="image/png, image/jpeg, image/webp, image/gif, image/svg+xml"
+                    class="hidden"
+                  />
+                </div>
+
+                <div>
+                  <label class="small-label text-emerald-400"
+                    >Image Object Fit</label
+                  >
+                  <select id="ctrl-object-fit" class="control-input">
+                    <option value="cover">
+                      cover (Fills container preserving ratio)
+                    </option>
+                    <option value="contain">
+                      contain (Fits inside without clipping)
+                    </option>
+                    <option value="fill">fill (Stretches to fill)</option>
+                    <option value="none">none (Original dimensions)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LIVE CSS CODE EDITOR -->
+          <div class="panel p-5">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h3 class="font-bold text-sm text-white">
+                  Live CSS Playground
+                </h3>
+                <p class="text-xs subtle">Edit styles directly</p>
+              </div>
+              <i class="fa-solid fa-code text-violet-400"></i>
+            </div>
+
+            <textarea
+              id="css-editor"
+              class="code-editor"
+              spellcheck="false"
+            ></textarea>
+
+            <div class="grid grid-cols-2 gap-2 mt-3">
+              <button id="apply-css" class="btn btn-primary text-xs">
+                <i class="fa-solid fa-play mr-1.5"></i> Apply CSS
+              </button>
+              <button id="copy-css" class="btn text-xs">
+                <i class="fa-regular fa-copy mr-1.5"></i> Copy Code
+              </button>
+            </div>
+          </div>
+
+          <!-- GENERATED CSS OUTPUT -->
+          <div class="panel p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3
+                class="font-bold text-xs uppercase tracking-wider text-slate-400"
+              >
+                Generated Computed CSS
+              </h3>
+              <i class="fa-solid fa-terminal text-xs text-slate-500"></i>
+            </div>
+            <pre
+              id="generated-css"
+              class="text-[11px] leading-relaxed text-violet-300 bg-[#090a0d] p-3 rounded-lg border border-[#202430] overflow-x-auto whitespace-pre-wrap mono"
+            ></pre>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <script>
+      /* ============================================================
+   CSS BOX MODEL & GEOMETRY VISUALIZER
+   Unified / repaired controller
+   ============================================================ */
+
+      const LESSONS = [
+        {
+          id: 1,
+          title: "What is the CSS Box Model?",
+          category: "Box Model Core",
+          property: "box-model",
+          propertyLarge: "box-sizing: content-box",
+          syntax: "width + padding + border + margin",
+          model: "Nested Boxes Hierarchy",
+          intro:
+            "Every HTML element generated on a web page is formatted as a rectangular box according to the standard CSS visual formatting model.",
+          explanation: `
+                <p>The CSS Box Model consists of 4 distinct visual layers wrapping around content:</p>
+                <ul class="list-disc pl-5 space-y-1 my-2 text-slate-300">
+                  <li><strong class="text-emerald-400">Content Box:</strong> The inner region where text, images, or child elements reside.</li>
+                  <li><strong class="text-blue-400">Padding Box:</strong> Transparent space surrounding content inside the border. Inherits the box background!</li>
+                  <li><strong class="text-red-400">Border Box:</strong> The edge/line outlining the padding and content.</li>
+                  <li><strong class="text-amber-400">Margin Box:</strong> Transparent space separating this element from sibling elements.</li>
+                </ul>
+                <p>By default in standard <code>content-box</code> mode, specifying <code>width: 300px</code> sets ONLY the content box width. Padding and border add onto this size!</p>
+              `,
+          defaultState: {
+            width: 280,
+            height: 160,
+            boxSizing: "content-box",
+            paddingTop: 20,
+            paddingRight: 20,
+            paddingBottom: 20,
+            paddingLeft: 20,
+            borderTop: 8,
+            borderRight: 8,
+            borderBottom: 8,
+            borderLeft: 8,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 0,
+            clipPath: "none",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "With <code>box-sizing: content-box</code>, if an element has <code>width: 200px</code>, <code>padding: 20px</code> (all sides), and <code>border: 5px</code> (all sides), what is its total computed physical width?",
+            type: "quiz",
+            options: [
+              {
+                text: "200px",
+                correct: false,
+                explanation:
+                  "Incorrect! 200px is only the content box. In content-box mode, padding and border add to total width.",
+              },
+              {
+                text: "250px",
+                correct: true,
+                explanation:
+                  "Correct! Total width = 200px (content) + 20px (left pad) + 20px (right pad) + 5px (left border) + 5px (right border) = 250px.",
+              },
+              {
+                text: "225px",
+                correct: false,
+                explanation:
+                  "Incorrect! Don't forget to count both left and right padding and borders!",
+              },
+              {
+                text: "240px",
+                correct: false,
+                explanation:
+                  "Incorrect! Ensure you add left + right padding (40px) and left + right border (10px).",
+              },
+            ],
+            hint: "Formula for content-box: Total Width = Width + Padding Left + Padding Right + Border Left + Border Right.",
+          },
+        },
+        {
+          id: 2,
+          title: "Content-Box vs Border-Box",
+          category: "Box Model Core",
+          property: "box-sizing",
+          propertyLarge: "box-sizing: border-box",
+          syntax: "box-sizing: border-box | content-box;",
+          model: "Border-Box keeps sizes predictable",
+          intro:
+            "Master the fundamental property that modern CSS frameworks (Tailwind, Bootstrap) reset on every webpage.",
+          explanation: `
+                <p>The <code>box-sizing</code> property determines how element dimensions (width and height) are computed:</p>
+                <div class="mistake my-3">
+                  <p class="font-semibold text-white text-xs mb-1">Standard vs Universal Reset:</p>
+                  <p class="text-xs">With <code>box-sizing: border-box</code>, the width you specify IS the final outer border width! The browser automatically shrinks the inner content box when you add padding or borders.</p>
+                </div>
+                <p>This prevents layouts from breaking when adding padding or borders to responsive column layouts!</p>
+              `,
+          defaultState: {
+            width: 280,
+            height: 160,
+            boxSizing: "border-box",
+            paddingTop: 30,
+            paddingRight: 30,
+            paddingBottom: 30,
+            paddingLeft: 30,
+            borderTop: 10,
+            borderRight: 10,
+            borderBottom: 10,
+            borderLeft: 10,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 8,
+            clipPath: "none",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "With <code>box-sizing: border-box</code>, if you set <code>width: 300px</code>, <code>padding: 25px</code>, and <code>border: 5px</code>, what will the inner Content Box width be?",
+            type: "quiz",
+            options: [
+              {
+                text: "300px",
+                correct: false,
+                explanation:
+                  "Incorrect! 300px is the total outer border box width.",
+              },
+              {
+                text: "240px",
+                correct: true,
+                explanation:
+                  "Spot on! Content Width = 300px - (25px pad left + 25px pad right) - (5px border left + 5px border right) = 240px.",
+              },
+              {
+                text: "360px",
+                correct: false,
+                explanation:
+                  "Incorrect! In border-box mode, content shrinks inside the width; it does not grow.",
+              },
+              {
+                text: "270px",
+                correct: false,
+                explanation:
+                  "Incorrect! Be sure to subtract both left and right padding AND borders.",
+              },
+            ],
+            hint: "In border-box: Content Width = Width - (Left Pad + Right Pad) - (Left Border + Right Border).",
+          },
+        },
+        {
+          id: 3,
+          title: "Padding & Element Backgrounds",
+          category: "Padding & Spacing",
+          property: "padding",
+          propertyLarge: "padding: 20px 40px",
+          syntax: "padding: top right bottom left;",
+          model: "Padding is inside the element boundary",
+          intro:
+            "Learn how padding creates inner breathing room and how element backgrounds extend through padding.",
+          explanation: `
+                <p>Padding creates interior space between an element's content and its border. Crucially, an element's background color or background image spans underneath the <strong>padding layer</strong> up to the inner edge of the border!</p>
+                <p class="mt-2">Padding cannot accept negative values. You can specify padding for individual sides (e.g. <code>padding-top</code>) or shorthand values.</p>
+              `,
+          defaultState: {
+            width: 280,
+            height: 160,
+            boxSizing: "border-box",
+            paddingTop: 40,
+            paddingRight: 15,
+            paddingBottom: 40,
+            paddingLeft: 15,
+            borderTop: 4,
+            borderRight: 4,
+            borderBottom: 4,
+            borderLeft: 4,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 12,
+            clipPath: "none",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "Which statement regarding CSS <code>padding</code> is TRUE?",
+            type: "quiz",
+            options: [
+              {
+                text: "Padding allows negative values to pull content outward.",
+                correct: false,
+                explanation:
+                  "False! Padding can never be negative (unlike margin).",
+              },
+              {
+                text: "Element backgrounds extend into the padding area.",
+                correct: true,
+                explanation:
+                  "Correct! Background colors and background images cover both content and padding boxes.",
+              },
+              {
+                text: "Padding sits outside the element's border.",
+                correct: false,
+                explanation:
+                  "Incorrect! Padding is strictly inside the border.",
+              },
+              {
+                text: "Padding collapses when two vertical elements touch.",
+                correct: false,
+                explanation:
+                  "Incorrect! Only vertical margins collapse; padding never collapses.",
+              },
+            ],
+            hint: "Think about where element background colors end.",
+          },
+        },
+        {
+          id: 4,
+          title: "Borders & Border Widths",
+          category: "Borders",
+          property: "border",
+          propertyLarge: "border: 8px solid #ef4444",
+          syntax: "border: width style color;",
+          model: "Borders frame the padding and content",
+          intro:
+            "Borders sit directly between padding and margin, defining element boundaries.",
+          explanation: `
+                <p>Borders frame an element. Each side (top, right, bottom, left) can have independent widths, colors, and styles (e.g., <code>solid</code>, <code>dashed</code>, <code>dotted</code>, <code>double</code>).</p>
+                <p class="mt-2">Border widths directly affect total element dimensions in both <code>content-box</code> and <code>border-box</code> modes!</p>
+              `,
+          defaultState: {
+            width: 280,
+            height: 160,
+            boxSizing: "border-box",
+            paddingTop: 20,
+            paddingRight: 20,
+            paddingBottom: 20,
+            paddingLeft: 20,
+            borderTop: 12,
+            borderRight: 4,
+            borderBottom: 12,
+            borderLeft: 4,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 6,
+            clipPath: "none",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "What happens in <code>border-box</code> mode when you increase border width from 2px to 12px without changing total width?",
+            type: "quiz",
+            options: [
+              {
+                text: "The outer element expands by 20px.",
+                correct: false,
+                explanation:
+                  "Incorrect! In border-box mode, total width remains constant.",
+              },
+              {
+                text: "The inner content area shrinks to accommodate the thicker border.",
+                correct: true,
+                explanation:
+                  "Correct! The outer width stays fixed, so interior content area compresses.",
+              },
+              {
+                text: "The padding automatically increases.",
+                correct: false,
+                explanation:
+                  "Incorrect! Padding values stay constant unless explicitly changed.",
+              },
+              {
+                text: "The margin decreases automatically.",
+                correct: false,
+                explanation:
+                  "Incorrect! Margin is outside the element and unaffected.",
+              },
+            ],
+            hint: "Remember border-box locks the outer boundary size.",
+          },
+        },
+        {
+          id: 5,
+          title: "Margins & Spacing Outside",
+          category: "Margin & Collapsing",
+          property: "margin",
+          propertyLarge: "margin: 20px auto",
+          syntax: "margin: top right bottom left;",
+          model: "Margins push adjacent elements away",
+          intro:
+            "Margins exist outside the border layer to create buffer space between separate HTML elements.",
+          explanation: `
+                <p>Unlike padding, margins can accept <strong>negative values</strong> (to overlap elements) and <code>auto</code> values (to center block-level elements horizontally).</p>
+                <p class="mt-2">Note: Vertical margins on adjacent block elements can suffer from <strong>margin collapsing</strong>, where only the largest margin applies!</p>
+              `,
+          defaultState: {
+            width: 280,
+            height: 160,
+            boxSizing: "border-box",
+            paddingTop: 15,
+            paddingRight: 15,
+            paddingBottom: 15,
+            paddingLeft: 15,
+            borderTop: 4,
+            borderRight: 4,
+            borderBottom: 4,
+            borderLeft: 4,
+            marginTop: 35,
+            marginRight: 35,
+            marginBottom: 35,
+            marginLeft: 35,
+            borderRadius: 8,
+            clipPath: "none",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "Which feature belongs exclusively to <code>margin</code> and NOT padding?",
+            type: "quiz",
+            options: [
+              {
+                text: "Can take negative values and 'auto' for horizontal centering.",
+                correct: true,
+                explanation:
+                  "Correct! Negative values and 'auto' centering apply to margins.",
+              },
+              {
+                text: "Inherits the element background color.",
+                correct: false,
+                explanation:
+                  "Incorrect! Backgrounds apply to content and padding, not margin.",
+              },
+              {
+                text: "Sits inside the element border.",
+                correct: false,
+                explanation:
+                  "Incorrect! Padding is inside border; margin is outside.",
+              },
+              {
+                text: "Increases the element click area.",
+                correct: false,
+                explanation:
+                  "Incorrect! Margins are outside the element's interactive hit target.",
+              },
+            ],
+            hint: "Think about setting 'margin: 0 auto' or negative margins.",
+          },
+        },
+        {
+          id: 6,
+          title: "Border-Radius & Curved Geometry",
+          category: "Border Radius",
+          property: "border-radius",
+          propertyLarge: "border-radius: 24px",
+          syntax: "border-radius: [all] | [tl tr br bl];",
+          model: "Curving the outer border layer",
+          intro:
+            "Master border radius curves and understand how corner rounding affects outer vs inner box boundaries.",
+          explanation: `
+                <p>The <code>border-radius</code> property rounds the corners of an element's border box edge.</p>
+                <p class="mt-2">You can specify 1 value (all corners) or 4 individual values for Top-Left, Top-Right, Bottom-Right, Bottom-Left.</p>
+                <p class="mt-2">Try moving the <strong>Border Radius slider</strong> in the controls sidebar to watch the box curve in real-time!</p>
+              `,
+          defaultState: {
+            width: 280,
+            height: 160,
+            boxSizing: "border-box",
+            paddingTop: 20,
+            paddingRight: 20,
+            paddingBottom: 20,
+            paddingLeft: 20,
+            borderTop: 8,
+            borderRight: 8,
+            borderBottom: 8,
+            borderLeft: 8,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 32,
+            clipPath: "none",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "What CSS shorthand rounded top-left=10px, top-right=20px, bottom-right=30px, bottom-left=40px?",
+            type: "quiz",
+            options: [
+              {
+                text: "border-radius: 10px 20px 30px 40px;",
+                correct: true,
+                explanation:
+                  "Correct! Shorthand order goes clockwise starting from Top-Left: TL, TR, BR, BL.",
+              },
+              {
+                text: "border-radius: 40px 30px 20px 10px;",
+                correct: false,
+                explanation:
+                  "Incorrect! Clockwise sequence starts top-left, not bottom-left.",
+              },
+              {
+                text: "border-radius: 10px 30px 20px 40px;",
+                correct: false,
+                explanation: "Incorrect! Sequence is TL -> TR -> BR -> BL.",
+              },
+              {
+                text: "border-radius: 20px 10px 40px 30px;",
+                correct: false,
+                explanation: "Incorrect!",
+              },
+            ],
+            hint: "Order follows clockwise rotation: Top-Left, Top-Right, Bottom-Right, Bottom-Left.",
+          },
+        },
+        {
+          id: 7,
+          title: "Inner vs Outer Border Radius",
+          category: "Border Radius",
+          property: "inner-radius",
+          propertyLarge: "Inner Radius = Outer - Border",
+          syntax: "R_inner = max(0, R_outer - border_width)",
+          model: "Coordinated Curved Padding & Borders",
+          intro:
+            "Learn the geometry rule for perfectly concentric inner padding curves inside thick rounded borders.",
+          explanation: `
+                <p>When you apply a thick border alongside <code>border-radius</code>, the inner curve of the border (where padding meets border) does NOT equal the outer radius!</p>
+                <div class="formula my-3">
+                  <strong>Concentric Radius Math:</strong><br>
+                  Inner Padding Radius = Outer Radius - Border Width
+                </div>
+                <p>If outer <code>border-radius: 30px</code> and <code>border-width: 10px</code>, the inner padding curve equals <strong>20px</strong>! If border width exceeds outer radius, the inner curve becomes sharp (0px).</p>
+                <p class="mt-2 text-violet-300">Look at the Inspector panel to observe the computed Inner Curve value as you adjust sliders!</p>
+              `,
+          defaultState: {
+            width: 280,
+            height: 160,
+            boxSizing: "border-box",
+            paddingTop: 20,
+            paddingRight: 20,
+            paddingBottom: 20,
+            paddingLeft: 20,
+            borderTop: 16,
+            borderRight: 16,
+            borderBottom: 16,
+            borderLeft: 16,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 40,
+            clipPath: "none",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "If an element has outer <code>border-radius: 24px</code> and <code>border-width: 10px</code>, what radius forms the inner curve between padding and border?",
+            type: "quiz",
+            options: [
+              {
+                text: "24px",
+                correct: false,
+                explanation:
+                  "Incorrect! 24px is the outer curve. Inner curve is smaller due to border thickness.",
+              },
+              {
+                text: "14px",
+                correct: true,
+                explanation:
+                  "Spot on! Inner Radius = Outer Radius (24px) - Border Width (10px) = 14px.",
+              },
+              {
+                text: "34px",
+                correct: false,
+                explanation:
+                  "Incorrect! Inner radius subtracts border width, does not add it.",
+              },
+              {
+                text: "0px",
+                correct: false,
+                explanation:
+                  "Incorrect! Since 24px > 10px, inner curve is smooth at 14px.",
+              },
+            ],
+            hint: "Subtract border width from outer radius.",
+          },
+        },
+        {
+          id: 8,
+          title: "Clip-Path Geometry & Shapes",
+          category: "Clip Path",
+          property: "clip-path",
+          propertyLarge: "clip-path: polygon(...)",
+          syntax: "clip-path: circle() | polygon() | inset();",
+          model: "Clipping masks visual output",
+          intro:
+            "Discover how clip-path masks element visibility while maintaining original box model hit box boundaries.",
+          explanation: `
+                <p>The <code>clip-path</code> CSS property creates a clipping region that determines what parts of an element are visible.</p>
+                <p class="mt-2">Common functions include:</p>
+                <ul class="list-disc pl-5 space-y-1 my-2 text-slate-300">
+                  <li><code>circle(radius at x y)</code></li>
+                  <li><code>ellipse(rx ry at x y)</code></li>
+                  <li><code>polygon(x1 y1, x2 y2, ...)</code></li>
+                  <li><code>inset(top right bottom left)</code></li>
+                </ul>
+                <div class="mistake my-2">
+                  <strong>Key Distinction:</strong> <code>clip-path</code> visually cuts off content and borders, but the layout box model footprint (width, height, margin spacing) remains a full rectangle!
+                </div>
+              `,
+          defaultState: {
+            width: 280,
+            height: 180,
+            boxSizing: "border-box",
+            paddingTop: 20,
+            paddingRight: 20,
+            paddingBottom: 20,
+            paddingLeft: 20,
+            borderTop: 6,
+            borderRight: 6,
+            borderBottom: 6,
+            borderLeft: 6,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 0,
+            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+            mode: "box",
+          },
+          challenge: {
+            description:
+              "When applying <code>clip-path: circle(50%)</code> to an element, what happens to its outer margin spacing in page layout?",
+            type: "quiz",
+            options: [
+              {
+                text: "The layout box collapses into a circle shape.",
+                correct: false,
+                explanation:
+                  "Incorrect! Layout calculations remain strictly rectangular.",
+              },
+              {
+                text: "The outer rectangular box model and margin spacing remain completely unchanged.",
+                correct: true,
+                explanation:
+                  "Correct! Clip-path only clips visual rendering; the layout box footprint remains rectangular!",
+              },
+              {
+                text: "Margins are automatically cleared.",
+                correct: false,
+                explanation: "Incorrect!",
+              },
+              {
+                text: "Padding expands to fill the circle.",
+                correct: false,
+                explanation: "Incorrect!",
+              },
+            ],
+            hint: "Does clip-path alter layout dimensions or only visual rendering?",
+          },
+        },
+        {
+          id: 9,
+          title: "Image & Media Box Mode",
+          category: "Media Geometry",
+          property: "object-fit",
+          propertyLarge: "Image Padding & Fit",
+          syntax: "object-fit: cover | contain | fill;",
+          model: "Padding around images inside content box",
+          intro:
+            "Explore how padding surrounds media elements like images and how object-fit handles image scaling.",
+          explanation: `
+                <p>When working with images (<code>&lt;img&gt;</code>) or video elements, padding creates a frame or gap between the border/container and the picture!</p>
+                <p class="mt-2">Switching to <strong>Image / Media Mode</strong> allows you to inspect how <code>padding</code> and <code>object-fit</code> interact with real photos inside the content layer.</p>
+                <ul class="list-disc pl-5 space-y-1 my-2 text-slate-300">
+                  <li><code>object-fit: cover</code> fills the content box while maintaining aspect ratio.</li>
+                  <li><code>object-fit: contain</code> scales the image to fit entirely without cropping.</li>
+                </ul>
+              `,
+          defaultState: {
+            width: 300,
+            height: 200,
+            boxSizing: "border-box",
+            paddingTop: 24,
+            paddingRight: 24,
+            paddingBottom: 24,
+            paddingLeft: 24,
+            borderTop: 8,
+            borderRight: 8,
+            borderBottom: 8,
+            borderLeft: 8,
+            marginTop: 15,
+            marginRight: 15,
+            marginBottom: 15,
+            marginLeft: 15,
+            borderRadius: 16,
+            clipPath: "none",
+            mode: "image",
+            objectFit: "cover",
+          },
+          challenge: {
+            description:
+              "What happens when you add <code>padding: 20px</code> directly to an <code>&lt;img&gt;</code> tag with a background color and border?",
+            type: "quiz",
+            options: [
+              {
+                text: "Padding creates a visible background mat/frame gap between image pixels and border.",
+                correct: true,
+                explanation:
+                  "Correct! Padding pushes image pixels inward, revealing background color around the photo.",
+              },
+              {
+                text: "Images ignore padding entirely.",
+                correct: false,
+                explanation: "Incorrect! Images respect box model padding.",
+              },
+              {
+                text: "The image stretches over the padding.",
+                correct: false,
+                explanation: "Incorrect!",
+              },
+              {
+                text: "Border disappears.",
+                correct: false,
+                explanation: "Incorrect!",
+              },
+            ],
+            hint: "Think of image padding like a picture frame mat.",
+          },
+        },
+      ];
+
+      const IMAGE_PRESETS = [
+        "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+      ];
+
+      const STORAGE_KEY = "css_box_model_visualizer_v2";
+
+      const DEFAULT_BOX = {
+        width: 280,
+        height: 160,
+        boxSizing: "content-box",
+        paddingTop: 20,
+        paddingRight: 20,
+        paddingBottom: 20,
+        paddingLeft: 20,
+        borderTop: 8,
+        borderRight: 8,
+        borderBottom: 8,
+        borderLeft: 8,
+        marginTop: 15,
+        marginRight: 15,
+        marginBottom: 15,
+        marginLeft: 15,
+        borderRadius: 16,
+        radiusTL: 16,
+        radiusTR: 16,
+        radiusBR: 16,
+        radiusBL: 16,
+        clipPath: "none",
+        mode: "box",
+        objectFit: "cover",
+        currentImageSrc: IMAGE_PRESETS[0],
+        customUploadedImageSrc: null,
+      };
+
+      let state = {
+        currentLessonIndex: 0,
+        completedLessons: new Set(),
+        selectedChallengeOption: null,
+        ...structuredClone(DEFAULT_BOX),
+      };
+
+      /* ---------- small DOM helpers ---------- */
+      const $ = (id) => document.getElementById(id);
+
+      function num(value, fallback = 0) {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : fallback;
+      }
+
+      function clamp(value, min = 0, max = Infinity) {
+        return Math.min(max, Math.max(min, num(value, min)));
+      }
+
+      function setText(id, value) {
+        const el = $(id);
+        if (el) el.textContent = value;
+      }
+
+      function setValue(id, value) {
+        const el = $(id);
+        if (el) el.value = value;
+      }
+
+      function safeSetStyle(id, property, value) {
+        const el = $(id);
+        if (el) el.style[property] = value;
+      }
+
+      /* ---------- persistence ---------- */
+      function saveState() {
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              completedLessons: [...state.completedLessons],
+            }),
+          );
+        } catch (error) {
+          console.warn("Could not save progress:", error);
+        }
+      }
+
+      function loadSavedState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+
+          const saved = JSON.parse(raw);
+          if (Array.isArray(saved.completedLessons)) {
+            state.completedLessons = new Set(
+              saved.completedLessons.map(Number).filter(Number.isFinite),
+            );
+          }
+        } catch (error) {
+          console.warn("Could not load saved progress:", error);
+        }
+      }
+
+      /* ---------- box calculations ---------- */
+      function getBoxMetrics() {
+        const b = state;
+
+        const horizontalPadding = b.paddingLeft + b.paddingRight;
+        const verticalPadding = b.paddingTop + b.paddingBottom;
+
+        const horizontalBorder = b.borderLeft + b.borderRight;
+        const verticalBorder = b.borderTop + b.borderBottom;
+
+        let contentWidth;
+        let contentHeight;
+        let borderBoxWidth;
+        let borderBoxHeight;
+
+        if (b.boxSizing === "border-box") {
+          borderBoxWidth = Math.max(0, b.width);
+          borderBoxHeight = Math.max(0, b.height);
+          contentWidth = Math.max(
+            0,
+            borderBoxWidth - horizontalPadding - horizontalBorder,
+          );
+          contentHeight = Math.max(
+            0,
+            borderBoxHeight - verticalPadding - verticalBorder,
+          );
+        } else {
+          contentWidth = Math.max(0, b.width);
+          contentHeight = Math.max(0, b.height);
+          borderBoxWidth = contentWidth + horizontalPadding + horizontalBorder;
+          borderBoxHeight = contentHeight + verticalPadding + verticalBorder;
+        }
+
+        const paddingBoxWidth = contentWidth + horizontalPadding;
+        const paddingBoxHeight = contentHeight + verticalPadding;
+
+        const marginBoxWidth = borderBoxWidth + b.marginLeft + b.marginRight;
+        const marginBoxHeight = borderBoxHeight + b.marginTop + b.marginBottom;
+
+        return {
+          contentWidth,
+          contentHeight,
+          paddingBoxWidth,
+          paddingBoxHeight,
+          borderBoxWidth,
+          borderBoxHeight,
+          marginBoxWidth,
+          marginBoxHeight,
+          horizontalPadding,
+          verticalPadding,
+          horizontalBorder,
+          verticalBorder,
+        };
+      }
+
+      /* ---------- lesson data -> state ---------- */
+      function normalizeLessonState(lesson) {
+        const d = lesson?.defaultState || DEFAULT_BOX;
+
+        Object.assign(state, structuredClone(DEFAULT_BOX), d);
+
+        state.radiusTL = d.radiusTL ?? d.borderRadius ?? 0;
+        state.radiusTR = d.radiusTR ?? d.borderRadius ?? 0;
+        state.radiusBR = d.radiusBR ?? d.borderRadius ?? 0;
+        state.radiusBL = d.radiusBL ?? d.borderRadius ?? 0;
+        state.borderRadius =
+          d.borderRadius ??
+          Math.max(
+            state.radiusTL,
+            state.radiusTR,
+            state.radiusBR,
+            state.radiusBL,
+          );
+
+        state.currentImageSrc =
+          d.currentImageSrc || state.currentImageSrc || IMAGE_PRESETS[0];
+
+        state.objectFit = d.objectFit || "cover";
+        state.mode = d.mode || "box";
+        state.clipPath = d.clipPath || "none";
+
+        state.selectedChallengeOption = null;
+      }
+
+      /* ---------- lesson navigation ---------- */
+      function renderLessonList() {
+        const list = $("lesson-list");
+        if (!list) return;
+
+        list.innerHTML = "";
+
+        LESSONS.forEach((lesson, index) => {
+          const completed = state.completedLessons.has(lesson.id);
+          const active = index === state.currentLessonIndex;
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `lesson-btn ${active ? "active" : ""} ${completed ? "completed" : ""}`;
+
+          button.innerHTML = `
+      <span class="lesson-number">
+        ${completed ? '<i class="fa-solid fa-check"></i>' : lesson.id}
+      </span>
+      <span class="min-w-0 flex-1">
+        <span class="block text-xs font-semibold truncate">${lesson.title}</span>
+        <span class="block text-[10px] subtle mt-0.5 truncate">${lesson.category}</span>
+      </span>
+    `;
+
+          button.addEventListener("click", () => loadLesson(index));
+          list.appendChild(button);
+        });
+
+        setText("lesson-total-count", LESSONS.length);
+        setText("lesson-completed-count", state.completedLessons.size);
+        updateProgressHeader();
+      }
+
+      function updateProgressHeader() {
+        const total = LESSONS.length || 1;
+        const percentage = Math.round(
+          (state.completedLessons.size / total) * 100,
+        );
+
+        safeSetStyle("header-progress", "width", `${percentage}%`);
+        setText("progress-text", `${percentage}%`);
+      }
+
+      function renderLessonHeader() {
+        const lesson = LESSONS[state.currentLessonIndex];
+        if (!lesson) return;
+
+        setText("lesson-number", `Lesson ${lesson.id}`);
+        setText("lesson-category", lesson.category);
+        setText("lesson-property", lesson.property);
+        setText("lesson-title", lesson.title);
+        $("lesson-intro").innerHTML = lesson.intro;
+        setText("lesson-property-large", lesson.propertyLarge);
+        setText("lesson-syntax", lesson.syntax);
+        setText("lesson-model", lesson.model);
+
+        $("lesson-explanation").innerHTML = lesson.explanation;
+
+        const button = $("complete-lesson");
+        const completed = state.completedLessons.has(lesson.id);
+
+        button.innerHTML = completed
+          ? '<i class="fa-solid fa-circle-check mr-1.5"></i> Complete'
+          : '<i class="fa-solid fa-check mr-1.5"></i> Mark Complete';
+
+        button.className = completed
+          ? "btn btn-success shrink-0 opacity-80"
+          : "btn btn-success shrink-0";
+      }
+
+      function loadLesson(index) {
+        if (index < 0 || index >= LESSONS.length) return;
+
+        state.currentLessonIndex = index;
+        const lesson = LESSONS[index];
+
+        normalizeLessonState(lesson);
+        renderLessonList();
+        renderLessonHeader();
+        renderChallenge();
+        syncControlInputsFromState();
+        renderAll();
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      /* ---------- challenge system ---------- */
+      function renderChallenge() {
+        const lesson = LESSONS[state.currentLessonIndex];
+        if (!lesson?.challenge) return;
+
+        const challenge = lesson.challenge;
+        const container = $("challenge-options-container");
+        const feedback = $("challenge-feedback");
+
+        $("challenge-description").innerHTML = challenge.description;
+        $("challenge-hint").textContent = challenge.hint;
+        container.innerHTML = "";
+        feedback.className = "hidden p-3.5 rounded-xl text-xs font-medium mb-4";
+        feedback.innerHTML = "";
+
+        challenge.options.forEach((option, index) => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = `challenge-card text-left w-full ${
+            state.selectedChallengeOption === index ? "selected" : ""
+          }`;
+
+          card.innerHTML = `
+      <div class="flex items-center gap-3">
+        <div class="w-5 h-5 rounded-full border border-slate-600 flex items-center justify-center shrink-0 text-[10px] font-bold text-slate-300">
+          ${String.fromCharCode(65 + index)}
+        </div>
+        <div class="text-xs text-slate-200 font-medium">${option.text}</div>
+      </div>
+    `;
+
+          card.addEventListener("click", () => {
+            state.selectedChallengeOption = index;
+            container.querySelectorAll(".challenge-card").forEach((item, i) => {
+              item.classList.toggle("selected", i === index);
+            });
+          });
+
+          container.appendChild(card);
+        });
+      }
+
+      function checkChallengeSolution() {
+        const lesson = LESSONS[state.currentLessonIndex];
+        const challenge = lesson?.challenge;
+        const feedback = $("challenge-feedback");
+
+        if (!challenge) return;
+
+        if (state.selectedChallengeOption === null) {
+          feedback.className =
+            "p-3.5 rounded-xl text-xs font-medium mb-4 bg-amber-950/40 border border-amber-800/50 text-amber-300 block";
+          feedback.innerHTML =
+            '<i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Please select an option before checking.';
+          return;
+        }
+
+        const selected = challenge.options[state.selectedChallengeOption];
+        const cards = $("challenge-options-container").querySelectorAll(
+          ".challenge-card",
+        );
+
+        cards.forEach((card) => card.classList.remove("success", "fail"));
+
+        if (selected.correct) {
+          cards[state.selectedChallengeOption]?.classList.add("success");
+
+          feedback.className =
+            "p-3.5 rounded-xl text-xs font-medium mb-4 bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 block";
+          feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1.5"></i><strong>Excellent!</strong> ${selected.explanation}`;
+
+          markCurrentLessonComplete();
+        } else {
+          cards[state.selectedChallengeOption]?.classList.add("fail");
+
+          feedback.className =
+            "p-3.5 rounded-xl text-xs font-medium mb-4 bg-red-950/40 border border-red-800/50 text-red-300 block";
+          feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1.5"></i><strong>Not quite.</strong> ${selected.explanation}`;
+        }
+      }
+
+      function markCurrentLessonComplete() {
+        const lesson = LESSONS[state.currentLessonIndex];
+        if (!lesson) return;
+
+        state.completedLessons.add(lesson.id);
+        saveState();
+        renderLessonList();
+        renderLessonHeader();
+      }
+
+      /* ---------- controls ---------- */
+      const CONTROL_MAP = {
+        "ctrl-width": "width",
+        "ctrl-height": "height",
+        "ctrl-box-sizing": "boxSizing",
+        "ctrl-padding-top": "paddingTop",
+        "ctrl-padding-right": "paddingRight",
+        "ctrl-padding-bottom": "paddingBottom",
+        "ctrl-padding-left": "paddingLeft",
+        "ctrl-border-top": "borderTop",
+        "ctrl-border-right": "borderRight",
+        "ctrl-border-bottom": "borderBottom",
+        "ctrl-border-left": "borderLeft",
+        "ctrl-margin-top": "marginTop",
+        "ctrl-margin-right": "marginRight",
+        "ctrl-margin-bottom": "marginBottom",
+        "ctrl-margin-left": "marginLeft",
+        "ctrl-radius-tl": "radiusTL",
+        "ctrl-radius-tr": "radiusTR",
+        "ctrl-radius-br": "radiusBR",
+        "ctrl-radius-bl": "radiusBL",
+        "ctrl-object-fit": "objectFit",
+      };
+
+      function syncControlInputsFromState() {
+        Object.entries(CONTROL_MAP).forEach(([id, key]) => {
+          const el = $(id);
+          if (!el) return;
+          el.value = state[key];
+        });
+
+        setValue("ctrl-border-radius", state.borderRadius);
+        setText("radius-val-disp", `${state.borderRadius}px`);
+
+        setValue("ctrl-clip-preset", state.clipPath);
+        setValue("ctrl-clip-custom", state.clipPath);
+
+        const imageSelect = $("ctrl-image-preset");
+        if (imageSelect) {
+          const isKnownPreset = IMAGE_PRESETS.includes(state.currentImageSrc);
+          imageSelect.value = isKnownPreset
+            ? state.currentImageSrc
+            : state.customUploadedImageSrc
+              ? "custom"
+              : IMAGE_PRESETS[0];
+        }
+
+        const customOption = $("custom-img-option");
+        if (customOption) {
+          customOption.disabled = !state.customUploadedImageSrc;
+          if (state.customUploadedImageSrc) {
+            customOption.textContent = "Custom Uploaded Image";
+          }
+        }
+
+        setModeUI(state.mode);
+      }
+
+      function syncStateFromControlInputs() {
+        Object.entries(CONTROL_MAP).forEach(([id, key]) => {
+          const el = $(id);
+          if (!el) return;
+
+          if (el.tagName === "SELECT") {
+            state[key] = el.value;
+            return;
+          }
+
+          state[key] = clamp(
+            parseFloat(el.value),
+            key.startsWith("padding") ||
+              key.startsWith("border") ||
+              key.startsWith("margin") ||
+              key.startsWith("radius")
+              ? 0
+              : 0,
+            key === "width" ? 1200 : key === "height" ? 800 : 500,
+          );
+        });
+
+        state.borderRadius = Math.max(
+          state.radiusTL,
+          state.radiusTR,
+          state.radiusBR,
+          state.radiusBL,
+        );
+
+        const clip = $("ctrl-clip-custom")?.value.trim();
+        if (clip) state.clipPath = clip;
+
+        setValue("ctrl-border-radius", state.borderRadius);
+        setText("radius-val-disp", `${state.borderRadius}px`);
+
+        renderAll();
+      }
+
+      function setModeUI(mode) {
+        state.mode = mode === "image" ? "image" : "box";
+
+        $("mode-box")?.classList.toggle("active", state.mode === "box");
+        $("mode-image")?.classList.toggle("active", state.mode === "image");
+
+        const imageControls = $("image-controls-group");
+        if (imageControls) {
+          imageControls.classList.toggle("hidden", state.mode !== "image");
+        }
+
+        setText(
+          "active-mode-badge",
+          state.mode === "image" ? "Image / Media" : "Standard Box",
+        );
+
+        const text = $("box-content-text");
+        const image = $("box-media-image");
+
+        if (text) text.classList.toggle("hidden", state.mode === "image");
+        if (image) image.classList.toggle("hidden", state.mode !== "image");
+      }
+
+      /* ---------- visualizer ---------- */
+      function radiusString(tl, tr, br, bl) {
+        return `${tl}px ${tr}px ${br}px ${bl}px`;
+      }
+
+      function updateBoxVisualizer() {
+        const b = state;
+        const m = getBoxMetrics();
+
+        const boxVisual = $("box-visual");
+        const marginLayer = $("margin-layer");
+        const borderLayer = $("border-layer");
+        const paddingLayer = $("padding-layer");
+        const contentLayer = $("content-layer");
+        const image = $("box-media-image");
+
+        if (
+          !boxVisual ||
+          !marginLayer ||
+          !borderLayer ||
+          !paddingLayer ||
+          !contentLayer
+        ) {
+          return;
+        }
+
+        /* Outer dimensions */
+        boxVisual.style.width = `${m.marginBoxWidth}px`;
+        boxVisual.style.height = `${m.marginBoxHeight}px`;
+
+        marginLayer.style.width = `${m.marginBoxWidth}px`;
+        marginLayer.style.height = `${m.marginBoxHeight}px`;
+
+        /* Margin is represented by the amber area outside the border box.
+     Using padding on the margin layer keeps the nested dimensions exact. */
+        marginLayer.style.paddingTop = `${b.marginTop}px`;
+        marginLayer.style.paddingRight = `${b.marginRight}px`;
+        marginLayer.style.paddingBottom = `${b.marginBottom}px`;
+        marginLayer.style.paddingLeft = `${b.marginLeft}px`;
+        // The dashed boundary is an outline so it does not consume layout pixels.
+        marginLayer.style.border = "0";
+        marginLayer.style.outline = "1px dashed rgba(245, 158, 11, 0.7)";
+
+        borderLayer.style.width = `${m.borderBoxWidth}px`;
+        borderLayer.style.height = `${m.borderBoxHeight}px`;
+        borderLayer.style.boxSizing = "border-box";
+        borderLayer.style.borderTopWidth = `${b.borderTop}px`;
+        borderLayer.style.borderRightWidth = `${b.borderRight}px`;
+        borderLayer.style.borderBottomWidth = `${b.borderBottom}px`;
+        borderLayer.style.borderLeftWidth = `${b.borderLeft}px`;
+        borderLayer.style.borderStyle = "solid";
+        borderLayer.style.borderRadius = radiusString(
+          b.radiusTL,
+          b.radiusTR,
+          b.radiusBR,
+          b.radiusBL,
+        );
+        borderLayer.style.clipPath = b.clipPath || "none";
+
+        paddingLayer.style.width = `${m.paddingBoxWidth}px`;
+        paddingLayer.style.height = `${m.paddingBoxHeight}px`;
+        paddingLayer.style.boxSizing = "border-box";
+        paddingLayer.style.paddingTop = `${b.paddingTop}px`;
+        paddingLayer.style.paddingRight = `${b.paddingRight}px`;
+        paddingLayer.style.paddingBottom = `${b.paddingBottom}px`;
+        paddingLayer.style.paddingLeft = `${b.paddingLeft}px`;
+
+        const innerRadii = {
+          tl: Math.max(0, b.radiusTL - Math.max(b.borderTop, b.borderLeft)),
+          tr: Math.max(0, b.radiusTR - Math.max(b.borderTop, b.borderRight)),
+          br: Math.max(0, b.radiusBR - Math.max(b.borderBottom, b.borderRight)),
+          bl: Math.max(0, b.radiusBL - Math.max(b.borderBottom, b.borderLeft)),
+        };
+
+        paddingLayer.style.borderRadius = radiusString(
+          innerRadii.tl,
+          innerRadii.tr,
+          innerRadii.br,
+          innerRadii.bl,
+        );
+
+        contentLayer.style.width = `${m.contentWidth}px`;
+        contentLayer.style.height = `${m.contentHeight}px`;
+        contentLayer.style.boxSizing = "border-box";
+        contentLayer.style.borderRadius = radiusString(
+          Math.max(0, innerRadii.tl - b.paddingTop),
+          Math.max(0, innerRadii.tr - b.paddingTop),
+          Math.max(0, innerRadii.br - b.paddingBottom),
+          Math.max(0, innerRadii.bl - b.paddingBottom),
+        );
+
+        setModeUI(state.mode);
+
+        if (image) {
+          image.src = state.currentImageSrc || IMAGE_PRESETS[0];
+          image.style.objectFit = state.objectFit || "cover";
+          image.style.width = "100%";
+          image.style.height = "100%";
+          image.style.borderRadius = "inherit";
+          image.style.display = state.mode === "image" ? "block" : "";
+        }
+
+        setText(
+          "content-size-display",
+          `${Math.round(m.contentWidth)} × ${Math.round(m.contentHeight)} px`,
+        );
+
+        renderMath(m);
+        renderInspector(m);
+        updateCssEditorCode();
+      }
+
+      /* ---------- math / inspector ---------- */
+      function renderMath(m) {
+        setText("width-box-sizing", state.boxSizing);
+        setText("height-box-sizing", state.boxSizing);
+
+        if (state.boxSizing === "content-box") {
+          $("width-formula").innerHTML = `
+      Total Outer Width =
+      <span class="highlight">${state.width}px</span>
+      + <span class="text-blue-300">${m.horizontalPadding}px</span> padding
+      + <span class="text-red-300">${m.horizontalBorder}px</span> border
+      =
+      <strong class="text-emerald-400">${Math.round(m.borderBoxWidth)}px</strong>
+    `;
+
+          $("height-formula").innerHTML = `
+      Total Outer Height =
+      <span class="highlight">${state.height}px</span>
+      + <span class="text-blue-300">${m.verticalPadding}px</span> padding
+      + <span class="text-red-300">${m.verticalBorder}px</span> border
+      =
+      <strong class="text-emerald-400">${Math.round(m.borderBoxHeight)}px</strong>
+    `;
+        } else {
+          $("width-formula").innerHTML = `
+      Border Box Width =
+      <strong class="text-emerald-400">${state.width}px</strong><br>
+      Content Width =
+      ${state.width}px − ${m.horizontalPadding}px padding −
+      ${m.horizontalBorder}px border =
+      <span class="highlight">${Math.round(m.contentWidth)}px</span>
+    `;
+
+          $("height-formula").innerHTML = `
+      Border Box Height =
+      <strong class="text-emerald-400">${state.height}px</strong><br>
+      Content Height =
+      ${state.height}px − ${m.verticalPadding}px padding −
+      ${m.verticalBorder}px border =
+      <span class="highlight">${Math.round(m.contentHeight)}px</span>
+    `;
+        }
+      }
+
+      function renderInspector(m) {
+        setText("inspect-margin-width", `${Math.round(m.marginBoxWidth)}px`);
+        setText("inspect-margin-height", `${Math.round(m.marginBoxHeight)}px`);
+
+        setText("inspect-border-width", `${Math.round(m.borderBoxWidth)}px`);
+        setText("inspect-border-height", `${Math.round(m.borderBoxHeight)}px`);
+
+        setText(
+          "inspect-border-radius",
+          radiusString(
+            state.radiusTL,
+            state.radiusTR,
+            state.radiusBR,
+            state.radiusBL,
+          ),
+        );
+
+        setText("inspect-padding-width", `${Math.round(m.paddingBoxWidth)}px`);
+        setText(
+          "inspect-padding-height",
+          `${Math.round(m.paddingBoxHeight)}px`,
+        );
+
+        setText(
+          "inspect-inner-radius",
+          `${Math.round(
+            Math.max(
+              0,
+              Math.min(
+                state.radiusTL - Math.max(state.borderTop, state.borderLeft),
+                state.radiusTR - Math.max(state.borderTop, state.borderRight),
+                state.radiusBR -
+                  Math.max(state.borderBottom, state.borderRight),
+                state.radiusBL - Math.max(state.borderBottom, state.borderLeft),
+              ),
+            ),
+          )}px (inner)`,
+        );
+
+        setText("inspect-content-width", `${Math.round(m.contentWidth)}px`);
+        setText("inspect-content-height", `${Math.round(m.contentHeight)}px`);
+        setText("inspect-clip-path", state.clipPath || "none");
+      }
+
+      /* ---------- CSS generation ---------- */
+      function generateCSS() {
+        return `.box {
+  width: ${state.width}px;
+  height: ${state.height}px;
+  box-sizing: ${state.boxSizing};
+
+  padding: ${state.paddingTop}px ${state.paddingRight}px ${state.paddingBottom}px ${state.paddingLeft}px;
+
+  border-top: ${state.borderTop}px solid #ef4444;
+  border-right: ${state.borderRight}px solid #ef4444;
+  border-bottom: ${state.borderBottom}px solid #ef4444;
+  border-left: ${state.borderLeft}px solid #ef4444;
+
+  margin: ${state.marginTop}px ${state.marginRight}px ${state.marginBottom}px ${state.marginLeft}px;
+
+  border-radius: ${state.radiusTL}px ${state.radiusTR}px ${state.radiusBR}px ${state.radiusBL}px;
+  clip-path: ${state.clipPath || "none"};
+  overflow: hidden;${
+    state.mode === "image"
+      ? `
+  object-fit: ${state.objectFit};`
+      : ""
+  }
+}`;
+      }
+
+      function updateCssEditorCode() {
+        const css = generateCSS();
+
+        const editor = $("css-editor");
+        const output = $("generated-css");
+
+        if (editor && document.activeElement !== editor) {
+          editor.value = css;
+        }
+
+        if (output) output.textContent = css;
+      }
+
+      /* ---------- CSS parser ---------- */
+      function parseDeclarations(css) {
+        const cleaned = css
+          .replace(/\/\*[\s\S]*?\*\//g, "")
+          .replace(/<style[^>]*>/gi, "")
+          .replace(/<\/style>/gi, "");
+
+        const block = cleaned.match(/\{([\s\S]*)\}/);
+        const source = block ? block[1] : cleaned;
+        const declarations = {};
+
+        source.split(";").forEach((part) => {
+          const index = part.indexOf(":");
+          if (index === -1) return;
+
+          const property = part.slice(0, index).trim().toLowerCase();
+          const value = part.slice(index + 1).trim();
+
+          if (property && value) declarations[property] = value;
+        });
+
+        return declarations;
+      }
+
+      function parseLength(value) {
+        if (!value) return null;
+
+        const match = String(value)
+          .trim()
+          .match(/^(-?\d*\.?\d+)(px|rem|em|%)?$/);
+
+        if (!match) return null;
+
+        const n = Number(match[1]);
+        const unit = match[2] || "px";
+
+        if (unit === "px") return n;
+
+        /* The visualizer is pixel-based. For non-pixel lengths,
+     keep a sensible educational approximation. */
+        if (unit === "rem") return n * 16;
+        if (unit === "em") return n * 16;
+        if (unit === "%") return n;
+
+        return null;
+      }
+
+      function parseShorthand(value) {
+        const parts = String(value)
+          .trim()
+          .split(/\s+/)
+          .map(parseLength)
+          .filter((v) => v !== null);
+
+        if (!parts.length) return null;
+        if (parts.length === 1) {
+          return {
+            top: parts[0],
+            right: parts[0],
+            bottom: parts[0],
+            left: parts[0],
+          };
+        }
+        if (parts.length === 2) {
+          return {
+            top: parts[0],
+            right: parts[1],
+            bottom: parts[0],
+            left: parts[1],
+          };
+        }
+        if (parts.length === 3) {
+          return {
+            top: parts[0],
+            right: parts[1],
+            bottom: parts[2],
+            left: parts[1],
+          };
+        }
+        return {
+          top: parts[0],
+          right: parts[1],
+          bottom: parts[2],
+          left: parts[3],
+        };
+      }
+
+      function parseBorderShorthand(value) {
+        const widthToken = String(value)
+          .trim()
+          .split(/\s+/)
+          .find((token) => parseLength(token) !== null);
+
+        return widthToken ? parseLength(widthToken) : null;
+      }
+
+      function applyCSS() {
+        const editor = $("css-editor");
+        if (!editor) return;
+
+        const declarations = parseDeclarations(editor.value);
+
+        const lengthProps = {
+          width: "width",
+          height: "height",
+        };
+
+        Object.entries(lengthProps).forEach(([cssProp, stateKey]) => {
+          const value = parseLength(declarations[cssProp]);
+          if (value !== null)
+            state[stateKey] = clamp(
+              value,
+              0,
+              stateKey === "width" ? 1200 : 800,
+            );
+        });
+
+        if (
+          declarations["box-sizing"] === "content-box" ||
+          declarations["box-sizing"] === "border-box"
+        ) {
+          state.boxSizing = declarations["box-sizing"];
+        }
+
+        const padding = parseShorthand(declarations.padding);
+        if (padding) {
+          state.paddingTop = Math.max(0, padding.top);
+          state.paddingRight = Math.max(0, padding.right);
+          state.paddingBottom = Math.max(0, padding.bottom);
+          state.paddingLeft = Math.max(0, padding.left);
+        }
+
+        const border = parseBorderShorthand(declarations.border);
+        if (border !== null) {
+          state.borderTop = Math.max(0, border);
+          state.borderRight = Math.max(0, border);
+          state.borderBottom = Math.max(0, border);
+          state.borderLeft = Math.max(0, border);
+        }
+
+        const borderWidth = parseShorthand(declarations["border-width"]);
+        if (borderWidth) {
+          state.borderTop = Math.max(0, borderWidth.top);
+          state.borderRight = Math.max(0, borderWidth.right);
+          state.borderBottom = Math.max(0, borderWidth.bottom);
+          state.borderLeft = Math.max(0, borderWidth.left);
+        }
+
+        [
+          ["border-top-width", "borderTop"],
+          ["border-right-width", "borderRight"],
+          ["border-bottom-width", "borderBottom"],
+          ["border-left-width", "borderLeft"],
+        ].forEach(([prop, key]) => {
+          const value = parseLength(declarations[prop]);
+          if (value !== null) state[key] = Math.max(0, value);
+        });
+
+        const margin = parseShorthand(declarations.margin);
+        if (margin) {
+          state.marginTop = margin.top;
+          state.marginRight = margin.right;
+          state.marginBottom = margin.bottom;
+          state.marginLeft = margin.left;
+        }
+
+        [
+          ["margin-top", "marginTop"],
+          ["margin-right", "marginRight"],
+          ["margin-bottom", "marginBottom"],
+          ["margin-left", "marginLeft"],
+        ].forEach(([prop, key]) => {
+          const value = parseLength(declarations[prop]);
+          if (value !== null) state[key] = value;
+        });
+
+        const radius = parseShorthand(
+          String(declarations["border-radius"] || "").replace(/\s*\/\s*.*/, ""),
+        );
+
+        if (radius) {
+          state.radiusTL = Math.max(0, radius.top);
+          state.radiusTR = Math.max(0, radius.right);
+          state.radiusBR = Math.max(0, radius.bottom);
+          state.radiusBL = Math.max(0, radius.left);
+          state.borderRadius = Math.max(
+            state.radiusTL,
+            state.radiusTR,
+            state.radiusBR,
+            state.radiusBL,
+          );
+        }
+
+        [
+          ["border-top-left-radius", "radiusTL"],
+          ["border-top-right-radius", "radiusTR"],
+          ["border-bottom-right-radius", "radiusBR"],
+          ["border-bottom-left-radius", "radiusBL"],
+        ].forEach(([prop, key]) => {
+          const value = parseLength(declarations[prop]);
+          if (value !== null) state[key] = Math.max(0, value);
+        });
+
+        state.borderRadius = Math.max(
+          state.radiusTL,
+          state.radiusTR,
+          state.radiusBR,
+          state.radiusBL,
+        );
+
+        if (declarations["clip-path"]) {
+          state.clipPath = declarations["clip-path"];
+        }
+
+        if (
+          ["cover", "contain", "fill", "none", "scale-down"].includes(
+            declarations["object-fit"],
+          )
+        ) {
+          state.objectFit = declarations["object-fit"];
+        }
+
+        syncControlInputsFromState();
+        renderAll();
+      }
+
+      /* ---------- events ---------- */
+      function setupEventListeners() {
+        /* Number/select controls */
+        Object.entries(CONTROL_MAP).forEach(([id, key]) => {
+          const el = $(id);
+          if (!el) return;
+
+          el.addEventListener("input", () => {
+            if (el.tagName === "SELECT") {
+              state[key] = el.value;
+            } else {
+              state[key] = clamp(
+                parseFloat(el.value) || 0,
+                0,
+                key === "width" ? 1200 : key === "height" ? 800 : 500,
+              );
+            }
+
+            state.borderRadius = Math.max(
+              state.radiusTL,
+              state.radiusTR,
+              state.radiusBR,
+              state.radiusBL,
+            );
+
+            renderAll();
+          });
+
+          el.addEventListener("change", () => {
+            el.dispatchEvent(new Event("input"));
+          });
+        });
+
+        const radiusSlider = $("ctrl-border-radius");
+        radiusSlider?.addEventListener("input", (event) => {
+          const value = clamp(event.target.value, 0, 80);
+
+          state.borderRadius = value;
+          state.radiusTL = value;
+          state.radiusTR = value;
+          state.radiusBR = value;
+          state.radiusBL = value;
+
+          setText("radius-val-disp", `${value}px`);
+          [
+            "ctrl-radius-tl",
+            "ctrl-radius-tr",
+            "ctrl-radius-br",
+            "ctrl-radius-bl",
+          ].forEach((id) => setValue(id, value));
+
+          renderAll();
+        });
+
+        $("ctrl-clip-preset")?.addEventListener("change", (event) => {
+          state.clipPath = event.target.value;
+          setValue("ctrl-clip-custom", state.clipPath);
+          renderAll();
+        });
+
+        $("ctrl-clip-custom")?.addEventListener("input", (event) => {
+          state.clipPath = event.target.value.trim() || "none";
+          renderAll();
+        });
+
+        $("mode-box")?.addEventListener("click", () => {
+          state.mode = "box";
+          setModeUI("box");
+          renderAll();
+        });
+
+        $("mode-image")?.addEventListener("click", () => {
+          state.mode = "image";
+          setModeUI("image");
+          renderAll();
+        });
+
+        $("ctrl-image-preset")?.addEventListener("change", (event) => {
+          if (event.target.value === "custom") {
+            if (state.customUploadedImageSrc) {
+              state.currentImageSrc = state.customUploadedImageSrc;
+            }
+          } else {
+            state.currentImageSrc = event.target.value;
+          }
+
+          state.mode = "image";
+          setModeUI("image");
+          renderAll();
+        });
+
+        $("ctrl-image-file")?.addEventListener("change", (event) => {
+          const file = event.target.files?.[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            state.customUploadedImageSrc = e.target.result;
+            state.currentImageSrc = e.target.result;
+            state.mode = "image";
+
+            const customOption = $("custom-img-option");
+            if (customOption) {
+              customOption.disabled = false;
+              customOption.textContent = `Custom: ${
+                file.name.length > 18
+                  ? file.name.slice(0, 15) + "..."
+                  : file.name
+              }`;
+            }
+
+            setText(
+              "file-upload-label",
+              file.name.length > 20
+                ? file.name.slice(0, 17) + "..."
+                : file.name,
+            );
+
+            setModeUI("image");
+            renderAll();
+          };
+
+          reader.readAsDataURL(file);
+        });
+
+        $("complete-lesson")?.addEventListener(
+          "click",
+          markCurrentLessonComplete,
+        );
+        $("check-challenge")?.addEventListener("click", checkChallengeSolution);
+
+        $("apply-css")?.addEventListener("click", applyCSS);
+
+        $("copy-css")?.addEventListener("click", async () => {
+          const css = generateCSS();
+          const button = $("copy-css");
+
+          try {
+            await navigator.clipboard.writeText(css);
+            const original = button.innerHTML;
+            button.innerHTML =
+              '<i class="fa-solid fa-check mr-1.5 text-emerald-400"></i> Copied!';
+            setTimeout(() => (button.innerHTML = original), 1600);
+          } catch {
+            const editor = $("css-editor");
+            editor.focus();
+            editor.select();
+            alert(
+              "Clipboard access is unavailable. The CSS has been selected for manual copying.",
+            );
+          }
+        });
+
+        $("reset-app")?.addEventListener("click", () => {
+          if (
+            !confirm(
+              "Reset course progress and restore the visualizer defaults?",
+            )
+          ) {
+            return;
+          }
+
+          localStorage.removeItem(STORAGE_KEY);
+          state.completedLessons.clear();
+          state.currentLessonIndex = 0;
+          loadLesson(0);
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+            event.preventDefault();
+            applyCSS();
+          }
+        });
+      }
+
+      /* ---------- master render ---------- */
+      function renderAll() {
+        syncControlInputsFromState();
+        updateBoxVisualizer();
+      }
+
+      /* ---------- initialization ---------- */
+      function initApp() {
+        loadSavedState();
+
+        if (!LESSONS.length) return;
+
+        loadLesson(
+          Math.min(Math.max(0, state.currentLessonIndex), LESSONS.length - 1),
+        );
+
+        setupEventListeners();
+        renderAll();
+      }
+
+      window.addEventListener("DOMContentLoaded", initApp);
+    </script>
+  </body>
+</html>

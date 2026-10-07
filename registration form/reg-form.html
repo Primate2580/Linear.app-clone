@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Create an Account</h2>
+    <p class="subtitle">Join our learning path today!</p>
+
+    <form action="#" method="POST">
+      <!-- Full Name -->
+      <div class="input-group">
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" name="fullname" placeholder="John Doe" required>
+      </div>
+
+      <!-- Email Address -->
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="john@example.com" required>
+      </div>
+
+      <!-- Password -->
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
+      </div>
+
+      <!-- Course Selection Dropdown -->
+      <div class="input-group">
+        <label for="track">Select Learning Track</label>
+        <select id="track" name="track" required>
+          <option value="" disabled selected>Choose your track...</option>
+          <option value="frontend">Frontend Development (HTML/CSS/JS)</option>
+          <option value="backend">Backend Development (Node/Python)</option>
+          <option value="fullstack">Fullstack Development</option>
+        </select>
+      </div>
+
+      <!-- Terms & Conditions Checkbox -->
+      <div class="checkbox-group">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I agree to the <a href="#">Terms & Conditions</a></label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn">Register Now</button>
+    </form>
+  </div>
+
+</body>
+</html>

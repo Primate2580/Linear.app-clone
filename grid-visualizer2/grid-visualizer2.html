@@ -1,0 +1,3046 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CSS Grid Learning Lab</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: #020617;
+        color: #e2e8f0;
+        font-family: "Inter", sans-serif;
+      }
+
+      code,
+      pre,
+      textarea,
+      select,
+      input {
+        font-family: "Fira Code", monospace;
+      }
+
+      ::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #020617;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+
+      /* =====================================================
+       APP SHELL
+    ===================================================== */
+
+      .app-shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* =====================================================
+       LESSON PATH
+    ===================================================== */
+
+      .lesson-item {
+        position: relative;
+      }
+
+      .lesson-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 34px;
+        bottom: -16px;
+        width: 1px;
+        background: #1e293b;
+      }
+
+      .lesson-button {
+        position: relative;
+        z-index: 2;
+      }
+
+      .lesson-button.active {
+        background: rgba(79, 70, 229, 0.15);
+        border-color: rgba(99, 102, 241, 0.5);
+      }
+
+      .lesson-button.completed .lesson-number {
+        background: #059669;
+        border-color: #10b981;
+        color: white;
+      }
+
+      .lesson-button.active .lesson-number {
+        background: #4f46e5;
+        border-color: #818cf8;
+        color: white;
+      }
+
+      /* =====================================================
+       GRID VISUALIZER
+    ===================================================== */
+
+      .visualizer-stage {
+        position: relative;
+        background-color: #020617;
+
+        background-image:
+          linear-gradient(rgba(99, 102, 241, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(99, 102, 241, 0.045) 1px, transparent 1px);
+
+        background-size: 24px 24px;
+      }
+
+      .grid-wrapper {
+        position: relative;
+        width: min(100%, 850px);
+        min-height: 400px;
+        padding: 46px 50px 50px 50px;
+      }
+
+      .grid-canvas {
+        position: relative;
+        width: 100%;
+        min-height: 300px;
+      }
+
+      #grid-container {
+        position: relative;
+        width: 100%;
+        min-height: 300px;
+
+        display: grid;
+
+        background: linear-gradient(
+          rgba(99, 102, 241, 0.035),
+          rgba(99, 102, 241, 0.035)
+        );
+
+        border: 1px solid rgba(99, 102, 241, 0.35);
+        border-radius: 12px;
+      }
+
+      /* =====================================================
+       GRID LINE OVERLAY
+    ===================================================== */
+
+      .grid-line {
+        position: absolute;
+        pointer-events: none;
+        z-index: 30;
+      }
+
+      .grid-line.vertical {
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: rgba(129, 140, 248, 0.6);
+      }
+
+      .grid-line.horizontal {
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: rgba(167, 139, 250, 0.6);
+      }
+
+      .grid-line-number {
+        position: absolute;
+        font-family: "Fira Code", monospace;
+        font-size: 10px;
+        font-weight: 600;
+        color: #a5b4fc;
+
+        background: #312e81;
+        border: 1px solid #6366f1;
+
+        padding: 3px 6px;
+        border-radius: 5px;
+
+        white-space: nowrap;
+      }
+
+      .grid-line.vertical .grid-line-number {
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .grid-line.horizontal .grid-line-number {
+        left: -43px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* =====================================================
+       TRACK LABELS
+    ===================================================== */
+
+      .track-label {
+        position: absolute;
+        z-index: 31;
+
+        font-size: 9px;
+        font-family: "Fira Code", monospace;
+
+        color: #818cf8;
+        background: rgba(30, 27, 75, 0.9);
+
+        padding: 3px 6px;
+        border-radius: 4px;
+
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .column-label {
+        top: -42px;
+        transform: translateX(-50%);
+      }
+
+      .row-label {
+        left: -49px;
+        transform: translateY(-50%);
+      }
+
+      /* =====================================================
+       GAP INDICATORS
+    ===================================================== */
+
+      .gap-indicator {
+        position: absolute;
+        z-index: 32;
+        pointer-events: none;
+      }
+
+      .gap-indicator.horizontal {
+        height: 2px;
+        background: #f59e0b;
+      }
+
+      .gap-indicator.vertical {
+        width: 2px;
+        background: #f59e0b;
+      }
+
+      .gap-label {
+        position: absolute;
+
+        background: #78350f;
+        border: 1px solid #f59e0b;
+
+        color: #fbbf24;
+
+        font-size: 9px;
+        font-family: "Fira Code", monospace;
+
+        padding: 3px 5px;
+        border-radius: 4px;
+
+        white-space: nowrap;
+      }
+
+      /* =====================================================
+       GRID ITEMS
+    ===================================================== */
+
+      .grid-item {
+        position: relative;
+
+        min-height: 70px;
+
+        border: 2px solid;
+        border-radius: 10px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        cursor: pointer;
+
+        transition:
+          transform 0.2s,
+          opacity 0.2s,
+          box-shadow 0.2s,
+          border-color 0.2s;
+
+        z-index: 20;
+      }
+
+      .grid-item:hover {
+        transform: translateY(-1px);
+      }
+
+      .grid-item.selected {
+        z-index: 40;
+
+        border-color: white !important;
+
+        box-shadow:
+          0 0 0 2px #6366f1,
+          0 0 30px rgba(99, 102, 241, 0.45);
+
+        transform: scale(1.015);
+      }
+
+      .grid-item .item-title {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .grid-item .item-placement {
+        margin-top: 4px;
+
+        font-size: 9px;
+        font-family: "Fira Code", monospace;
+
+        color: #94a3b8;
+      }
+
+      /* =====================================================
+       START / END MARKERS
+    ===================================================== */
+
+      .placement-marker {
+        position: absolute;
+
+        z-index: 50;
+
+        padding: 4px 7px;
+
+        border-radius: 5px;
+
+        font-size: 9px;
+        font-family: "Fira Code", monospace;
+        font-weight: 600;
+
+        white-space: nowrap;
+
+        pointer-events: none;
+      }
+
+      .placement-start {
+        background: #065f46;
+        border: 1px solid #10b981;
+        color: #6ee7b7;
+      }
+
+      .placement-end {
+        background: #7c2d12;
+        border: 1px solid #f97316;
+        color: #fdba74;
+      }
+
+      /* =====================================================
+       CODE EDITOR
+    ===================================================== */
+
+      .code-editor {
+        width: 100%;
+        min-height: 190px;
+
+        resize: vertical;
+
+        padding: 16px;
+
+        border-radius: 12px;
+
+        background: #020617;
+
+        border: 1px solid #1e293b;
+
+        color: #c7d2fe;
+
+        outline: none;
+
+        line-height: 1.7;
+
+        font-size: 12px;
+      }
+
+      .code-editor:focus {
+        border-color: #6366f1;
+
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.12);
+      }
+
+      /* =====================================================
+       CHALLENGE
+    ===================================================== */
+
+      .challenge-card {
+        background: linear-gradient(
+          135deg,
+          rgba(79, 70, 229, 0.12),
+          rgba(124, 58, 237, 0.05)
+        );
+
+        border: 1px solid rgba(99, 102, 241, 0.3);
+      }
+
+      .challenge-success {
+        border-color: rgba(16, 185, 129, 0.5);
+        background: rgba(6, 78, 59, 0.2);
+      }
+
+      .challenge-failed {
+        border-color: rgba(245, 158, 11, 0.4);
+        background: rgba(120, 53, 15, 0.15);
+      }
+
+      /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+      @media (max-width: 768px) {
+        .grid-wrapper {
+          padding-left: 38px;
+          padding-right: 25px;
+        }
+
+        .grid-line.horizontal .grid-line-number {
+          left: -35px;
+        }
+
+        .row-label {
+          left: -40px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <!-- =====================================================
+       HEADER
+  ===================================================== -->
+
+      <header
+        class="sticky top-0 z-[100] bg-slate-950/95 backdrop-blur-xl border-b border-slate-800"
+      >
+        <div class="max-w-[1900px] mx-auto px-4 md:px-6 py-4">
+          <div
+            class="flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+          >
+            <!-- Brand -->
+
+            <div class="flex items-center gap-3">
+              <div
+                class="w-11 h-11 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-950"
+              >
+                <i class="fa-solid fa-table-cells-large text-white"></i>
+              </div>
+
+              <div>
+                <h1 class="font-bold text-white text-lg md:text-xl">
+                  CSS Grid Learning Lab
+                </h1>
+
+                <p class="text-xs text-slate-400">
+                  Learn → Experiment → Understand → Solve
+                </p>
+              </div>
+            </div>
+
+            <!-- Progress -->
+
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <div
+                  class="text-[10px] uppercase tracking-wider text-slate-500"
+                >
+                  Lesson Progress
+                </div>
+
+                <div
+                  id="progress-text"
+                  class="text-sm font-semibold text-indigo-300"
+                >
+                  1 / 14
+                </div>
+              </div>
+
+              <div class="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  id="progress-bar"
+                  class="h-full bg-indigo-500 transition-all duration-500"
+                  style="width: 7%"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =====================================================
+       MAIN APPLICATION
+  ===================================================== -->
+
+      <main class="flex-1 max-w-[1900px] w-full mx-auto p-4 md:p-6">
+        <div
+          class="grid grid-cols-1 xl:grid-cols-[270px_minmax(0,1fr)_360px] gap-6"
+        >
+          <!-- =================================================
+           LEFT: LESSON PATH
+      ================================================= -->
+
+          <aside>
+            <div
+              class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sticky top-24"
+            >
+              <div class="mb-5">
+                <div
+                  class="text-[10px] uppercase tracking-widest text-indigo-400 font-bold mb-1"
+                >
+                  Learning Path
+                </div>
+
+                <h2 class="text-sm font-bold text-white">CSS Grid</h2>
+              </div>
+
+              <div id="lesson-path" class="space-y-1"></div>
+
+              <div class="mt-5 pt-4 border-t border-slate-800">
+                <div class="flex items-center gap-2 text-[10px] text-slate-500">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                  Completed
+                </div>
+
+                <div
+                  class="flex items-center gap-2 text-[10px] text-slate-500 mt-2"
+                >
+                  <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+
+                  Current lesson
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- =================================================
+           CENTER: LESSON + VISUALIZER
+      ================================================= -->
+
+          <section class="min-w-0 space-y-6">
+            <!-- ===============================================
+             LESSON INTRO
+        =============================================== -->
+
+            <div
+              class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6"
+            >
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                <span
+                  id="lesson-number"
+                  class="px-2.5 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold"
+                >
+                  LESSON 01
+                </span>
+
+                <span
+                  id="lesson-category"
+                  class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 text-[10px]"
+                >
+                  Container
+                </span>
+              </div>
+
+              <h2
+                id="lesson-title"
+                class="text-2xl md:text-3xl font-bold text-white mb-3"
+              >
+                Grid Container
+              </h2>
+
+              <p
+                id="lesson-description"
+                class="text-sm text-slate-400 leading-7 max-w-3xl"
+              ></p>
+
+              <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <!-- Learn -->
+
+                <div
+                  class="bg-indigo-950/30 border border-indigo-900/40 rounded-xl p-4"
+                >
+                  <div class="flex items-center gap-2 mb-2">
+                    <span
+                      class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center"
+                    >
+                      <i
+                        class="fa-solid fa-book-open text-indigo-400 text-xs"
+                      ></i>
+                    </span>
+
+                    <span class="text-xs font-bold text-indigo-300">
+                      Learn
+                    </span>
+                  </div>
+
+                  <p
+                    id="learn-text"
+                    class="text-xs leading-6 text-slate-300"
+                  ></p>
+                </div>
+
+                <!-- Mental Model -->
+
+                <div
+                  class="bg-violet-950/20 border border-violet-900/40 rounded-xl p-4"
+                >
+                  <div class="flex items-center gap-2 mb-2">
+                    <span
+                      class="w-7 h-7 rounded-lg bg-violet-500/10 flex items-center justify-center"
+                    >
+                      <i class="fa-solid fa-brain text-violet-400 text-xs"></i>
+                    </span>
+
+                    <span class="text-xs font-bold text-violet-300">
+                      Mental Model
+                    </span>
+                  </div>
+
+                  <p
+                    id="mental-model"
+                    class="text-xs leading-6 text-slate-300"
+                  ></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+             VISUALIZER
+        =============================================== -->
+
+            <div
+              class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden"
+            >
+              <!-- Visualizer Header -->
+
+              <div
+                class="px-5 py-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3"
+              >
+                <div>
+                  <div
+                    class="text-[10px] uppercase tracking-widest text-slate-500 mb-1"
+                  >
+                    Visualize
+                  </div>
+
+                  <h3 class="text-sm font-bold text-white">
+                    See the Grid System
+                  </h3>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 text-[10px]">
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded bg-indigo-500"></span>
+                    Grid Lines
+                  </span>
+
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded bg-amber-500"></span>
+                    Gap
+                  </span>
+
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded bg-emerald-500"></span>
+                    Start
+                  </span>
+
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded bg-orange-500"></span>
+                    End
+                  </span>
+                </div>
+              </div>
+
+              <!-- Stage -->
+
+              <div
+                class="visualizer-stage min-h-[500px] flex items-center justify-center overflow-auto"
+              >
+                <div class="grid-wrapper">
+                  <div id="grid-canvas" class="grid-canvas">
+                    <div id="grid-container"></div>
+
+                    <div id="grid-lines"></div>
+
+                    <div id="track-labels"></div>
+
+                    <div id="gap-indicators"></div>
+
+                    <div id="placement-markers"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Visual Explanation -->
+
+              <div
+                class="grid grid-cols-2 md:grid-cols-4 border-t border-slate-800"
+              >
+                <div class="p-4 border-r border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">
+                    Columns
+                  </div>
+
+                  <div
+                    id="column-count"
+                    class="text-lg font-bold text-indigo-300 mt-1"
+                  >
+                    3
+                  </div>
+                </div>
+
+                <div class="p-4 border-r border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">Rows</div>
+
+                  <div
+                    id="row-count"
+                    class="text-lg font-bold text-violet-300 mt-1"
+                  >
+                    2
+                  </div>
+                </div>
+
+                <div class="p-4 border-r border-slate-800">
+                  <div class="text-[10px] text-slate-500 uppercase">
+                    Column Gap
+                  </div>
+
+                  <div
+                    id="column-gap-display"
+                    class="text-lg font-bold text-amber-300 mt-1"
+                  >
+                    16px
+                  </div>
+                </div>
+
+                <div class="p-4">
+                  <div class="text-[10px] text-slate-500 uppercase">
+                    Selected
+                  </div>
+
+                  <div
+                    id="selected-display"
+                    class="text-lg font-bold text-emerald-300 mt-1"
+                  >
+                    #1
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===============================================
+             WHY PANEL
+        =============================================== -->
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center"
+                >
+                  <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                </div>
+
+                <div>
+                  <div
+                    class="text-[10px] uppercase tracking-widest text-amber-400 font-bold"
+                  >
+                    Why?
+                  </div>
+
+                  <h3 class="text-sm font-bold text-white">
+                    Understand the Mental Model
+                  </h3>
+                </div>
+              </div>
+
+              <div
+                id="why-content"
+                class="text-sm text-slate-300 leading-7"
+              ></div>
+
+              <div
+                id="why-example"
+                class="mt-4 bg-slate-950 border border-slate-800 rounded-xl p-4"
+              ></div>
+            </div>
+
+            <!-- ===============================================
+             CHALLENGE
+        =============================================== -->
+
+            <div id="challenge-card" class="challenge-card rounded-2xl p-5">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span
+                      class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center"
+                    >
+                      <i class="fa-solid fa-crosshairs text-indigo-400"></i>
+                    </span>
+
+                    <span
+                      class="text-[10px] uppercase tracking-widest text-indigo-300 font-bold"
+                    >
+                      Challenge
+                    </span>
+                  </div>
+
+                  <h3
+                    id="challenge-title"
+                    class="text-lg font-bold text-white"
+                  ></h3>
+                </div>
+
+                <span id="challenge-status" class="text-xs"></span>
+              </div>
+
+              <p
+                id="challenge-description"
+                class="text-sm text-slate-300 leading-7 mt-4"
+              ></p>
+
+              <div
+                class="mt-4 p-4 rounded-xl bg-slate-950/70 border border-slate-800"
+              >
+                <div
+                  class="text-[10px] uppercase tracking-widest text-slate-500 mb-2"
+                >
+                  Your Goal
+                </div>
+
+                <div
+                  id="challenge-goal"
+                  class="text-sm text-indigo-200 font-mono"
+                ></div>
+              </div>
+
+              <button
+                onclick="checkChallenge()"
+                class="mt-5 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-2"
+              >
+                <i class="fa-solid fa-circle-check"></i>
+
+                Check Answer
+              </button>
+
+              <div
+                id="challenge-feedback"
+                class="hidden mt-4 p-4 rounded-xl text-xs leading-6"
+              ></div>
+            </div>
+
+            <!-- ===============================================
+             NAVIGATION
+        =============================================== -->
+
+            <div class="flex items-center justify-between gap-3 pb-6">
+              <button
+                id="previous-button"
+                onclick="previousLesson()"
+                class="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-medium transition flex items-center gap-2"
+              >
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Previous
+              </button>
+
+              <button
+                id="next-button"
+                onclick="nextLesson()"
+                class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center gap-2"
+              >
+                Next Lesson
+
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- =================================================
+           RIGHT: EXPERIMENT PANEL
+      ================================================= -->
+
+          <aside>
+            <div class="sticky top-24 space-y-5">
+              <!-- =============================================
+               EXPERIMENT
+          ============================================= -->
+
+              <div
+                class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden"
+              >
+                <div class="px-5 py-4 border-b border-slate-800">
+                  <div
+                    class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold mb-1"
+                  >
+                    Experiment
+                  </div>
+
+                  <h3 class="text-sm font-bold text-white">Write the CSS</h3>
+
+                  <p class="text-[11px] text-slate-500 mt-1">
+                    Change the code and watch the grid respond.
+                  </p>
+                </div>
+
+                <div class="p-4">
+                  <textarea
+                    id="css-editor"
+                    class="code-editor"
+                    spellcheck="false"
+                  ></textarea>
+
+                  <div class="flex items-center gap-2 mt-3">
+                    <button
+                      onclick="runCode()"
+                      class="flex-1 px-3 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition"
+                    >
+                      <i class="fa-solid fa-play mr-1"></i>
+
+                      Run CSS
+                    </button>
+
+                    <button
+                      onclick="resetExperiment()"
+                      class="px-3 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-medium"
+                    >
+                      <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- =============================================
+               CURRENT PROPERTY
+          ============================================= -->
+
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                <div
+                  class="text-[10px] uppercase tracking-widest text-indigo-400 font-bold mb-2"
+                >
+                  Current Property
+                </div>
+
+                <div
+                  id="property-name"
+                  class="font-mono text-sm text-white font-semibold"
+                >
+                  display
+                </div>
+
+                <div
+                  id="property-value"
+                  class="mt-2 p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono text-xs text-indigo-300"
+                >
+                  display: grid;
+                </div>
+              </div>
+
+              <!-- =============================================
+               EXPLAIN
+          ============================================= -->
+
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                <div class="flex items-center gap-2 mb-3">
+                  <span
+                    class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center"
+                  >
+                    <i
+                      class="fa-solid fa-wand-magic-sparkles text-cyan-400 text-xs"
+                    ></i>
+                  </span>
+
+                  <div>
+                    <div
+                      class="text-[10px] uppercase tracking-widest text-cyan-400 font-bold"
+                    >
+                      Explain
+                    </div>
+
+                    <h3 class="text-sm font-bold text-white">
+                      What just happened?
+                    </h3>
+                  </div>
+                </div>
+
+                <p
+                  id="dynamic-explanation"
+                  class="text-xs text-slate-400 leading-6"
+                ></p>
+              </div>
+
+              <!-- =============================================
+               GENERATED CSS
+          ============================================= -->
+
+              <div
+                class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden"
+              >
+                <div
+                  class="px-5 py-4 border-b border-slate-800 flex items-center justify-between"
+                >
+                  <div>
+                    <div
+                      class="text-[10px] uppercase tracking-widest text-slate-500"
+                    >
+                      Output
+                    </div>
+
+                    <h3 class="text-sm font-bold text-white">Generated CSS</h3>
+                  </div>
+
+                  <button
+                    onclick="copyCSS()"
+                    class="text-slate-400 hover:text-white text-xs"
+                  >
+                    <i id="copy-icon" class="fa-regular fa-copy"></i>
+                  </button>
+                </div>
+
+                <pre
+                  id="generated-css"
+                  class="p-4 bg-slate-950 text-[10px] leading-5 text-indigo-200 overflow-auto max-h-64"
+                ></pre>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <!-- =====================================================
+       FOOTER
+  ===================================================== -->
+
+      <footer
+        class="border-t border-slate-800 bg-slate-950 py-4 text-center text-[10px] text-slate-600"
+      >
+        CSS Grid Learning Lab
+
+        <span class="mx-2">•</span>
+
+        Learn the system, not just the syntax.
+      </footer>
+    </div>
+
+    <script>
+      /* =========================================================
+     LESSON DATA
+  ========================================================= */
+
+      const lessons = [
+        {
+          id: 1,
+
+          title: "Grid Container",
+
+          category: "Container",
+
+          property: "display",
+
+          description:
+            "CSS Grid begins when an element becomes a grid container. Its direct children then become grid items that participate in the grid layout.",
+
+          learn:
+            "The most important first step is display: grid. Without it, properties such as grid-template-columns and grid-column do not create a Grid layout.",
+
+          mental:
+            "Think of the container as the sheet of graph paper. Turning on display: grid creates the grid system that the children can live inside.",
+
+          why: `
+          <p>
+            A Grid layout has two sides:
+          </p>
+
+          <ul class="list-disc ml-5 mt-2 space-y-1">
+            <li>The <strong>container</strong> controls the grid.</li>
+            <li>The <strong>items</strong> occupy positions inside the grid.</li>
+          </ul>
+        `,
+
+          example: `<code class="text-indigo-300">display: grid;</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}`,
+
+          challenge: {
+            title: "Turn the container into a Grid",
+
+            description:
+              "The container currently needs a Grid formatting context.",
+
+            goal: "Use display: grid;",
+
+            check: (state) => state.container.display === "grid",
+          },
+        },
+
+        {
+          id: 2,
+
+          title: "Columns & Rows",
+
+          category: "Tracks",
+
+          property: "grid-template-columns",
+
+          description:
+            "Grid columns and rows define the tracks that make up the grid. A three-column grid has three column tracks but four vertical grid lines.",
+
+          learn:
+            "grid-template-columns describes the width and number of column tracks. repeat(3, 1fr) means create three equal columns.",
+
+          mental:
+            "Tracks are the spaces between lines. Lines define boundaries. Remember: 3 columns require 4 vertical lines.",
+
+          why: `
+          <p>
+            A grid with three columns looks like this:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-3">
+            Line 1 &nbsp; Line 2 &nbsp; Line 3 &nbsp; Line 4
+          </div>
+
+          <div class="font-mono text-slate-400 mt-1">
+            │────────│────────│────────│
+          </div>
+
+          <p class="mt-3">
+            The spaces between those lines are the
+            <strong>three column tracks</strong>.
+          </p>
+        `,
+
+          example: `<code class="text-indigo-300">grid-template-columns: repeat(3, 1fr);</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}`,
+
+          challenge: {
+            title: "Create four equal columns",
+
+            description:
+              "Change the grid so the container has four equal column tracks.",
+
+            goal: "grid-template-columns: repeat(4, 1fr);",
+
+            check: (state) =>
+              state.container.templateColumns.trim() === "repeat(4, 1fr)",
+          },
+        },
+
+        {
+          id: 3,
+
+          title: "Gap",
+
+          category: "Spacing",
+
+          property: "gap",
+
+          description:
+            "The gap creates space between grid tracks. It does not create space outside the grid container.",
+
+          learn:
+            "column-gap controls horizontal spacing. row-gap controls vertical spacing. The shorthand gap controls both.",
+
+          mental:
+            "Imagine physical shelves. The gap is the empty space between shelves, not part of either shelf.",
+
+          why: `
+          <p>
+            If your columns are:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-3">
+            Column 1 | Column 2 | Column 3
+          </div>
+
+          <p class="mt-3">
+            The gap lives <strong>between</strong> those tracks.
+          </p>
+        `,
+
+          example: `<code class="text-indigo-300">gap: 16px;</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}`,
+
+          challenge: {
+            title: "Give the cards breathing room",
+
+            description: "Set the horizontal and vertical gap to 24px.",
+
+            goal: "gap: 24px;",
+
+            check: (state) =>
+              Number(state.container.columnGap) === 24 &&
+              Number(state.container.rowGap) === 24,
+          },
+        },
+
+        {
+          id: 4,
+
+          title: "Grid Lines",
+
+          category: "Grid System",
+
+          property: "grid lines",
+
+          description:
+            "Grid lines are the invisible boundaries that define the beginning and ending points of grid tracks.",
+
+          learn:
+            "You position grid items using grid lines. The line numbers are what grid-column and grid-row refer to.",
+
+          mental:
+            "Think of lines as the rulers. Tracks are the spaces between ruler marks.",
+
+          why: `
+          <p>
+            A three-column grid has four vertical lines:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-3">
+            1 &nbsp;&nbsp; 2 &nbsp;&nbsp; 3 &nbsp;&nbsp; 4
+          </div>
+
+          <div class="font-mono text-slate-400">
+            │────│────│────│
+          </div>
+
+          <p class="mt-3">
+            That is why grid-column uses line numbers.
+          </p>
+        `,
+
+          example: `<code class="text-indigo-300">grid-column: 1 / 3;</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}`,
+
+          challenge: {
+            title: "Identify the grid system",
+
+            description:
+              "For this challenge, create three columns so that the visualizer shows four vertical grid lines.",
+
+            goal: "grid-template-columns: repeat(3, 1fr);",
+
+            check: (state) =>
+              state.container.templateColumns.trim() === "repeat(3, 1fr)",
+          },
+        },
+
+        {
+          id: 5,
+
+          title: "grid-column",
+
+          category: "Placement",
+
+          property: "grid-column",
+
+          description:
+            "grid-column controls where a grid item starts and ends along the column axis.",
+
+          learn:
+            "grid-column uses grid line numbers. The first value is the starting line and the second is the ending line.",
+
+          mental:
+            "Read it like a journey: start at this line → finish at that line.",
+
+          why: `
+          <p>
+            <strong>grid-column: 1 / 3</strong> means:
+          </p>
+
+          <div class="mt-3 font-mono text-indigo-300">
+            start at line 1
+            <br />
+            ↓
+            <br />
+            end at line 3
+          </div>
+
+          <p class="mt-3">
+            Therefore the item occupies two column tracks.
+          </p>
+        `,
+
+          example: `<code class="text-indigo-300">grid-column: 1 / 3;</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.item-1 {
+  grid-column: 1 / 3;
+}`,
+
+          challenge: {
+            title: "Make Card #1 span two columns",
+
+            description:
+              "Make Card #1 begin at grid line 1 and finish at grid line 3.",
+
+            goal: "grid-column: 1 / 3;",
+
+            check: (state) => state.items[0]?.gridColumn.trim() === "1 / 3",
+          },
+        },
+
+        {
+          id: 6,
+
+          title: "grid-row",
+
+          category: "Placement",
+
+          property: "grid-row",
+
+          description:
+            "grid-row controls where a grid item begins and ends along the row axis.",
+
+          learn:
+            "Just like grid-column works with vertical grid lines, grid-row works with horizontal grid lines.",
+
+          mental: "grid-column moves across. grid-row moves down.",
+
+          why: `
+          <p>
+            If the item uses:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-3">
+            grid-row: 1 / 3;
+          </div>
+
+          <p class="mt-3">
+            it starts at horizontal line 1 and ends at horizontal line 3.
+            That means it occupies two row tracks.
+          </p>
+        `,
+
+          example: `<code class="text-indigo-300">grid-row: 1 / 3;</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.item-1 {
+  grid-row: 1 / 3;
+}`,
+
+          challenge: {
+            title: "Make Card #1 occupy both rows",
+
+            description:
+              "Make Card #1 start on row line 1 and end on row line 3.",
+
+            goal: "grid-row: 1 / 3;",
+
+            check: (state) => state.items[0]?.gridRow.trim() === "1 / 3",
+          },
+        },
+
+        {
+          id: 7,
+
+          title: "span",
+
+          category: "Placement",
+
+          property: "span",
+
+          description:
+            "The span keyword lets you describe how many tracks an item should occupy without manually specifying the ending line.",
+
+          learn:
+            "grid-column: 1 / span 2 means start at line 1 and occupy two column tracks.",
+
+          mental:
+            "Line numbers tell you where to finish. span tells you how many tracks to consume.",
+
+          why: `
+          <p>
+            Compare these:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-3 space-y-1">
+            <div>1 / 2 → 1 column</div>
+            <div>1 / 3 → 2 columns</div>
+            <div>1 / 4 → 3 columns</div>
+          </div>
+
+          <p class="mt-3">
+            With span:
+          </p>
+
+          <div class="font-mono text-emerald-300">
+            1 / span 2 → 2 columns
+          </div>
+        `,
+
+          example: `<code class="text-indigo-300">grid-column: 1 / span 2;</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.item-1 {
+  grid-column: 1 / span 2;
+}`,
+
+          challenge: {
+            title: "Use span",
+
+            description:
+              "Make Card #1 begin at line 1 and occupy exactly two columns using the span keyword.",
+
+            goal: "grid-column: 1 / span 2;",
+
+            check: (state) =>
+              state.items[0]?.gridColumn.trim() === "1 / span 2",
+          },
+        },
+
+        {
+          id: 8,
+
+          title: "justify-items",
+
+          category: "Alignment",
+
+          property: "justify-items",
+
+          description:
+            "justify-items controls the horizontal alignment of grid items inside their grid areas.",
+
+          learn:
+            "It applies to all grid items at once. Use start, center, end or stretch.",
+
+          mental:
+            "Think left-to-right. justify-items decides where the items sit horizontally inside their assigned cells.",
+
+          why: `
+          <p>
+            <strong>justify-items</strong> affects every item.
+          </p>
+
+          <div class="mt-3 font-mono text-indigo-300 space-y-1">
+            <div>start → left</div>
+            <div>center → middle</div>
+            <div>end → right</div>
+            <div>stretch → fill</div>
+          </div>
+        `,
+
+          example: `<code class="text-indigo-300">justify-items: center;</code>`,
+
+          code: `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+}`,
+
+          challenge: {
+            title: "Center every item horizontally",
+
+            description:
+              "Change the container so every grid item is horizontally centered inside its grid area.",
+
+            goal: "justify-items: center;",
+
+            check: (state) => state.container.justifyItems === "center",
+          },
+        },
+
+        {
+          id: 9,
+
+          title: "align-items",
+
+          category: "Alignment",
+
+          property: "align-items",
+
+          description:
+            "align-items controls the vertical alignment of grid items inside their grid areas.",
+
+          learn:
+            "Use align-items when you want to control how all grid items sit along the block or vertical axis.",
+
+          mental:
+            "If justify-items answers 'left, center or right?', align-items answers 'top, center or bottom?'.",
+
+          why: `
+          <p>
+            Think of each grid cell as a box.
+          </p>
+
+          <p class="mt-3">
+            align-items controls where the item sits
+            <strong>vertically</strong> inside that box.
+          </p>
+        `,
+
+          example: `<code class="text-indigo-300">align-items: center;</code>`,
+
+          challenge: {
+            title: "Center items vertically",
+
+            description:
+              "Make all grid items vertically centered inside their grid areas.",
+
+            goal: "align-items: center;",
+
+            check: (state) => state.container.alignItems === "center",
+          },
+        },
+
+        {
+          id: 10,
+
+          title: "justify-self",
+
+          category: "Individual Alignment",
+
+          property: "justify-self",
+
+          description:
+            "justify-self lets one individual grid item override the container's horizontal alignment.",
+
+          learn:
+            "Unlike justify-items, justify-self applies to one specific grid item.",
+
+          mental:
+            "justify-items is the group rule. justify-self is the individual exception.",
+
+          why: `
+          <p>
+            If the container says:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-2">
+            justify-items: center;
+          </div>
+
+          <p class="mt-3">
+            one item can override it:
+          </p>
+
+          <div class="font-mono text-emerald-300 mt-2">
+            justify-self: end;
+          </div>
+        `,
+
+          example: `<code class="text-indigo-300">justify-self: end;</code>`,
+
+          challenge: {
+            title: "Move Card #1 to the right",
+
+            description:
+              "Keep the other cards unchanged. Make only Card #1 align to the end of its grid area horizontally.",
+
+            goal: "justify-self: end;",
+
+            check: (state) => state.items[0]?.justifySelf === "end",
+          },
+        },
+
+        {
+          id: 11,
+
+          title: "align-self",
+
+          category: "Individual Alignment",
+
+          property: "align-self",
+
+          description:
+            "align-self controls the vertical alignment of one individual grid item.",
+
+          learn:
+            "It works like align-items, except it targets one item instead of all items.",
+
+          mental:
+            "align-items is the group setting. align-self is the personal override.",
+
+          why: `
+          <p>
+            You can have a grid where every item is centered,
+            but one item can decide to move to the bottom.
+          </p>
+        `,
+
+          example: `<code class="text-indigo-300">align-self: end;</code>`,
+
+          challenge: {
+            title: "Move Card #1 downward",
+
+            description:
+              "Make only Card #1 align to the bottom of its grid area.",
+
+            goal: "align-self: end;",
+
+            check: (state) => state.items[0]?.alignSelf === "end",
+          },
+        },
+
+        {
+          id: 12,
+
+          title: "justify-content",
+
+          category: "Grid Alignment",
+
+          property: "justify-content",
+
+          description:
+            "justify-content controls how the entire grid tracks are positioned along the horizontal axis when extra space exists.",
+
+          learn:
+            "This property moves the grid itself inside the container. It is different from justify-items, which moves items inside their cells.",
+
+          mental:
+            "justify-items moves the furniture inside rooms. justify-content moves the entire row of rooms.",
+
+          why: `
+          <p>
+            This distinction is critical:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-3 space-y-1">
+            <div>justify-content → moves the grid tracks</div>
+            <div>justify-items → moves the items inside tracks</div>
+          </div>
+        `,
+
+          example: `<code class="text-indigo-300">justify-content: center;</code>`,
+
+          challenge: {
+            title: "Center the entire grid",
+
+            description:
+              "Center the grid tracks horizontally inside the container.",
+
+            goal: "justify-content: center;",
+
+            check: (state) => state.container.justifyContent === "center",
+          },
+        },
+
+        {
+          id: 13,
+
+          title: "align-content",
+
+          category: "Grid Alignment",
+
+          property: "align-content",
+
+          description:
+            "align-content controls how the entire set of grid rows is positioned along the vertical axis when extra space exists.",
+
+          learn:
+            "It moves the grid tracks vertically inside the container. It does not directly move individual items.",
+
+          mental:
+            "justify-content moves the whole grid horizontally. align-content moves the whole grid vertically.",
+
+          why: `
+          <p>
+            Think about the difference:
+          </p>
+
+          <div class="font-mono text-indigo-300 mt-3 space-y-1">
+            <div>align-content → moves rows</div>
+            <div>align-items → moves items inside rows</div>
+          </div>
+        `,
+
+          example: `<code class="text-indigo-300">align-content: center;</code>`,
+
+          challenge: {
+            title: "Center the grid vertically",
+
+            description:
+              "Center all of the grid's rows vertically inside the container.",
+
+            goal: "align-content: center;",
+
+            check: (state) => state.container.alignContent === "center",
+          },
+        },
+
+        {
+          id: 14,
+
+          title: "Real Layout Challenge",
+
+          category: "Final Challenge",
+
+          property: "grid-column + grid-row",
+
+          description:
+            "Now combine everything you have learned. Build a simple dashboard layout by controlling the placement of individual items.",
+
+          learn:
+            "Real CSS layouts rarely depend on one property. You combine tracks, gaps, placement and alignment to describe a layout.",
+
+          mental:
+            "Stop thinking about isolated properties. Think about the layout as a system of tracks, lines and relationships.",
+
+          why: `
+          <p>
+            A real layout can be described using:
+          </p>
+
+          <ul class="list-disc ml-5 mt-3 space-y-1">
+            <li>How many tracks exist?</li>
+            <li>Where does an item start?</li>
+            <li>Where does it end?</li>
+            <li>How many tracks does it span?</li>
+            <li>How should items align?</li>
+          </ul>
+        `,
+
+          example: `<code class="text-indigo-300">grid-column: 1 / span 2;</code>`,
+
+          challenge: {
+            title: "Build the dashboard",
+
+            description:
+              "Make Card #1 occupy the first two columns and Card #2 occupy the third column.",
+
+            goal: "Card #1 → grid-column: 1 / span 2\nCard #2 → grid-column: 3",
+
+            check: (state) =>
+              state.items[0]?.gridColumn.trim() === "1 / span 2" &&
+              state.items[1]?.gridColumn.trim() === "3",
+          },
+        },
+      ];
+
+      /* =========================================================
+     APPLICATION STATE
+  ========================================================= */
+
+      const state = {
+        currentLesson: 0,
+
+        selectedItem: 0,
+
+        completedLessons: [],
+
+        container: {
+          display: "grid",
+
+          templateColumns: "repeat(3, 1fr)",
+
+          templateRows: "repeat(2, 1fr)",
+
+          justifyItems: "stretch",
+
+          alignItems: "stretch",
+
+          justifyContent: "stretch",
+
+          alignContent: "stretch",
+
+          columnGap: 16,
+
+          rowGap: 16,
+        },
+
+        items: [],
+      };
+
+      /* =========================================================
+     CREATE ITEMS
+  ========================================================= */
+
+      function createItems() {
+        state.items = Array.from({ length: 6 }, (_, index) => ({
+          id: index + 1,
+
+          gridColumn: "auto",
+
+          gridRow: "auto",
+
+          justifySelf: "auto",
+
+          alignSelf: "auto",
+        }));
+      }
+
+      /* =========================================================
+     LESSON PATH
+  ========================================================= */
+
+      function renderLessonPath() {
+        const container = document.getElementById("lesson-path");
+
+        container.innerHTML = "";
+
+        lessons.forEach((lesson, index) => {
+          const completed = state.completedLessons.includes(index);
+
+          const active = index === state.currentLesson;
+
+          const button = document.createElement("button");
+
+          button.className = `
+            lesson-button
+            w-full
+            text-left
+            flex
+            items-center
+            gap-3
+            px-2
+            py-2
+            rounded-lg
+            border
+            border-transparent
+            hover:bg-slate-800/70
+            transition
+            ${active ? "active" : ""}
+            ${completed ? "completed" : ""}
+          `;
+
+          button.innerHTML = `
+
+          <span
+            class="
+              lesson-number
+              flex-shrink-0
+              w-8
+              h-8
+              rounded-full
+              border
+              border-slate-700
+              bg-slate-950
+              flex
+              items-center
+              justify-center
+              text-[9px]
+              font-bold
+              text-slate-500
+            "
+          >
+            ${
+              completed
+                ? '<i class="fa-solid fa-check text-[10px]"></i>'
+                : String(index + 1).padStart(2, "0")
+            }
+          </span>
+
+          <span class="min-w-0">
+
+            <span
+              class="
+                block
+                text-[11px]
+                font-semibold
+                ${active ? "text-white" : "text-slate-400"}
+              "
+            >
+              ${lesson.title}
+            </span>
+
+            <span
+              class="
+                block
+                text-[9px]
+                text-slate-600
+                mt-0.5
+              "
+            >
+              ${lesson.category}
+            </span>
+
+          </span>
+
+        `;
+
+          button.onclick = () => {
+            state.currentLesson = index;
+
+            resetLesson();
+          };
+
+          const wrapper = document.createElement("div");
+
+          wrapper.className = "lesson-item";
+
+          wrapper.appendChild(button);
+
+          container.appendChild(wrapper);
+        });
+      }
+
+      /* =========================================================
+     LOAD LESSON
+  ========================================================= */
+
+      function loadLesson() {
+        const lesson = lessons[state.currentLesson];
+
+        document.getElementById("lesson-number").textContent = `LESSON ${String(
+          lesson.id,
+        ).padStart(2, "0")}`;
+
+        document.getElementById("lesson-category").textContent =
+          lesson.category;
+
+        document.getElementById("lesson-title").textContent = lesson.title;
+
+        document.getElementById("lesson-description").textContent =
+          lesson.description;
+
+        document.getElementById("learn-text").textContent = lesson.learn;
+
+        document.getElementById("mental-model").textContent = lesson.mental;
+
+        document.getElementById("property-name").textContent = lesson.property;
+
+        document.getElementById("why-content").innerHTML = lesson.why;
+
+        document.getElementById("why-example").innerHTML = `
+        <div
+          class="text-[9px] uppercase tracking-widest text-slate-500 mb-2"
+        >
+          Example
+        </div>
+
+        ${lesson.example}
+      `;
+
+        document.getElementById("challenge-title").textContent =
+          lesson.challenge.title;
+
+        document.getElementById("challenge-description").textContent =
+          lesson.challenge.description;
+
+        document.getElementById("challenge-goal").textContent =
+          lesson.challenge.goal;
+
+        document.getElementById("css-editor").value = lesson.code;
+
+        document.getElementById("challenge-feedback").className =
+          "hidden mt-4 p-4 rounded-xl text-xs leading-6";
+
+        document.getElementById("challenge-status").textContent = "";
+
+        document
+          .getElementById("challenge-card")
+          .classList.remove("challenge-success", "challenge-failed");
+
+        updateProgress();
+
+        renderLessonPath();
+
+        updatePropertyDisplay();
+
+        updateGeneratedCSS();
+
+        renderGrid();
+      }
+
+      /* =========================================================
+     PARSE CSS
+  ========================================================= */
+
+      function parseCSS(css) {
+        const result = {
+          container: {
+            ...state.container,
+          },
+
+          itemChanges: {},
+        };
+
+        const clean = css.replace(/\/\*[\s\S]*?\*\//g, "");
+
+        const containerMatch = clean.match(
+          /\.grid-container\s*\{([\s\S]*?)\}/i,
+        );
+
+        if (containerMatch) {
+          const body = containerMatch[1];
+
+          parseContainerProperties(body, result.container);
+        }
+
+        const itemRegex = /\.item-(\d+)\s*\{([\s\S]*?)\}/gi;
+
+        let match;
+
+        while ((match = itemRegex.exec(clean))) {
+          const index = Number(match[1]) - 1;
+
+          if (index < 0 || index >= state.items.length) {
+            continue;
+          }
+
+          const item = {
+            ...state.items[index],
+          };
+
+          const body = match[2];
+
+          const properties = [
+            ["grid-column", "gridColumn"],
+
+            ["grid-row", "gridRow"],
+
+            ["justify-self", "justifySelf"],
+
+            ["align-self", "alignSelf"],
+          ];
+
+          properties.forEach(([cssName, key]) => {
+            const regex = new RegExp(cssName + "\\s*:\\s*([^;]+)", "i");
+
+            const propertyMatch = body.match(regex);
+
+            if (propertyMatch) {
+              item[key] = propertyMatch[1].trim();
+            }
+          });
+
+          result.itemChanges[index] = item;
+        }
+
+        return result;
+      }
+
+      /* =========================================================
+     PARSE CONTAINER PROPERTIES
+  ========================================================= */
+
+      function parseContainerProperties(body, container) {
+        const properties = [
+          ["display", "display"],
+
+          ["grid-template-columns", "templateColumns"],
+
+          ["grid-template-rows", "templateRows"],
+
+          ["justify-items", "justifyItems"],
+
+          ["align-items", "alignItems"],
+
+          ["justify-content", "justifyContent"],
+
+          ["align-content", "alignContent"],
+
+          ["column-gap", "columnGap"],
+
+          ["row-gap", "rowGap"],
+
+          ["gap", "gap"],
+        ];
+
+        properties.forEach(([cssName, key]) => {
+          const regex = new RegExp(cssName + "\\s*:\\s*([^;]+)", "i");
+
+          const match = body.match(regex);
+
+          if (!match) return;
+
+          const value = match[1].trim();
+
+          if (key === "columnGap" || key === "rowGap") {
+            const number = parseInt(value);
+
+            if (!isNaN(number)) {
+              container[key] = number;
+            }
+          } else if (key === "gap") {
+            const parts = value.split(/\s+/);
+
+            const first = parseInt(parts[0]);
+
+            const second = parts[1] ? parseInt(parts[1]) : first;
+
+            if (!isNaN(first)) {
+              container.columnGap = first;
+
+              container.rowGap = !isNaN(second) ? second : first;
+            }
+          } else {
+            container[key] = value;
+          }
+        });
+      }
+
+      /* =========================================================
+     RUN CSS
+  ========================================================= */
+
+      function runCode() {
+        const code = document.getElementById("css-editor").value;
+
+        const parsed = parseCSS(code);
+
+        state.container = parsed.container;
+
+        Object.entries(parsed.itemChanges).forEach(([index, item]) => {
+          state.items[Number(index)] = item;
+        });
+
+        updatePropertyDisplay();
+
+        updateGeneratedCSS();
+
+        renderGrid();
+
+        updateDynamicExplanation();
+      }
+
+      /* =========================================================
+     RESET EXPERIMENT
+  ========================================================= */
+
+      function resetExperiment() {
+        const lesson = lessons[state.currentLesson];
+
+        document.getElementById("css-editor").value = lesson.code;
+
+        runCode();
+      }
+
+      /* =========================================================
+     RENDER GRID
+  ========================================================= */
+
+      function renderGrid() {
+        const container = document.getElementById("grid-container");
+
+        container.innerHTML = "";
+
+        container.style.display = state.container.display;
+
+        container.style.gridTemplateColumns = state.container.templateColumns;
+
+        container.style.gridTemplateRows = state.container.templateRows;
+
+        container.style.justifyItems = state.container.justifyItems;
+
+        container.style.alignItems = state.container.alignItems;
+
+        container.style.justifyContent = state.container.justifyContent;
+
+        container.style.alignContent = state.container.alignContent;
+
+        container.style.columnGap = `${state.container.columnGap}px`;
+
+        container.style.rowGap = `${state.container.rowGap}px`;
+
+        state.items.forEach((item, index) => {
+          const itemEl = document.createElement("div");
+
+          const colors = [
+            ["rgba(79,70,229,.25)", "#6366f1", "#c7d2fe"],
+
+            ["rgba(124,58,237,.25)", "#8b5cf6", "#ddd6fe"],
+
+            ["rgba(5,150,105,.25)", "#10b981", "#a7f3d0"],
+
+            ["rgba(217,119,6,.25)", "#f59e0b", "#fde68a"],
+
+            ["rgba(225,29,72,.25)", "#f43f5e", "#fecdd3"],
+
+            ["rgba(8,145,178,.25)", "#06b6d4", "#a5f3fc"],
+          ];
+
+          const color = colors[index % colors.length];
+
+          itemEl.className = `
+            grid-item
+            ${index === state.selectedItem ? "selected" : ""}
+          `;
+
+          itemEl.style.background = color[0];
+
+          itemEl.style.borderColor = color[1];
+
+          itemEl.style.gridColumn = item.gridColumn;
+
+          itemEl.style.gridRow = item.gridRow;
+
+          itemEl.style.justifySelf = item.justifySelf;
+
+          itemEl.style.alignSelf = item.alignSelf;
+
+          itemEl.innerHTML = `
+            <span
+              class="item-title"
+              style="color:${color[2]}"
+            >
+              #${index + 1}
+            </span>
+
+            <span
+              class="item-placement"
+            >
+              ${formatPlacement(item)}
+            </span>
+          `;
+
+          itemEl.onclick = () => {
+            state.selectedItem = index;
+
+            renderGrid();
+
+            updatePropertyDisplay();
+          };
+
+          container.appendChild(itemEl);
+        });
+
+        renderGridLines();
+
+        renderTrackLabels();
+
+        renderGapIndicators();
+
+        renderPlacementMarkers();
+
+        updateStats();
+      }
+
+      /* =========================================================
+     FORMAT PLACEMENT
+  ========================================================= */
+
+      function formatPlacement(item) {
+        const column = item.gridColumn === "auto" ? "auto" : item.gridColumn;
+
+        const row = item.gridRow === "auto" ? "auto" : item.gridRow;
+
+        return `
+      col: ${column}
+      <br>
+      row: ${row}
+    `;
+      }
+
+      /* =========================================================
+     COUNT TRACKS
+  ========================================================= */
+
+      function countTracks(template) {
+        if (!template) return 1;
+
+        const repeatMatch = template.match(/repeat\(\s*(\d+)\s*,/i);
+
+        if (repeatMatch) {
+          return Number(repeatMatch[1]);
+        }
+
+        return template.trim().split(/\s+/).filter(Boolean).length;
+      }
+
+      /* =========================================================
+     GRID LINES
+  ========================================================= */
+
+      function renderGridLines() {
+        const wrapper = document.getElementById("grid-lines");
+
+        wrapper.innerHTML = "";
+
+        const columns = countTracks(state.container.templateColumns);
+
+        const rows = countTracks(state.container.templateRows);
+
+        const grid = document.getElementById("grid-container");
+
+        const width = grid.offsetWidth;
+
+        const height = grid.offsetHeight;
+
+        if (!width || !height) return;
+
+        /*
+      Vertical lines
+    */
+
+        for (let index = 0; index <= columns; index++) {
+          const line = document.createElement("div");
+
+          line.className = "grid-line vertical";
+
+          const percentage = (index / columns) * 100;
+
+          line.style.left = `${percentage}%`;
+
+          line.innerHTML = `
+          <span class="grid-line-number">
+            ${index + 1}
+          </span>
+        `;
+
+          wrapper.appendChild(line);
+        }
+
+        /*
+      Horizontal lines
+    */
+
+        for (let index = 0; index <= rows; index++) {
+          const line = document.createElement("div");
+
+          line.className = "grid-line horizontal";
+
+          const percentage = (index / rows) * 100;
+
+          line.style.top = `${percentage}%`;
+
+          line.innerHTML = `
+          <span class="grid-line-number">
+            ${index + 1}
+          </span>
+        `;
+
+          wrapper.appendChild(line);
+        }
+      }
+
+      /* =========================================================
+     TRACK LABELS
+  ========================================================= */
+
+      function renderTrackLabels() {
+        const wrapper = document.getElementById("track-labels");
+
+        wrapper.innerHTML = "";
+
+        const columns = countTracks(state.container.templateColumns);
+
+        const rows = countTracks(state.container.templateRows);
+
+        for (let index = 0; index < columns; index++) {
+          const label = document.createElement("div");
+
+          label.className = "track-label column-label";
+
+          label.style.left = `${((index + 0.5) / columns) * 100}%`;
+
+          label.textContent = `Column ${index + 1}`;
+
+          wrapper.appendChild(label);
+        }
+
+        for (let index = 0; index < rows; index++) {
+          const label = document.createElement("div");
+
+          label.className = "track-label row-label";
+
+          label.style.top = `${((index + 0.5) / rows) * 100}%`;
+
+          label.textContent = `Row ${index + 1}`;
+
+          wrapper.appendChild(label);
+        }
+      }
+
+      /* =========================================================
+     GAP INDICATORS
+  ========================================================= */
+
+      function renderGapIndicators() {
+        const wrapper = document.getElementById("gap-indicators");
+
+        wrapper.innerHTML = "";
+
+        const columns = countTracks(state.container.templateColumns);
+
+        const rows = countTracks(state.container.templateRows);
+
+        const grid = document.getElementById("grid-container");
+
+        const width = grid.offsetWidth;
+
+        const height = grid.offsetHeight;
+
+        if (!width || !height) return;
+
+        /*
+      Column gap
+    */
+
+        if (columns > 1 && state.container.columnGap > 0) {
+          const indicator = document.createElement("div");
+
+          indicator.className = "gap-indicator horizontal";
+
+          const approximateTrack =
+            (width - (columns - 1) * state.container.columnGap) / columns;
+
+          const left = approximateTrack + state.container.columnGap / 2;
+
+          indicator.style.left = `${left}px`;
+
+          indicator.style.width = `${state.container.columnGap}px`;
+
+          indicator.style.top = "-12px";
+
+          indicator.innerHTML = `
+          <span
+            class="gap-label"
+            style="
+              left:50%;
+              top:-19px;
+              transform:translateX(-50%);
+            "
+          >
+            ${state.container.columnGap}px
+          </span>
+        `;
+
+          wrapper.appendChild(indicator);
+        }
+
+        /*
+      Row gap
+    */
+
+        if (rows > 1 && state.container.rowGap > 0) {
+          const indicator = document.createElement("div");
+
+          indicator.className = "gap-indicator vertical";
+
+          const approximateTrack =
+            (height - (rows - 1) * state.container.rowGap) / rows;
+
+          const top = approximateTrack + state.container.rowGap / 2;
+
+          indicator.style.top = `${top}px`;
+
+          indicator.style.height = `${state.container.rowGap}px`;
+
+          indicator.style.left = "-12px";
+
+          indicator.innerHTML = `
+          <span
+            class="gap-label"
+            style="
+              left:-10px;
+              top:50%;
+              transform:translate(-100%,-50%);
+            "
+          >
+            ${state.container.rowGap}px
+          </span>
+        `;
+
+          wrapper.appendChild(indicator);
+        }
+      }
+
+      /* =========================================================
+     PLACEMENT MARKERS
+  ========================================================= */
+
+      function renderPlacementMarkers() {
+        const wrapper = document.getElementById("placement-markers");
+
+        wrapper.innerHTML = "";
+
+        const item = state.items[state.selectedItem];
+
+        if (!item) return;
+
+        const columns = countTracks(state.container.templateColumns);
+
+        const rows = countTracks(state.container.templateRows);
+
+        const columnPlacement = resolvePlacement(item.gridColumn, columns);
+
+        const rowPlacement = resolvePlacement(item.gridRow, rows);
+
+        if (!columnPlacement || !rowPlacement) return;
+
+        /*
+      Start marker
+    */
+
+        const start = document.createElement("div");
+
+        start.className = "placement-marker placement-start";
+
+        start.style.left = `${((columnPlacement.start - 1) / columns) * 100}%`;
+
+        start.style.top = `${((rowPlacement.start - 1) / rows) * 100}%`;
+
+        start.style.transform = "translate(-100%, -100%)";
+
+        start.textContent = `START: ${columnPlacement.start}, ${rowPlacement.start}`;
+
+        wrapper.appendChild(start);
+
+        /*
+      End marker
+    */
+
+        const end = document.createElement("div");
+
+        end.className = "placement-marker placement-end";
+
+        end.style.left = `${((columnPlacement.end - 1) / columns) * 100}%`;
+
+        end.style.top = `${((rowPlacement.end - 1) / rows) * 100}%`;
+
+        end.style.transform = "translate(0, 0)";
+
+        end.textContent = `END: ${columnPlacement.end}, ${rowPlacement.end}`;
+
+        wrapper.appendChild(end);
+      }
+
+      /* =========================================================
+     RESOLVE PLACEMENT
+  ========================================================= */
+
+      function resolvePlacement(value, trackCount) {
+        if (!value || value === "auto") {
+          return {
+            start: 1,
+            end: 2,
+          };
+        }
+
+        const parts = value.trim().split(/\s*\/\s*/);
+
+        if (parts.length < 2) {
+          return {
+            start: 1,
+            end: 2,
+          };
+        }
+
+        let start = parseInt(parts[0]);
+
+        let end;
+
+        if (parts[1].startsWith("span")) {
+          const span = parseInt(parts[1].replace("span", ""));
+
+          end = start + span;
+        } else {
+          end = parseInt(parts[1]);
+        }
+
+        if (isNaN(start)) {
+          start = 1;
+        }
+
+        if (isNaN(end)) {
+          end = start + 1;
+        }
+
+        return {
+          start,
+          end,
+        };
+      }
+
+      /* =========================================================
+     UPDATE STATS
+  ========================================================= */
+
+      function updateStats() {
+        const columns = countTracks(state.container.templateColumns);
+
+        const rows = countTracks(state.container.templateRows);
+
+        document.getElementById("column-count").textContent = columns;
+
+        document.getElementById("row-count").textContent = rows;
+
+        document.getElementById("column-gap-display").textContent =
+          `${state.container.columnGap}px`;
+
+        document.getElementById("selected-display").textContent =
+          `#${state.selectedItem + 1}`;
+      }
+
+      /* =========================================================
+     PROPERTY DISPLAY
+  ========================================================= */
+
+      function updatePropertyDisplay() {
+        const lesson = lessons[state.currentLesson];
+
+        let value = "";
+
+        switch (lesson.property) {
+          case "display":
+            value = `display: ${state.container.display};`;
+            break;
+
+          case "grid-template-columns":
+            value = `grid-template-columns: ${state.container.templateColumns};`;
+            break;
+
+          case "gap":
+            value = `column-gap: ${state.container.columnGap}px;\nrow-gap: ${state.container.rowGap}px;`;
+            break;
+
+          case "grid-column":
+            value = `grid-column: ${state.items[state.selectedItem].gridColumn};`;
+            break;
+
+          case "grid-row":
+            value = `grid-row: ${state.items[state.selectedItem].gridRow};`;
+            break;
+
+          case "span":
+            value = `grid-column: ${state.items[state.selectedItem].gridColumn};`;
+            break;
+
+          case "justify-items":
+            value = `justify-items: ${state.container.justifyItems};`;
+            break;
+
+          case "align-items":
+            value = `align-items: ${state.container.alignItems};`;
+            break;
+
+          case "justify-self":
+            value = `justify-self: ${state.items[state.selectedItem].justifySelf};`;
+            break;
+
+          case "align-self":
+            value = `align-self: ${state.items[state.selectedItem].alignSelf};`;
+            break;
+
+          case "justify-content":
+            value = `justify-content: ${state.container.justifyContent};`;
+            break;
+
+          case "align-content":
+            value = `align-content: ${state.container.alignContent};`;
+            break;
+
+          default:
+            value = lesson.property;
+        }
+
+        document.getElementById("property-value").textContent = value;
+      }
+
+      /* =========================================================
+     DYNAMIC EXPLANATION
+  ========================================================= */
+
+      function updateDynamicExplanation() {
+        const lesson = lessons[state.currentLesson];
+
+        const item = state.items[state.selectedItem];
+
+        const columns = countTracks(state.container.templateColumns);
+
+        const rows = countTracks(state.container.templateRows);
+
+        let explanation = "";
+
+        if (lesson.property === "display") {
+          explanation =
+            state.container.display === "grid"
+              ? "The container is now a Grid container. Its direct children can participate in the grid system."
+              : "The container is not currently using display: grid, so the Grid layout system is not active.";
+        } else if (lesson.property === "grid-template-columns") {
+          explanation = `You currently have ${columns} column tracks, which means the browser creates ${columns + 1} vertical grid lines.`;
+        } else if (lesson.property === "gap") {
+          explanation = `The horizontal space between columns is ${state.container.columnGap}px and the vertical space between rows is ${state.container.rowGap}px.`;
+        } else if (lesson.property === "grid-column") {
+          const placement = resolvePlacement(item.gridColumn, columns);
+
+          const span = placement.end - placement.start;
+
+          explanation = `Card #${state.selectedItem + 1} starts at grid line ${placement.start} and ends at grid line ${placement.end}. That means it occupies ${span} column track${span === 1 ? "" : "s"}.`;
+        } else if (lesson.property === "grid-row") {
+          const placement = resolvePlacement(item.gridRow, rows);
+
+          const span = placement.end - placement.start;
+
+          explanation = `Card #${state.selectedItem + 1} starts at row line ${placement.start} and ends at row line ${placement.end}. That means it occupies ${span} row track${span === 1 ? "" : "s"}.`;
+        } else if (lesson.property === "span") {
+          const placement = resolvePlacement(item.gridColumn, columns);
+
+          const span = placement.end - placement.start;
+
+          explanation = `The item starts at line ${placement.start} and currently occupies ${span} column track${span === 1 ? "" : "s"}.`;
+        } else if (lesson.property === "justify-items") {
+          explanation = `All grid items are currently horizontally aligned using "${state.container.justifyItems}".`;
+        } else if (lesson.property === "align-items") {
+          explanation = `All grid items are currently vertically aligned using "${state.container.alignItems}".`;
+        } else if (lesson.property === "justify-self") {
+          explanation = `Card #${state.selectedItem + 1} is using justify-self: ${item.justifySelf}. This controls only that item horizontally.`;
+        } else if (lesson.property === "align-self") {
+          explanation = `Card #${state.selectedItem + 1} is using align-self: ${item.alignSelf}. This controls only that item vertically.`;
+        } else if (lesson.property === "justify-content") {
+          explanation = `The grid tracks themselves are currently positioned using justify-content: ${state.container.justifyContent}.`;
+        } else if (lesson.property === "align-content") {
+          explanation = `The grid rows themselves are currently positioned using align-content: ${state.container.alignContent}.`;
+        }
+
+        document.getElementById("dynamic-explanation").textContent =
+          explanation;
+      }
+
+      /* =========================================================
+     GENERATED CSS
+  ========================================================= */
+
+      function updateGeneratedCSS() {
+        let css = `.grid-container {
+  display: ${state.container.display};
+  grid-template-columns: ${state.container.templateColumns};
+  grid-template-rows: ${state.container.templateRows};
+  justify-items: ${state.container.justifyItems};
+  align-items: ${state.container.alignItems};
+  justify-content: ${state.container.justifyContent};
+  align-content: ${state.container.alignContent};
+  column-gap: ${state.container.columnGap}px;
+  row-gap: ${state.container.rowGap}px;
+}`;
+
+        state.items.forEach((item, index) => {
+          if (
+            item.gridColumn !== "auto" ||
+            item.gridRow !== "auto" ||
+            item.justifySelf !== "auto" ||
+            item.alignSelf !== "auto"
+          ) {
+            css += `\n\n.item-${index + 1} {`;
+
+            if (item.gridColumn !== "auto") {
+              css += `\n  grid-column: ${item.gridColumn};`;
+            }
+
+            if (item.gridRow !== "auto") {
+              css += `\n  grid-row: ${item.gridRow};`;
+            }
+
+            if (item.justifySelf !== "auto") {
+              css += `\n  justify-self: ${item.justifySelf};`;
+            }
+
+            if (item.alignSelf !== "auto") {
+              css += `\n  align-self: ${item.alignSelf};`;
+            }
+
+            css += "\n}";
+          }
+        });
+
+        document.getElementById("generated-css").textContent = css;
+      }
+
+      /* =========================================================
+     CHALLENGE CHECK
+  ========================================================= */
+
+      function checkChallenge() {
+        const lesson = lessons[state.currentLesson];
+
+        const correct = lesson.challenge.check(state);
+
+        const card = document.getElementById("challenge-card");
+
+        const feedback = document.getElementById("challenge-feedback");
+
+        const status = document.getElementById("challenge-status");
+
+        feedback.classList.remove("hidden");
+
+        card.classList.remove("challenge-success", "challenge-failed");
+
+        if (correct) {
+          if (!state.completedLessons.includes(state.currentLesson)) {
+            state.completedLessons.push(state.currentLesson);
+          }
+
+          card.classList.add("challenge-success");
+
+          status.innerHTML = `
+          <span class="text-emerald-400 font-bold">
+            <i class="fa-solid fa-check mr-1"></i>
+            Correct
+          </span>
+        `;
+
+          feedback.className = `
+          mt-4
+          p-4
+          rounded-xl
+          text-xs
+          leading-6
+          bg-emerald-950/50
+          border
+          border-emerald-800
+          text-emerald-300
+        `;
+
+          feedback.innerHTML = `
+          <strong>✓ Correct!</strong>
+
+          <br>
+
+          You solved the challenge.
+
+          <br><br>
+
+          The important part is not just that the code works.
+          You changed the Grid system in the exact way the challenge requested.
+        `;
+
+          renderLessonPath();
+
+          updateProgress();
+        } else {
+          card.classList.add("challenge-failed");
+
+          status.innerHTML = `
+          <span class="text-amber-400 font-bold">
+            <i class="fa-solid fa-lightbulb mr-1"></i>
+            Keep experimenting
+          </span>
+        `;
+
+          feedback.className = `
+          mt-4
+          p-4
+          rounded-xl
+          text-xs
+          leading-6
+          bg-amber-950/40
+          border
+          border-amber-800
+          text-amber-300
+        `;
+
+          feedback.innerHTML = `
+          <strong>Not quite yet.</strong>
+
+          <br>
+
+          Read the challenge again and inspect the grid lines.
+
+          <br><br>
+
+          <span class="text-slate-400">
+            Tip: don't guess the syntax. Ask yourself:
+            "Where should the item start?"
+            and
+            "Where should it end?"
+          </span>
+        `;
+        }
+      }
+
+      /* =========================================================
+     LESSON RESET
+  ========================================================= */
+
+      function resetLesson() {
+        state.container = {
+          display: "grid",
+
+          templateColumns: "repeat(3, 1fr)",
+
+          templateRows: "repeat(2, 1fr)",
+
+          justifyItems: "stretch",
+
+          alignItems: "stretch",
+
+          justifyContent: "stretch",
+
+          alignContent: "stretch",
+
+          columnGap: 16,
+
+          rowGap: 16,
+        };
+
+        createItems();
+
+        state.selectedItem = 0;
+
+        loadLesson();
+      }
+
+      /* =========================================================
+     NEXT LESSON
+  ========================================================= */
+
+      function nextLesson() {
+        if (state.currentLesson < lessons.length - 1) {
+          state.currentLesson++;
+
+          resetLesson();
+        }
+      }
+
+      /* =========================================================
+     PREVIOUS LESSON
+  ========================================================= */
+
+      function previousLesson() {
+        if (state.currentLesson > 0) {
+          state.currentLesson--;
+
+          resetLesson();
+        }
+      }
+
+      /* =========================================================
+     PROGRESS
+  ========================================================= */
+
+      function updateProgress() {
+        const current = state.currentLesson + 1;
+
+        const total = lessons.length;
+
+        document.getElementById("progress-text").textContent =
+          `${current} / ${total}`;
+
+        document.getElementById("progress-bar").style.width = `${
+          (current / total) * 100
+        }%`;
+
+        document.getElementById("previous-button").disabled =
+          state.currentLesson === 0;
+
+        document.getElementById("previous-button").style.opacity =
+          state.currentLesson === 0 ? ".4" : "1";
+
+        document.getElementById("next-button").innerHTML =
+          state.currentLesson === lessons.length - 1
+            ? `
+          Finish Course
+          <i class="fa-solid fa-flag-checkered"></i>
+        `
+            : `
+          Next Lesson
+          <i class="fa-solid fa-arrow-right"></i>
+        `;
+      }
+
+      /* =========================================================
+     COPY CSS
+  ========================================================= */
+
+      async function copyCSS() {
+        const code = document.getElementById("generated-css").textContent;
+
+        try {
+          await navigator.clipboard.writeText(code);
+
+          const icon = document.getElementById("copy-icon");
+
+          icon.className = "fa-solid fa-check text-emerald-400";
+
+          setTimeout(() => {
+            icon.className = "fa-regular fa-copy";
+          }, 1500);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      /* =========================================================
+     RESIZE OBSERVER
+  ========================================================= */
+
+      const observer = new ResizeObserver(() => {
+        renderGridLines();
+
+        renderTrackLabels();
+
+        renderGapIndicators();
+
+        renderPlacementMarkers();
+      });
+
+      observer.observe(document.getElementById("grid-container"));
+
+      /* =========================================================
+     INITIALIZE
+  ========================================================= */
+
+      createItems();
+
+      loadLesson();
+    </script>
+
+    <script src="grid-lab-upgrade.js"></script>
+  </body>
+</html>
