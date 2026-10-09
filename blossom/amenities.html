@@ -1,0 +1,514 @@
+<style>
+  /* =========================================================
+     1. EDGE-TO-EDGE HERO BANNER (NO MARGINS)
+     ========================================================= */
+  .amenities-hero-section {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0b0f19;
+    background-image: url("https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_1z.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+  .amenities-hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(11, 15, 25, 0.4) 0%,
+      rgba(11, 15, 25, 0.85) 100%
+    );
+    z-index: 1;
+  }
+
+  .amenities-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #ffffff;
+    max-width: 800px;
+  }
+
+  .amenities-hero-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f3e5ab;
+    margin-bottom: 16px;
+  }
+
+  .amenities-hero-content h1 {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #ffffff;
+  }
+
+  .amenities-hero-content p {
+    font-size: 1.2rem;
+    color: #e2e8f0;
+    margin: 0;
+  }
+
+  /* =========================================================
+     2. REFERENCE LAYOUT CANVAS
+     ========================================================= */
+  .amenities-page-wrapper {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family:
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    padding: 60px 20px 80px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .amenities-container {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  /* Image Mosaic Showcase (1 Large Left, 4 Small Right) */
+  .showcase-mosaic {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .mosaic-main-card {
+    height: 420px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  .mosaic-main-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .mosaic-main-card:hover img {
+    transform: scale(1.03);
+  }
+
+  .mosaic-sub-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    height: 420px;
+  }
+
+  .mosaic-sub-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .mosaic-sub-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .mosaic-sub-card:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Property Header Title & Score Badge */
+  .property-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+  }
+
+  .property-title-bar h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+  }
+
+  .property-title-bar p {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .property-rating-badge {
+    background: rgba(197, 160, 89, 0.12);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    padding: 10px 18px;
+    border-radius: 14px;
+    text-align: right;
+  }
+
+  .rating-score {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #b8860b;
+  }
+
+  .rating-count {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  /* Tab Navigation Line */
+  .amenities-tabs {
+    display: flex;
+    gap: 32px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 36px;
+  }
+
+  .tab-item {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #64748b;
+    padding-bottom: 12px;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .tab-item.active {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .tab-item.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #c5a059;
+    border-radius: 2px;
+  }
+
+  /* Overview & Amenities Section Split */
+  .amenities-overview-split {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .overview-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 24px 0;
+  }
+
+  /* Icon Grid (2 Columns) */
+  .amenities-list-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 30px;
+  }
+
+  .amenity-inline-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .amenity-inline-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  }
+
+  .amenity-inline-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: #0f172a;
+  }
+
+  .amenity-inline-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  /* Location Map Preview Card (Reference Image Style) */
+  .location-map-card {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  }
+
+  .map-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .map-card-header h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #0f172a;
+  }
+
+  .map-card-header p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .map-frame-box {
+    height: 240px;
+    width: 100%;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .showcase-mosaic {
+      grid-template-columns: 1fr;
+    }
+    .mosaic-main-card,
+    .mosaic-sub-grid {
+      height: 300px;
+    }
+    .amenities-overview-split {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .amenities-list-grid {
+      grid-template-columns: 1fr;
+    }
+    .mosaic-sub-grid {
+      grid-template-columns: 1fr 1fr;
+      height: auto;
+    }
+    .mosaic-sub-card {
+      height: 140px;
+    }
+  }
+</style>
+
+<!-- =========================================================
+     1. FULL-WIDTH HERO SECTION
+     ========================================================= -->
+<section class="amenities-hero-section">
+  <div class="amenities-hero-content">
+    <span class="amenities-hero-badge">✦ Unmatched Comfort</span>
+    <h1>Amenities &amp; Guest Services</h1>
+    <p>
+      Everything you need for an exquisite short-stay experience in Jericho GRA
+      &amp; Dubai.
+    </p>
+  </div>
+</section>
+
+<!-- =========================================================
+     2. REFERENCE STYLE PROPERTY SHOWCASE & AMENITIES
+     ========================================================= -->
+<section class="amenities-page-wrapper">
+  <div class="amenities-container">
+    <!-- 5-Image Mosaic Showcase (Reference Picture Style) -->
+    <div class="showcase-mosaic">
+      <!-- Main Featured Image -->
+      <div class="mosaic-main-card">
+        <img
+          src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_1z.jpg"
+          alt="Blossom Luxury Suite"
+        />
+      </div>
+
+      <!-- 2x2 Sub-Grid Images -->
+      <div class="mosaic-sub-grid">
+        <div class="mosaic-sub-card">
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_1.jpg"
+            alt="Living Area"
+          />
+        </div>
+        <div class="mosaic-sub-card">
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_2.jpg"
+            alt="Bedroom Suite"
+          />
+        </div>
+        <div class="mosaic-sub-card">
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_3.jpg"
+            alt="Swimming Pool"
+          />
+        </div>
+        <div class="mosaic-sub-card">
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_4.jpg"
+            alt="Executive Kitchen"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Title Bar & Rating Badge -->
+    <div class="property-title-bar">
+      <div>
+        <h2>Blossom Luxury Locations</h2>
+        <p>Jericho GRA, Ibadan, Nigeria · Short-Stay Apartments &amp; Suites</p>
+      </div>
+      <div class="property-rating-badge">
+        <div class="rating-score">✦ 9.8 / 10</div>
+        <div class="rating-count">Excellent Guest Score</div>
+      </div>
+    </div>
+
+    <!-- Sub-Navigation Line -->
+    <div class="amenities-tabs">
+      <a href="#overview" class="tab-item active">Overview</a>
+      <a href="#suites" class="tab-item">Suites &amp; Rooms</a>
+      <a href="#amenities-list" class="tab-item">All Amenities</a>
+      <a href="#policies" class="tab-item">Policies</a>
+    </div>
+
+    <!-- Split Section: Property Overview & Map -->
+    <div class="amenities-overview-split" id="overview">
+      <!-- Left: Icon Amenities Grid -->
+      <div class="overview-content">
+        <h3>Property Overview &amp; Key Services</h3>
+
+        <div class="amenities-list-grid" id="amenities-list">
+          <!-- WiFi -->
+          <div class="amenity-inline-item">
+            <div class="amenity-inline-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 3C7.03 3 2.5 5.24 0 8.71l2.42 2.42C4.17 8.27 7.84 6.5 12 6.5s7.83 1.77 9.58 4.63L24 8.71C21.5 5.24 16.97 3 12 3zm0 6c-3.1 0-5.91 1.25-7.95 3.26l2.42 2.42C7.94 13.25 9.87 12.5 12 12.5s4.06.75 5.53 2.18l2.42-2.42C17.91 10.25 15.1 9 12 9zm0 6c-1.38 0-2.63.56-3.54 1.46L12 20l3.54-3.54C14.63 15.56 13.38 15 12 15z"
+                />
+              </svg>
+            </div>
+            <span class="amenity-inline-text"
+              >Complimentary High-Speed WiFi</span
+            >
+          </div>
+
+          <!-- Parking -->
+          <div class="amenity-inline-item">
+            <div class="amenity-inline-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4h14v4z"
+                />
+                <circle cx="7.5" cy="15" r="1.5" />
+                <circle cx="16.5" cy="15" r="1.5" />
+              </svg>
+            </div>
+            <span class="amenity-inline-text">Free On-site Secure Parking</span>
+          </div>
+
+          <!-- Pool -->
+          <div class="amenity-inline-item">
+            <div class="amenity-inline-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M18.5 4c-1.38 0-2.5 1.12-2.5 2.5S17.12 9 18.5 9 21 7.88 21 6.5 19.88 4 18.5 4zm-6.05 6.82l-2.52-2.52c-.78-.78-2.05-.78-2.83 0l-5.6 5.6 1.41 1.41 5.6-5.6 1.7 1.7-3.8 3.8 1.41 1.41 5.21-5.22-1.38-1.38zM2 19c.68 0 1.36-.09 2.02-.27 1.31-.35 2.65-.35 3.96 0 1.32.35 2.68.35 4 0 1.31-.35 2.65-.35 3.96 0 1.32.35 2.68.35 4 0v-2c-.68 0-1.36.09-2.02.27-1.31.35-2.65.35-3.96 0-1.32-.35-2.68-.35-4 0-1.31.35-2.65.35-3.96 0-1.32-.35-2.68-.35-4 0H2z"
+                />
+              </svg>
+            </div>
+            <span class="amenity-inline-text">Outdoor Swimming Pool</span>
+          </div>
+
+          <!-- 24/7 Power -->
+          <div class="amenity-inline-item">
+            <div class="amenity-inline-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 2v11h3v9l7-12h-4l4-8z" />
+              </svg>
+            </div>
+            <span class="amenity-inline-text">24-Hour Electricity Supply</span>
+          </div>
+
+          <!-- Self Catering -->
+          <div class="amenity-inline-item">
+            <div class="amenity-inline-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M18 3c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h1v9h2V3h-3zm-10 0v8h2V3H8zm-4 0v8h2V3H4zm2 10c-1.1 0-2 .9-2 2v7h6v-7c0-1.1-.9-2-2-2H6z"
+                />
+              </svg>
+            </div>
+            <span class="amenity-inline-text">Self-Catering Kitchens</span>
+          </div>
+
+          <!-- Laundry -->
+          <div class="amenity-inline-item">
+            <div class="amenity-inline-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M18 2.01L6 2c-1.11 0-2 .89-2 2v16c0 1.11.89 2 2 2h12c1.11 0 2-.89 2-2V4c0-1.11-.89-1.99-2-1.99zM18 20H6V4h12v16zM8 6c0-.55.45-1 1-1h1c.55 0 1 .45 1 1s-.45 1-1 1H9c-.55 0-1-.45-1-1zm5 0c0-.55.45-1 1-1h1c.55 0 1 .45 1 1s-.45 1-1 1h-1c-.55 0-1-.45-1-1zm-1 4c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"
+                />
+              </svg>
+            </div>
+            <span class="amenity-inline-text">Laundry &amp; Valet Service</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Location Map Card (Matching Reference Picture style) -->
+      <div class="location-map-card">
+        <div class="map-card-header">
+          <h4>Location Highlight</h4>
+          <p>5 Bashorun Apampa Street, Jericho GRA, Ibadan</p>
+        </div>
+        <div class="map-frame-box">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31652.596516405712!2d3.836413279101566!3d7.401472400000021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d1903bf39e5%3A0x8dfeb7280e8bc86a!2sBLOSSOM%20HERITAGE!5e0!3m2!1sen!2sng!4v1655909579723!5m2!1sen!2sng"
+            width="100%"
+            height="100%"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

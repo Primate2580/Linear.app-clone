@@ -1,0 +1,496 @@
+<style>
+
+   *{box-sizing: border-box;
+     padding: 0;
+     margin: 0;
+} 
+  /* Base Reset & Palette */
+  .contact-page-wrapper {
+    background-color: #f8fafc; /* Light off-white background matching reference image */
+    color: #0f172a;
+    font-family:
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    padding: 80px 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Full-Width Hero Section */
+  .contact-hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 55vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0b0f19;
+    background-image: url("https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_2z.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+  .contact-hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(11, 15, 25, 0.45) 0%,
+      rgba(11, 15, 25, 0.85) 100%
+    );
+    z-index: 1;
+  }
+
+  .contact-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #ffffff;
+    max-width: 800px;
+  }
+
+  .contact-hero-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f3e5ab;
+    margin-bottom: 16px;
+  }
+
+  .contact-hero-content h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #ffffff;
+  }
+
+  .contact-hero-content p {
+    font-size: 1.2rem;
+    color: #e2e8f0;
+    margin: 0;
+  }
+
+  /* Main Contact Section Grid */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+
+  /* Left Side: Modern Form Card */
+  .contact-form-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .contact-form-card h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+  }
+
+  .contact-form-card h2 span {
+    color: #c5a059; /* Gold accent */
+  }
+
+  .contact-form-card p {
+    color: #64748b;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+  }
+
+  .form-group-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .form-group-custom label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .form-control-custom {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    font-size: 0.95rem;
+    color: #0f172a;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .form-control-custom:focus {
+    border-color: #c5a059;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15);
+  }
+
+  .btn-submit-contact {
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px 36px;
+    border: none;
+    border-radius: 50px; /* Pill button like reference image */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
+  }
+
+  .btn-submit-contact:hover {
+    background: #c5a059;
+    transform: translateY(-2px);
+  }
+
+  /* Right Side: Contact Details & Luxury Showcase Image (Reference Style) */
+  .contact-info-card {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .contact-showcase-image {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 280px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 4px solid #ffffff;
+  }
+
+  .contact-showcase-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .info-items-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .info-box-item {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  }
+
+  .info-box-item span.label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #c5a059;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .info-box-item p,
+  .info-box-item a {
+    font-size: 0.95rem;
+    color: #0f172a;
+    font-weight: 500;
+    margin: 0;
+    text-decoration: none;
+    line-height: 1.5;
+  }
+
+  .info-box-item a:hover {
+    color: #c5a059;
+  }
+
+  /* Reference Picture Style: Reviews Section */
+  .reviews-section {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .reviews-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 24px;
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .review-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .review-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .review-stars {
+    color: #eab308; /* Bright yellow stars */
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+
+  .review-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 2px 0;
+  }
+
+  .review-text {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Map Container */
+  .map-wrapper {
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 60px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 4px solid #ffffff;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+    .info-items-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<!-- =========================================================
+     1. HERO BANNER
+     ========================================================= -->
+<section class="contact-hero-section">
+  <div class="contact-hero-content">
+    <span class="contact-hero-badge">✦ We're Here For You</span>
+    <h1>Contact Blossom Luxury Locations</h1>
+    <p>
+      We love to hear from you. Get in touch for reservations, inquiries, or
+      support.
+    </p>
+  </div>
+</section>
+
+<!-- =========================================================
+     2. MAIN CONTACT & REVIEWS SECTION
+     ========================================================= -->
+<section class="contact-page-wrapper">
+  <div class="contact-container">
+    <div class="contact-grid">
+      <!-- Left: Modern Contact Form -->
+      <div class="contact-form-card">
+        <h2>Send Us A <span>Message</span></h2>
+        <p>
+          Fill out the form below and our team will get back to you promptly.
+        </p>
+
+        <form action="#" method="POST">
+          <div class="form-group-custom">
+            <label for="name">Your Name *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-control-custom"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+
+          <div class="form-group-custom">
+            <label for="email2">Your Email *</label>
+            <input
+              type="email"
+              id="email2"
+              name="email"
+              class="form-control-custom"
+              placeholder="name@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group-custom">
+            <label for="subject">Subject</label>
+            <input
+              type="text"
+              id="subject"
+              name="subject"
+              class="form-control-custom"
+              placeholder="Reservation Inquiry"
+            />
+          </div>
+
+          <div class="form-group-custom">
+            <label for="message">Message *</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              class="form-control-custom"
+              placeholder="How can we assist you?"
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit-contact">Send Message</button>
+        </form>
+      </div>
+
+      <!-- Right: Contact Cards & Image Showcase -->
+      <div class="contact-info-card">
+        <!-- Luxury Showcase Image (Matching Reference Picture style) -->
+        <div class="contact-showcase-image">
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_4z.jpg"
+            alt="Blossom Luxury Suite"
+          />
+        </div>
+
+        <!-- Contact Information Grid -->
+        <div class="info-items-grid">
+          <div class="info-box-item">
+            <span class="label">Email Us</span>
+            <a href="mailto:customercare@blossomluxurylocations.com"
+              >customercare@blossomluxurylocations.com</a
+            >
+          </div>
+
+          <div class="info-box-item">
+            <span class="label">Call Us</span>
+            <p>
+              <a href="tel:+2349151568417">+234 915 156 8417</a><br />
+              <a href="tel:+2347057983044">+234 705 798 3044</a>
+            </p>
+          </div>
+
+          <div class="info-box-item">
+            <span class="label">Address</span>
+            <p>5 Bashorun Apampa Street, Jericho GRA, Ibadan, Nigeria</p>
+          </div>
+
+          <div class="info-box-item">
+            <span class="label">Social Media</span>
+            <p>
+              <a href="https://wa.me/2349151568417" target="_blank">WhatsApp</a>
+              ·
+              <a
+                href="https://www.facebook.com/people/Blossom-Luxury-Locations/100085256451914/"
+                target="_blank"
+                >Facebook</a
+              >
+              ·
+              <a
+                href="https://instagram.com/_blossomluxurylocations?igshid=YmMyMTA2M2Y="
+                target="_blank"
+                >Instagram</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reference Picture Style: Guest Reviews Row -->
+    <div class="reviews-section">
+      <div class="reviews-title">What our guests say:</div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_1.jpg"
+            alt="Helen Worden"
+            class="review-avatar"
+          />
+          <div>
+            <div class="review-stars">★★★★★</div>
+            <div class="review-name">Helen Worden</div>
+            <p class="review-text">
+              Exceptional service and serenity. The short-stay apartment
+              exceeded all our expectations!
+            </p>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_2.jpg"
+            alt="Luke Coursey"
+            class="review-avatar"
+          />
+          <div>
+            <div class="review-stars">★★★★★</div>
+            <div class="review-name">Luke Coursey</div>
+            <p class="review-text">
+              Prime location in Jericho GRA with top-notch 24/7 power and
+              security. Highly recommended.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Embedded Google Map -->
+    <div class="map-wrapper">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31652.596516405712!2d3.836413279101566!3d7.401472400000021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d1903bf39e5%3A0x8dfeb7280e8bc86a!2sBLOSSOM%20HERITAGE!5e0!3m2!1sen!2sng!4v1655909579723!5m2!1sen!2sng"
+        width="100%"
+        height="380"
+        style="border: 0"
+        allowfullscreen=""
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+</section>

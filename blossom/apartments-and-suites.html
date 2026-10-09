@@ -1,0 +1,499 @@
+<!-- Boxicons CDN CDN Include -->
+<link
+  href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+  rel="stylesheet"
+/>
+
+<style>
+  /* =========================================================
+     1. EDGE-TO-EDGE HERO BANNER
+     ========================================================= */
+  .suites-hero-section {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0b0f19;
+    background-image: url("https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_1z.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+  .suites-hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(11, 15, 25, 0.4) 0%,
+      rgba(11, 15, 25, 0.85) 100%
+    );
+    z-index: 1;
+  }
+
+  .suites-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #ffffff;
+    max-width: 800px;
+  }
+
+  .suites-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 18px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f3e5ab;
+    margin-bottom: 16px;
+  }
+
+  .suites-hero-content h1 {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #ffffff;
+  }
+
+  .suites-hero-content p {
+    font-size: 1.2rem;
+    color: #e2e8f0;
+    margin: 0;
+  }
+
+  /* =========================================================
+     2. SUITES CATALOG CANVAS
+     ========================================================= */
+  .suites-page-wrapper {
+    background-color: #ffffff;
+    color: #0f172a;
+    font-family:
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    padding: 60px 20px 80px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .suites-container {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  /* Filter Navigation Bar */
+  .suites-filter-bar {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  .filter-btn {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+  }
+
+  /* Suite Grid Layout */
+  .suites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+  }
+
+  /* Individual Suite Card */
+  .suite-card {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .suite-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+    border-color: rgba(197, 160, 89, 0.4);
+  }
+
+  /* Card Image Frame */
+  .suite-card-media {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+  }
+
+  .suite-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .suite-card:hover .suite-card-media img {
+    transform: scale(1.06);
+  }
+
+  .suite-card-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    color: #f3e5ab;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .suite-price-tag {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Card Body Content */
+  .suite-card-content {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .suite-card-content h3 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+  }
+
+  .suite-location-label {
+    font-size: 0.85rem;
+    color: #c5a059;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .suite-location-label i {
+    font-size: 1.1rem;
+  }
+
+  .suite-card-content p {
+    font-size: 0.92rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    flex-grow: 1;
+  }
+
+  /* Specs Bar (Bedrooms, Guests, etc.) */
+  .suite-specs-list {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+  }
+
+  .spec-item {
+    font-size: 0.82rem;
+    color: #334155;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .spec-item i {
+    font-size: 1.1rem;
+    color: #c5a059;
+  }
+
+  /* CTA Button */
+  .btn-book-suite {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .btn-book-suite:hover {
+    background: #c5a059;
+    color: #ffffff;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .suites-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<!-- 1. FULL-WIDTH HERO SECTION -->
+<section class="suites-hero-section">
+  <div class="suites-hero-content">
+    <span class="suites-hero-badge"
+      ><i class="bx bx-star"></i> Accommodations Catalog</span
+    >
+    <h1>Our Luxury Apartments &amp; Suites</h1>
+    <p>
+      Explore our curated portfolio of short-let residencies in Ibadan and
+      Dubai.
+    </p>
+  </div>
+</section>
+
+<!-- 2. CATALOG SECTION -->
+<section class="suites-page-wrapper">
+  <div class="suites-container">
+    <!-- Location Filter Bar -->
+    <div class="suites-filter-bar">
+      <button class="filter-btn active">
+        <i class="bx bx-grid-alt"></i> All Locations
+      </button>
+      <button class="filter-btn">
+        <i class="bx bx-map-pin"></i> Jericho GRA
+      </button>
+      <button class="filter-btn">
+        <i class="bx bx-building-house"></i> Alalubosa
+      </button>
+      <button class="filter-btn"><i class="bx bx-world"></i> Dubai, UAE</button>
+    </div>
+
+    <!-- Suites Grid -->
+    <div class="suites-grid">
+      <!-- Suite 1: Executive Suite -->
+      <div class="suite-card">
+        <div class="suite-card-media">
+          <span class="suite-card-badge"
+            ><i class="bx bxs-crown"></i> Featured Suite</span
+          >
+          <span class="suite-price-tag">Luxury Tier</span>
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_1z.jpg"
+            alt="Executive Suite"
+          />
+        </div>
+        <div class="suite-card-content">
+          <h3>Executive Master Suite</h3>
+          <div class="suite-location-label">
+            <i class="bx bxs-map"></i> Jericho GRA, Ibadan
+          </div>
+          <p>
+            Meticulously styled suite featuring climate-controlled interiors,
+            plush king bedding, private balcony access, and smart home
+            technology.
+          </p>
+
+          <div class="suite-specs-list">
+            <span class="spec-item"
+              ><i class="bx bx-bed"></i> 1 Master Bed</span
+            >
+            <span class="spec-item"
+              ><i class="bx bx-user"></i> Up to 2 Guests</span
+            >
+            <span class="spec-item"><i class="bx bx-wifi"></i> Free WiFi</span>
+          </div>
+
+          <a href="booking.php" class="btn-book-suite">
+            <span>Reserve Suite</span>
+            <i class="bx bx-right-arrow-alt"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Suite 2: Queen & Double Bedroom -->
+      <div class="suite-card">
+        <div class="suite-card-media">
+          <span class="suite-card-badge"
+            ><i class="bx bxs-group"></i> Family &amp; Group</span
+          >
+          <span class="suite-price-tag">Premium Stay</span>
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_2.jpg"
+            alt="Queen & Double Bedroom"
+          />
+        </div>
+        <div class="suite-card-content">
+          <h3>Queen &amp; Double Bedroom Apartment</h3>
+          <div class="suite-location-label">
+            <i class="bx bxs-map"></i> Jericho GRA, Ibadan
+          </div>
+          <p>
+            Spacious multi-bedroom apartment featuring an open-plan lounge,
+            fully equipped self-catering kitchen, and ensuite modern bathrooms.
+          </p>
+
+          <div class="suite-specs-list">
+            <span class="spec-item"
+              ><i class="bx bx-home-alt"></i> 2 Bedrooms</span
+            >
+            <span class="spec-item"
+              ><i class="bx bx-user"></i> Up to 4 Guests</span
+            >
+            <span class="spec-item"
+              ><i class="bx bx-bolt-circle"></i> 24/7 Power</span
+            >
+          </div>
+
+          <a href="booking.php" class="btn-book-suite">
+            <span>Reserve Suite</span>
+            <i class="bx bx-right-arrow-alt"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Suite 3: Le Voila Suite -->
+      <div class="suite-card">
+        <div class="suite-card-media">
+          <span class="suite-card-badge"
+            ><i class="bx bxs-drink"></i> Luxury Lounge</span
+          >
+          <span class="suite-price-tag">Boutique Stay</span>
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_1.jpg"
+            alt="Le Voila Suite"
+          />
+        </div>
+        <div class="suite-card-content">
+          <h3>Le Voila Executive Suite</h3>
+          <div class="suite-location-label">
+            <i class="bx bxs-map"></i> Alalubosa GRA, Ibadan
+          </div>
+          <p>
+            Designed for corporate retreats and executive stays. Features
+            private lounge seating, workstation setup, and instant poolside
+            access.
+          </p>
+
+          <div class="suite-specs-list">
+            <span class="spec-item"><i class="bx bx-bed"></i> 1 King Bed</span>
+            <span class="spec-item"
+              ><i class="bx bx-user"></i> Up to 2 Guests</span
+            >
+            <span class="spec-item"><i class="bx bx-water"></i> Poolside</span>
+          </div>
+
+          <a href="booking.php" class="btn-book-suite">
+            <span>Reserve Suite</span>
+            <i class="bx bx-right-arrow-alt"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Suite 4: Dubai 2-BR Executive Stay -->
+      <div class="suite-card">
+        <div class="suite-card-media">
+          <span class="suite-card-badge"
+            ><i class="bx bxs-plane-alt"></i> International</span
+          >
+          <span class="suite-price-tag">Frank Porter Stay</span>
+          <img
+            src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_4z.jpg"
+            alt="Dubai Apartment"
+          />
+        </div>
+        <div class="suite-card-content">
+          <h3>Dubai 2-BR Executive Residency</h3>
+          <div class="suite-location-label">
+            <i class="bx bxs-map"></i> Central Dubai, UAE
+          </div>
+          <p>
+            High-floor luxury apartment located in central Dubai, equipped with
+            full kitchen amenities, city skyline views, and building gym access.
+          </p>
+
+          <div class="suite-specs-list">
+            <span class="spec-item"
+              ><i class="bx bx-building"></i> 2 Bedrooms</span
+            >
+            <span class="spec-item"
+              ><i class="bx bx-user"></i> Up to 4 Guests</span
+            >
+            <span class="spec-item"
+              ><i class="bx bx-street-view"></i> City View</span
+            >
+          </div>
+
+          <a
+            href="https://booking.frankporter.com/details/62f614a9a9ba320034927c89"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-book-suite"
+          >
+            <span>Book Dubai Stay</span>
+            <i class="bx bx-export"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

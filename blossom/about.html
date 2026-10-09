@@ -1,0 +1,449 @@
+<style>
+  /* Base Reset & Palette */
+  .about-page-wrapper {
+    background-color: #fbf8f3; /* Cream background matching reference */
+    color: #1c2a26;
+    font-family:
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    padding: 80px 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* =========================================================
+     FULL-WIDTH HERO SECTION
+     ========================================================= */
+  .about-hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #0b0f19;
+    background-image: url("https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_2z.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+  /* Dark Overlay for Hero Text Contrast */
+  .about-hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(11, 15, 25, 0.45) 0%,
+      rgba(11, 15, 25, 0.7) 50%,
+      rgba(11, 15, 25, 0.85) 100%
+    );
+    z-index: 1;
+  }
+
+  .about-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #ffffff;
+    max-width: 850px;
+    width: 100%;
+    padding: 40px 0;
+  }
+
+  .about-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f3e5ab; /* Warm gold tint */
+    margin-bottom: 20px;
+  }
+
+  .about-hero-content h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: #ffffff;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .about-hero-content p {
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    font-weight: 300;
+    color: #e2e8f0;
+    margin: 0;
+    line-height: 1.6;
+    letter-spacing: 0.2px;
+  }
+
+  /* =========================================================
+     ABOUT CONTENT & STAGGERED GALLERY
+     ========================================================= */
+  .about-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 60px;
+  }
+
+  .about-badge {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #133e32;
+    text-transform: uppercase;
+    background: rgba(19, 62, 50, 0.08);
+    border: 1px solid rgba(19, 62, 50, 0.2);
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+  }
+
+  .about-header h2 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 700;
+    color: #133e32; /* Deep forest green */
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  .about-header p {
+    font-size: 1.15rem;
+    color: #4a5d57;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* Reference Picture Style: Staggered Gallery Banner */
+  .about-gallery-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 90px;
+    overflow: hidden;
+    padding: 10px 0;
+  }
+
+  .gallery-card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    border: 3px solid #ffffff;
+    transition: transform 0.4s ease;
+  }
+
+  .gallery-card:hover {
+    transform: translateY(-8px);
+  }
+
+  .gallery-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Outer Cards (Small) */
+  .gallery-card.size-sm {
+    width: 160px;
+    height: 160px;
+    opacity: 0.85;
+  }
+
+  /* Middle Cards (Medium) */
+  .gallery-card.size-md {
+    width: 220px;
+    height: 280px;
+  }
+
+  /* Center Featured Card (Large) */
+  .gallery-card.size-lg {
+    width: 320px;
+    height: 420px;
+    z-index: 2;
+  }
+
+  /* Stats & Value Proposition Section */
+  .about-details-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 40px;
+    align-items: stretch;
+  }
+
+  /* Dark Stat Card matching reference left box */
+  .stats-card-dark {
+    background: #133e32; /* Deep forest green */
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+    box-shadow: 0 20px 40px rgba(19, 62, 50, 0.2);
+  }
+
+  .stat-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 24px;
+  }
+
+  .stat-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .stat-number {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #f3e5ab; /* Soft gold text */
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 0.95rem;
+    color: #d1e0db;
+    line-height: 1.4;
+  }
+
+  /* Main Info Box */
+  .about-text-content {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 44px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .about-text-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #133e32;
+    margin: 0 0 20px 0;
+  }
+
+  .about-text-content p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #4a5d57;
+    margin: 0 0 30px 0;
+  }
+
+  /* Bottom Feature Subgrid */
+  .features-subgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  .feature-mini-card {
+    background: #fbf8f3;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(19, 62, 50, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .feature-mini-card:hover {
+    background: #133e32;
+    color: #ffffff;
+  }
+
+  .feature-mini-card h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+  }
+
+  .feature-mini-card:hover h4,
+  .feature-mini-card:hover p {
+    color: #ffffff;
+  }
+
+  .feature-mini-card p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .about-details-grid {
+      grid-template-columns: 1fr;
+    }
+    .gallery-card.size-sm {
+      display: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .about-hero-section {
+      min-height: 45vh;
+    }
+    .about-gallery-banner {
+      gap: 8px;
+    }
+    .gallery-card.size-md {
+      width: 130px;
+      height: 180px;
+    }
+    .gallery-card.size-lg {
+      width: 180px;
+      height: 250px;
+    }
+    .about-text-content {
+      padding: 24px;
+    }
+  }
+</style>
+
+<!-- =========================================================
+     1. FULL-WIDTH HERO BANNER
+     ========================================================= -->
+<section class="about-hero-section">
+  <div class="about-hero-content">
+    <div class="about-hero-badge">✦ Hospitality World Is Ours</div>
+    <h1>About Blossom Luxury Locations</h1>
+    <p>
+      Your premier choice for comfort, privacy, and refined living in Ibadan
+      &amp; Dubai.
+    </p>
+  </div>
+</section>
+
+<!-- =========================================================
+     2. ABOUT MAIN CONTENT (REFERENCE-STYLE DESIGN)
+     ========================================================= -->
+<section class="about-page-wrapper">
+  <div class="about-container">
+    <!-- Section Header -->
+    <div class="about-header">
+      <span class="about-badge">✦ Experience Refinement</span>
+      <h2>We Promise Service That Leaves Nothing To Ask For</h2>
+      <p>
+        At Blossom Luxury Locations, our mission is ensuring your complete
+        comfort and peace of mind through premier accommodation options tailored
+        for business retreats, family vacations, and personal stays.
+      </p>
+    </div>
+
+    <!-- Reference Style Staggered Image Gallery -->
+    <div class="about-gallery-banner">
+      <div class="gallery-card size-sm">
+        <img
+          src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_1.jpg"
+          alt="Luxury Interior 1"
+        />
+      </div>
+      <div class="gallery-card size-md">
+        <img
+          src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_3.jpg"
+          alt="Luxury Suite 2"
+        />
+      </div>
+      <!-- Center Featured Image -->
+      <div class="gallery-card size-lg">
+        <img
+          src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/slider_1z.jpg"
+          alt="Blossom Main Suite"
+        />
+      </div>
+      <div class="gallery-card size-md">
+        <img
+          src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_5.jpg"
+          alt="Luxury Amenity 3"
+        />
+      </div>
+      <div class="gallery-card size-sm">
+        <img
+          src="https://blossomluxurylocations.com/wp-content/uploads/2026/09/vtour_7.jpg"
+          alt="Luxury Interior 4"
+        />
+      </div>
+    </div>
+
+    <!-- About Details Grid (Dark Stat Box + Content Box) -->
+    <div class="about-details-grid">
+      <!-- Left Stat Box -->
+      <div class="stats-card-dark">
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Privacy &amp; Security Guaranteed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Uninterrupted Power Supply</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">2+</div>
+          <div class="stat-label">Global Cities (Ibadan &amp; Dubai)</div>
+        </div>
+      </div>
+
+      <!-- Right Main Content -->
+      <div class="about-text-content">
+        <div>
+          <h3>Finally, A Place For All The Things.</h3>
+          <p>
+            Whether you are planning a corporate conference, a temporary work
+            retreat, or a relaxing getaway with family, Blossom Luxury Locations
+            provides meticulously furnished short-let apartments designed to
+            feel like home.
+          </p>
+        </div>
+
+        <!-- Mini Feature Grid -->
+        <div class="features-subgrid">
+          <div class="feature-mini-card">
+            <h4>Prime Locations</h4>
+            <p>Jericho GRA, Alalubosa &amp; Dubai</p>
+          </div>
+          <div class="feature-mini-card">
+            <h4>High Airflow</h4>
+            <p>Spacious, climate-controlled suites</p>
+          </div>
+          <div class="feature-mini-card">
+            <h4>Self Catering</h4>
+            <p>Fully equipped modern kitchens</p>
+          </div>
+          <div class="feature-mini-card">
+            <h4>Poolside Relaxation</h4>
+            <p>On-site swimming facilities</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

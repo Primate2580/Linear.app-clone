@@ -1,0 +1,2206 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Animation Studio: Visualizer, Lessons & Challenges</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              studio: {
+                50: "#f4f4f5",
+                100: "#e4e4e7",
+                800: "#27272a",
+                900: "#18181b",
+                950: "#09090b",
+              },
+              accent: {
+                purple: "#a855f7",
+                cyan: "#06b6d4",
+                pink: "#ec4899",
+                amber: "#f59e0b",
+                emerald: "#10b981",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .font-mono-code {
+        font-family: "Fira Code", monospace;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(161, 161, 170, 0.3);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(161, 161, 170, 0.6);
+      }
+
+      .bg-grid-pattern {
+        background-size: 24px 24px;
+        background-image: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.07) 1px,
+          transparent 1px
+        );
+      }
+
+      .perspective-stage {
+        perspective: 1000px;
+      }
+
+      input[type="range"] {
+        accent-color: #a855f7;
+      }
+
+      #animation-target {
+        will-change: transform, opacity;
+        transform-style: preserve-3d;
+      }
+
+      .bezier-handle {
+        cursor: grab;
+        transition: r 0.2s ease;
+      }
+      .bezier-handle:active {
+        cursor: grabbing;
+        r: 8;
+      }
+
+      .glow-purple {
+        box-shadow: 0 0 25px rgba(168, 85, 247, 0.35);
+      }
+
+      .code-editor-area {
+        tab-size: 2;
+        line-height: 1.5;
+        caret-color: #ec4899;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-studio-950 text-zinc-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-purple-500 selection:text-white"
+  >
+    <header
+      class="border-b border-zinc-800 bg-zinc-950/90 backdrop-blur px-4 py-3 sticky top-0 z-50 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2.5 bg-gradient-to-tr from-purple-600 via-pink-600 to-cyan-500 rounded-xl text-white shadow-lg shadow-purple-500/20"
+        >
+          <i class="fa-solid fa-graduation-cap text-xl"></i>
+        </div>
+        <div>
+          <h1
+            class="text-lg font-bold bg-gradient-to-r from-purple-400 via-pink-300 to-cyan-400 bg-clip-text text-transparent"
+          >
+            CSS Animation Academy & Studio
+          </h1>
+          <p class="text-xs text-zinc-400 hidden sm:block">
+            Interactive Visualizer, Curriculum & Coding Challenges
+          </p>
+        </div>
+      </div>
+
+      <!-- Gamification & Quick Actions -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <div
+          class="hidden md:flex items-center gap-3 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl text-xs font-medium"
+        >
+          <div
+            class="flex items-center gap-1.5 text-amber-400"
+            title="XP Earned"
+          >
+            <i class="fa-solid fa-bolt"></i>
+            <span id="user-xp-display" class="font-bold">0 XP</span>
+          </div>
+          <div class="w-px h-3 bg-zinc-700"></div>
+          <div
+            class="flex items-center gap-1.5 text-cyan-400"
+            title="Challenges Passed"
+          >
+            <i class="fa-solid fa-trophy"></i>
+            <span id="user-badges-display" class="font-bold">0/6</span>
+          </div>
+        </div>
+
+        <button
+          id="btn-quick-copy"
+          class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-lg shadow-purple-600/20 transition flex items-center gap-1.5"
+          title="Copy CSS Code"
+        >
+          <i class="fa-solid fa-copy"></i>
+          <span class="hidden sm:inline">Copy CSS</span>
+        </button>
+        <button
+          id="btn-export-code"
+          class="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-lg transition flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-file-export"></i> Export
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+      <!-- LEFT SIDEBAR / TAB SYSTEM -->
+      <aside
+        class="w-full lg:w-7/12 border-b lg:border-b-0 lg:border-r border-zinc-800 flex flex-col bg-zinc-900/60 overflow-y-auto"
+      >
+        <!-- MAIN TABS NAVIGATION -->
+        <div
+          class="flex items-center bg-zinc-950 px-3 border-b border-zinc-800 text-xs font-medium overflow-x-auto"
+        >
+          <button
+            id="tab-btn-lessons"
+            class="studio-tab active border-b-2 border-purple-500 text-purple-400 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-semibold"
+          >
+            <i class="fa-solid fa-book-open text-amber-400"></i> Lessons
+          </button>
+          <button
+            id="tab-btn-challenges"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-semibold"
+          >
+            <i class="fa-solid fa-gamepad text-pink-400"></i> Practice
+            Challenges
+          </button>
+          <button
+            id="tab-btn-controls"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap"
+          >
+            <i class="fa-solid fa-sliders"></i> Property Visualizer
+          </button>
+          <button
+            id="tab-btn-editor"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap"
+          >
+            <i class="fa-solid fa-code text-cyan-400"></i> Live Code Editor
+          </button>
+          <button
+            id="tab-btn-bezier"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap"
+          >
+            <i class="fa-solid fa-bezier-curve"></i> Bezier Easing
+          </button>
+          <button
+            id="tab-btn-performance"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap"
+          >
+            <i class="fa-solid fa-bolt text-amber-400"></i> Performance
+          </button>
+        </div>
+
+        <!-- TAB CONTENT CONTAINERS -->
+        <div class="p-4 sm:p-6 space-y-6 flex-1">
+          <!-- 1. LESSONS CURRICULUM TAB -->
+          <div id="tab-content-lessons" class="space-y-6">
+            <div
+              class="flex items-center justify-between bg-zinc-950 p-4 rounded-2xl border border-zinc-800"
+            >
+              <div>
+                <h2
+                  class="text-sm font-bold text-zinc-100 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-graduation-cap text-amber-400"></i> CSS
+                  Animations Masterclass
+                </h2>
+                <p class="text-xs text-zinc-400 mt-1">
+                  Structured curriculum with interactive code demonstrations.
+                </p>
+              </div>
+              <span
+                class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                >6 Modules</span
+              >
+            </div>
+
+            <div class="space-y-4" id="lessons-list">
+              <!-- Lessons rendered via JS -->
+            </div>
+          </div>
+
+          <!-- 2. PRACTICE CHALLENGES TAB -->
+          <div id="tab-content-challenges" class="hidden space-y-6">
+            <div
+              class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+            >
+              <div>
+                <h2
+                  class="text-sm font-bold text-zinc-100 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-trophy text-pink-400"></i> Coding
+                  Challenges
+                </h2>
+                <p class="text-xs text-zinc-400 mt-0.5">
+                  Solve interactive coding challenges with live evaluation and
+                  automated test validation!
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  id="challenge-status-badge"
+                  class="text-xs font-bold font-mono px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700"
+                >
+                  Select a Challenge
+                </span>
+              </div>
+            </div>
+
+            <!-- Challenge Selector Cards -->
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+              id="challenge-cards-grid"
+            >
+              <!-- Injected via JS -->
+            </div>
+
+            <!-- Active Challenge Workspace -->
+            <div
+              id="active-challenge-panel"
+              class="hidden bg-zinc-950 p-5 rounded-2xl border border-purple-500/30 space-y-4 relative"
+            >
+              <div
+                class="flex justify-between items-start border-b border-zinc-800 pb-3"
+              >
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      id="ch-title"
+                      class="text-base font-bold text-purple-300"
+                      >Challenge Title</span
+                    >
+                    <span
+                      id="ch-xp-reward"
+                      class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                      >+50 XP</span
+                    >
+                  </div>
+                  <p
+                    id="ch-description"
+                    class="text-xs text-zinc-300 mt-1 leading-relaxed"
+                  ></p>
+                </div>
+              </div>
+
+              <!-- Goal Checklist -->
+              <div
+                class="bg-zinc-900/80 p-3.5 rounded-xl border border-zinc-800 space-y-2"
+              >
+                <h4
+                  class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-list-check text-cyan-400"></i>
+                  Validation Criteria
+                </h4>
+                <ul
+                  id="ch-criteria-list"
+                  class="space-y-1.5 text-xs text-zinc-400 font-mono"
+                ></ul>
+              </div>
+
+              <!-- Code Prompt / Quick Template -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-zinc-400 font-medium"
+                    >Your Challenge Code:</span
+                  >
+                  <div class="flex items-center gap-2">
+                    <button
+                      id="btn-ch-reset"
+                      class="text-zinc-400 hover:text-zinc-200 text-xs"
+                    >
+                      <i class="fa-solid fa-rotate-left"></i> Reset Code
+                    </button>
+                    <button
+                      id="btn-ch-solution"
+                      class="text-amber-400 hover:text-amber-300 text-xs font-semibold"
+                    >
+                      <i class="fa-solid fa-lightbulb"></i> Reveal Solution
+                    </button>
+                  </div>
+                </div>
+                <textarea
+                  id="ch-code-editor"
+                  spellcheck="false"
+                  class="w-full h-44 bg-zinc-900 text-purple-300 font-mono-code text-xs p-3.5 rounded-xl border border-zinc-800 focus:outline-none focus:border-purple-500 resize-y"
+                ></textarea>
+              </div>
+
+              <!-- Action Controls -->
+              <div class="flex items-center justify-between pt-1">
+                <span
+                  id="ch-validation-feedback"
+                  class="text-xs font-semibold"
+                ></span>
+                <button
+                  id="btn-ch-submit"
+                  class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-purple-600/30 transition flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-circle-check"></i> Run Tests & Validate
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. PROPERTY CONTROLS TAB -->
+          <div id="tab-content-controls" class="hidden space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <!-- Duration -->
+              <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                <div class="flex justify-between items-center mb-2">
+                  <label
+                    class="text-xs font-medium text-zinc-300 flex items-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-stopwatch text-purple-400"></i>
+                    Duration
+                  </label>
+                  <span
+                    id="val-duration"
+                    class="text-xs font-mono font-bold text-purple-400"
+                    >1.5s</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="input-duration"
+                  min="0.1"
+                  max="5.0"
+                  step="0.1"
+                  value="1.5"
+                  class="w-full"
+                />
+              </div>
+
+              <!-- Delay -->
+              <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                <div class="flex justify-between items-center mb-2">
+                  <label
+                    class="text-xs font-medium text-zinc-300 flex items-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-hourglass-start text-cyan-400"></i>
+                    Delay
+                  </label>
+                  <span
+                    id="val-delay"
+                    class="text-xs font-mono font-bold text-cyan-400"
+                    >0.0s</span
+                  >
+                </div>
+                <input
+                  type="range"
+                  id="input-delay"
+                  min="0"
+                  max="3.0"
+                  step="0.1"
+                  value="0"
+                  class="w-full"
+                />
+              </div>
+
+              <!-- Iteration Count -->
+              <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                <div class="flex justify-between items-center mb-2">
+                  <label
+                    class="text-xs font-medium text-zinc-300 flex items-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-repeat text-pink-400"></i> Iterations
+                  </label>
+                  <span
+                    id="val-iteration"
+                    class="text-xs font-mono font-bold text-pink-400"
+                    >infinite</span
+                  >
+                </div>
+                <div class="flex gap-2 items-center">
+                  <input
+                    type="range"
+                    id="input-iteration-range"
+                    min="1"
+                    max="10"
+                    step="1"
+                    value="1"
+                    disabled
+                    class="w-full opacity-50"
+                  />
+                  <label
+                    class="text-[11px] flex items-center gap-1 cursor-pointer select-none whitespace-nowrap bg-zinc-800 px-2 py-1 rounded border border-zinc-700"
+                  >
+                    <input
+                      type="checkbox"
+                      id="chk-infinite"
+                      checked
+                      class="rounded text-pink-500"
+                    />
+                    <span>Infinite</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Timing Function -->
+              <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                <label
+                  class="text-xs font-medium text-zinc-300 block mb-2 flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-chart-line text-emerald-400"></i> Timing
+                  Function
+                </label>
+                <select
+                  id="select-timing"
+                  class="w-full bg-zinc-900 border border-zinc-700 text-xs rounded-lg px-2.5 py-1.5 text-zinc-200 focus:outline-none focus:border-purple-500"
+                >
+                  <option value="ease">ease</option>
+                  <option value="linear">linear</option>
+                  <option value="ease-in">ease-in</option>
+                  <option value="ease-out">ease-out</option>
+                  <option value="ease-in-out">ease-in-out</option>
+                  <option value="cubic-bezier(0.68, -0.55, 0.265, 1.55)">
+                    cubic-bezier (Bounce)
+                  </option>
+                  <option value="cubic-bezier(0.25, 1, 0.5, 1)">
+                    cubic-bezier (Snappy)
+                  </option>
+                  <option value="steps(5, end)">steps(5, end)</option>
+                  <option value="custom-bezier">
+                    Custom Bezier (Curve Tab)
+                  </option>
+                </select>
+              </div>
+
+              <!-- Direction -->
+              <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                <label
+                  class="text-xs font-medium text-zinc-300 block mb-2 flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-arrows-left-right text-amber-400"></i>
+                  Direction
+                </label>
+                <select
+                  id="select-direction"
+                  class="w-full bg-zinc-900 border border-zinc-700 text-xs rounded-lg px-2.5 py-1.5 text-zinc-200 focus:outline-none focus:border-purple-500"
+                >
+                  <option value="normal">normal</option>
+                  <option value="reverse">reverse</option>
+                  <option value="alternate" selected>alternate</option>
+                  <option value="alternate-reverse">alternate-reverse</option>
+                </select>
+              </div>
+
+              <!-- Fill Mode -->
+              <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
+                <label
+                  class="text-xs font-medium text-zinc-300 block mb-2 flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-fill-drip text-indigo-400"></i> Fill
+                  Mode
+                </label>
+                <select
+                  id="select-fillmode"
+                  class="w-full bg-zinc-900 border border-zinc-700 text-xs rounded-lg px-2.5 py-1.5 text-zinc-200 focus:outline-none focus:border-purple-500"
+                >
+                  <option value="none">none</option>
+                  <option value="forwards" selected>forwards</option>
+                  <option value="backwards">backwards</option>
+                  <option value="both">both</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Keyframe Track Editor -->
+            <div
+              class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-4"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3
+                    class="text-xs font-bold text-zinc-200 uppercase tracking-wider flex items-center gap-2"
+                  >
+                    <i class="fa-solid fa-layer-group text-purple-400"></i>
+                    Keyframe Visual Editor
+                  </h3>
+                  <p class="text-[11px] text-zinc-400">
+                    Adjust CSS properties at keyframe percentages
+                  </p>
+                </div>
+                <button
+                  id="btn-add-keyframe"
+                  class="bg-zinc-800 hover:bg-zinc-700 text-purple-400 text-xs px-2.5 py-1 rounded-lg border border-zinc-700 font-medium transition flex items-center gap-1"
+                >
+                  <i class="fa-solid fa-plus"></i> Add Step
+                </button>
+              </div>
+
+              <div
+                id="keyframe-steps-container"
+                class="flex items-center gap-2 overflow-x-auto pb-1"
+              ></div>
+              <div
+                id="keyframe-properties-editor"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2 border-t border-zinc-900"
+              ></div>
+            </div>
+          </div>
+
+          <!-- 4. LIVE CODE EDITOR TAB -->
+          <div id="tab-content-editor" class="hidden space-y-4">
+            <div
+              class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3
+                    class="text-xs font-bold text-zinc-200 uppercase tracking-wider flex items-center gap-2"
+                  >
+                    <i class="fa-solid fa-code text-cyan-400"></i> Interactive
+                    CSS Keyframe Code Editor
+                  </h3>
+                  <p class="text-[11px] text-zinc-400">
+                    Write custom CSS keyframe animations directly
+                  </p>
+                </div>
+                <button
+                  id="btn-format-editor"
+                  class="bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 px-2.5 py-1 rounded-lg border border-zinc-700 transition"
+                >
+                  <i class="fa-solid fa-wand-magic"></i> Sync Visuals
+                </button>
+              </div>
+
+              <textarea
+                id="code-editor-textarea"
+                spellcheck="false"
+                class="w-full h-80 bg-zinc-900 text-purple-300 font-mono-code text-xs p-4 rounded-xl border border-zinc-800 focus:outline-none focus:border-purple-500 code-editor-area resize-y"
+              ></textarea>
+
+              <div class="flex items-center justify-between pt-1">
+                <p class="text-[11px] text-zinc-500 italic">
+                  Changes here immediately reflect on the visual preview stage.
+                </p>
+                <button
+                  id="btn-apply-editor-code"
+                  class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold shadow-lg shadow-purple-600/20 transition flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-play"></i> Apply Code
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. BEZIER EASING TAB -->
+          <div id="tab-content-bezier" class="hidden space-y-6">
+            <div
+              class="bg-zinc-950 p-5 rounded-2xl border border-zinc-800 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center"
+            >
+              <div
+                class="lg:col-span-7 flex flex-col items-center justify-center"
+              >
+                <div
+                  class="relative w-full max-w-[320px] aspect-square bg-zinc-900/90 rounded-2xl border border-zinc-800 p-4 shadow-inner"
+                >
+                  <svg
+                    class="w-full h-full overflow-visible"
+                    viewBox="0 0 100 100"
+                    id="bezier-svg"
+                  >
+                    <line
+                      x1="0"
+                      y1="0"
+                      x2="100"
+                      y2="0"
+                      stroke="#27272a"
+                      stroke-width="1"
+                    />
+                    <line
+                      x1="0"
+                      y1="25"
+                      x2="100"
+                      y2="25"
+                      stroke="#27272a"
+                      stroke-width="0.5"
+                      stroke-dasharray="2"
+                    />
+                    <line
+                      x1="0"
+                      y1="50"
+                      x2="100"
+                      y2="50"
+                      stroke="#27272a"
+                      stroke-width="0.5"
+                      stroke-dasharray="2"
+                    />
+                    <line
+                      x1="0"
+                      y1="75"
+                      x2="100"
+                      y2="75"
+                      stroke="#27272a"
+                      stroke-width="0.5"
+                      stroke-dasharray="2"
+                    />
+                    <line
+                      x1="0"
+                      y1="100"
+                      x2="100"
+                      y2="100"
+                      stroke="#27272a"
+                      stroke-width="1"
+                    />
+                    <line
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="100"
+                      stroke="#27272a"
+                      stroke-width="1"
+                    />
+                    <line
+                      x1="100"
+                      y1="0"
+                      x2="100"
+                      y2="100"
+                      stroke="#27272a"
+                      stroke-width="1"
+                    />
+                    <line
+                      x1="0"
+                      y1="100"
+                      x2="100"
+                      y2="0"
+                      stroke="#3f3f46"
+                      stroke-width="1"
+                      stroke-dasharray="2,2"
+                    />
+
+                    <line
+                      id="line-p1"
+                      x1="0"
+                      y1="100"
+                      x2="25"
+                      y2="25"
+                      stroke="#a855f7"
+                      stroke-width="1.5"
+                    />
+                    <line
+                      id="line-p2"
+                      x1="100"
+                      y1="0"
+                      x2="75"
+                      y2="75"
+                      stroke="#06b6d4"
+                      stroke-width="1.5"
+                    />
+                    <path
+                      id="bezier-curve-path"
+                      d="M 0,100 C 25,25 75,75 100,0"
+                      fill="none"
+                      stroke="#ec4899"
+                      stroke-width="3.5"
+                      stroke-linecap="round"
+                    />
+
+                    <circle
+                      id="handle-p1"
+                      class="bezier-handle"
+                      cx="25"
+                      cy="25"
+                      r="6"
+                      fill="#a855f7"
+                      stroke="#ffffff"
+                      stroke-width="1.5"
+                    />
+                    <circle
+                      id="handle-p2"
+                      class="bezier-handle"
+                      cx="75"
+                      cy="75"
+                      r="6"
+                      fill="#06b6d4"
+                      stroke="#ffffff"
+                      stroke-width="1.5"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="lg:col-span-5 space-y-4">
+                <div
+                  class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 space-y-3"
+                >
+                  <h4
+                    class="text-xs font-bold text-zinc-300 uppercase tracking-wider"
+                  >
+                    Cubic-Bezier Expression
+                  </h4>
+                  <div
+                    class="p-2.5 bg-zinc-950 rounded-lg border border-zinc-800 text-center font-mono text-xs text-pink-400 font-semibold select-all"
+                    id="bezier-code-output"
+                  >
+                    cubic-bezier(0.25, 0.75, 0.75, 0.25)
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <label class="text-[11px] text-purple-400 font-mono block"
+                        >P1 (X1, Y1)</label
+                      >
+                      <div class="flex gap-1 mt-1">
+                        <input
+                          id="input-p1x"
+                          type="number"
+                          step="0.05"
+                          min="0"
+                          max="1"
+                          value="0.25"
+                          class="w-full bg-zinc-950 border border-zinc-800 text-center text-xs py-1 rounded"
+                        />
+                        <input
+                          id="input-p1y"
+                          type="number"
+                          step="0.05"
+                          min="-0.5"
+                          max="1.5"
+                          value="0.75"
+                          class="w-full bg-zinc-950 border border-zinc-800 text-center text-xs py-1 rounded"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-[11px] text-cyan-400 font-mono block"
+                        >P2 (X2, Y2)</label
+                      >
+                      <div class="flex gap-1 mt-1">
+                        <input
+                          id="input-p2x"
+                          type="number"
+                          step="0.05"
+                          min="0"
+                          max="1"
+                          value="0.75"
+                          class="w-full bg-zinc-950 border border-zinc-800 text-center text-xs py-1 rounded"
+                        />
+                        <input
+                          id="input-p2y"
+                          type="number"
+                          step="0.05"
+                          min="-0.5"
+                          max="1.5"
+                          value="0.25"
+                          class="w-full bg-zinc-950 border border-zinc-800 text-center text-xs py-1 rounded"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    id="btn-apply-bezier"
+                    class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium py-2 rounded-lg transition"
+                  >
+                    Apply Curve to Active Animation
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. PERFORMANCE TAB -->
+          <div id="tab-content-performance" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-zinc-950 p-4 rounded-xl border border-rose-500/30">
+                <div
+                  class="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase mb-2"
+                >
+                  <i class="fa-solid fa-triangle-exclamation"></i> Layout
+                  Trigger (Slow)
+                </div>
+                <h4 class="text-sm font-semibold text-zinc-200">
+                  Reflow Properties
+                </h4>
+                <p class="text-xs text-zinc-400 mt-2 leading-relaxed">
+                  Animates geometry, forcing layout recalculation across
+                  elements.
+                </p>
+                <div
+                  class="mt-3 p-2 bg-zinc-900 rounded font-mono text-[11px] text-rose-300"
+                >
+                  width, height, top, left, margin, padding
+                </div>
+              </div>
+
+              <div
+                class="bg-zinc-950 p-4 rounded-xl border border-amber-500/30"
+              >
+                <div
+                  class="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase mb-2"
+                >
+                  <i class="fa-solid fa-paint-roller"></i> Paint Trigger
+                  (Medium)
+                </div>
+                <h4 class="text-sm font-semibold text-zinc-200">
+                  Repaint Properties
+                </h4>
+                <p class="text-xs text-zinc-400 mt-2 leading-relaxed">
+                  Repaints pixel colors without changing geometry positions.
+                </p>
+                <div
+                  class="mt-3 p-2 bg-zinc-900 rounded font-mono text-[11px] text-amber-300"
+                >
+                  background-color, box-shadow, color
+                </div>
+              </div>
+
+              <div
+                class="bg-zinc-950 p-4 rounded-xl border border-emerald-500/30"
+              >
+                <div
+                  class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase mb-2"
+                >
+                  <i class="fa-solid fa-gauge-high"></i> Composite Layer (60
+                  FPS)
+                </div>
+                <h4 class="text-sm font-semibold text-zinc-200">
+                  GPU Accelerated
+                </h4>
+                <p class="text-xs text-zinc-400 mt-2 leading-relaxed">
+                  Processed on GPU compositor layer without layout
+                  recalculations.
+                </p>
+                <div
+                  class="mt-3 p-2 bg-zinc-900 rounded font-mono text-[11px] text-emerald-300"
+                >
+                  transform (translate, scale, rotate), opacity
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT INTERACTIVE CANVAS & CODE VIEWER PANEL -->
+      <section
+        class="w-full lg:w-5/12 flex flex-col bg-zinc-950 relative overflow-hidden"
+      >
+        <!-- STAGE CONTROLS TOP BAR -->
+        <div
+          class="p-3 bg-zinc-900/80 border-b border-zinc-800 flex items-center justify-between flex-wrap gap-2"
+        >
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-zinc-400 font-medium">Stage Shape:</span>
+            <div
+              class="flex gap-1 bg-zinc-950 p-1 rounded-lg border border-zinc-800"
+            >
+              <button
+                id="shape-card"
+                class="shape-btn px-2.5 py-1 text-xs rounded font-medium bg-purple-600 text-white shadow"
+              >
+                Card
+              </button>
+              <button
+                id="shape-circle"
+                class="shape-btn px-2.5 py-1 text-xs rounded font-medium text-zinc-400 hover:text-zinc-200"
+              >
+                Sphere
+              </button>
+              <button
+                id="shape-heart"
+                class="shape-btn px-2.5 py-1 text-xs rounded font-medium text-zinc-400 hover:text-zinc-200"
+              >
+                Heart
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              id="btn-toggle-play"
+              class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
+            >
+              <i class="fa-solid fa-pause" id="icon-play-state"></i>
+              <span id="lbl-play-state">Pause</span>
+            </button>
+            <button
+              id="btn-restart"
+              class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 p-1.5 rounded-lg text-xs transition"
+              title="Restart Animation"
+            >
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ANIMATION STAGE -->
+        <div
+          class="flex-1 flex items-center justify-center p-6 bg-grid-pattern relative perspective-stage min-h-[280px]"
+        >
+          <div
+            id="animation-target"
+            class="w-52 h-64 bg-gradient-to-tr from-purple-900/90 via-indigo-900/90 to-zinc-900 border border-purple-500/40 rounded-2xl p-5 shadow-2xl flex flex-col justify-between select-none relative"
+          >
+            <div class="flex justify-between items-start">
+              <div
+                class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300"
+              >
+                <i class="fa-solid fa-cube text-base"></i>
+              </div>
+              <span
+                class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                >Target Node</span
+              >
+            </div>
+
+            <div class="space-y-2">
+              <div class="h-2 w-3/4 bg-purple-400/30 rounded-full"></div>
+              <div class="h-1.5 w-1/2 bg-purple-400/20 rounded-full"></div>
+              <p class="text-xs text-zinc-300 font-medium pt-2">
+                Live Animation Stage
+              </p>
+            </div>
+
+            <div
+              class="pt-3 border-t border-purple-500/20 flex justify-between items-center text-[10px] text-zinc-400 font-mono"
+            >
+              <span>60 FPS GPU</span>
+              <i class="fa-solid fa-bolt text-amber-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIMELINE SCRUBBER -->
+        <div class="px-4 py-2 bg-zinc-900 border-t border-zinc-800 space-y-1">
+          <div class="flex justify-between items-center text-[11px]">
+            <span class="text-zinc-400 font-medium flex items-center gap-1">
+              <i class="fa-solid fa-film text-purple-400"></i> Timeline Scrubber
+            </span>
+            <span
+              id="lbl-scrub-time"
+              class="font-mono text-purple-400 font-bold"
+              >0.00s / 1.50s (0%)</span
+            >
+          </div>
+          <input
+            type="range"
+            id="input-timeline-scrub"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            class="w-full"
+          />
+        </div>
+
+        <!-- PERSISTENT LIVE CODE VIEWER PANEL -->
+        <div
+          class="bg-zinc-950 border-t border-zinc-800 flex flex-col max-h-52"
+        >
+          <div
+            class="px-4 py-2 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between"
+          >
+            <span
+              class="text-xs font-bold text-purple-300 flex items-center gap-1.5"
+            >
+              <i class="fa-solid fa-code text-cyan-400"></i> Generated CSS Rule
+            </span>
+            <button
+              id="btn-panel-copy-css"
+              class="bg-purple-600/80 hover:bg-purple-600 text-white px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition"
+            >
+              <i class="fa-solid fa-copy"></i> Copy CSS
+            </button>
+          </div>
+          <pre
+            id="live-code-viewer"
+            class="p-3 bg-zinc-950 font-mono-code text-[11px] text-purple-300 overflow-y-auto overflow-x-auto select-all flex-1 leading-relaxed"
+          ></pre>
+        </div>
+      </section>
+    </main>
+
+    <!-- EXPORT MODAL -->
+    <div
+      id="export-modal"
+      class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4"
+    >
+      <div
+        class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4"
+      >
+        <div
+          class="flex justify-between items-center border-b border-zinc-800 pb-3"
+        >
+          <h3 class="font-bold text-zinc-100 text-base flex items-center gap-2">
+            <i class="fa-solid fa-file-export text-pink-400"></i> Export
+            Animation
+          </h3>
+          <button
+            id="btn-close-modal"
+            class="text-zinc-400 hover:text-white p-1 rounded-lg"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <pre
+          id="code-output-css"
+          class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 font-mono-code text-xs text-purple-300 overflow-x-auto max-h-48 select-all"
+        ></pre>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+          <button
+            id="btn-copy-modal-css"
+            class="bg-purple-600 hover:bg-purple-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
+          >
+            <i class="fa-solid fa-copy"></i> Copy CSS
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div
+      id="toast"
+      class="fixed bottom-5 right-5 bg-purple-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 z-50"
+    >
+      <i class="fa-solid fa-circle-check"></i>
+      <span id="toast-message">Notification message</span>
+    </div>
+
+    <script>
+      // --- LESSONS DATA ---
+      const LESSONS_DATA = [
+        {
+          id: 1,
+          title: "Lesson 1: CSS Animation Fundamentals",
+          subtitle: "Keyframe declarations, duration, and shorthand syntax",
+          level: "Beginner",
+          xp: 25,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+            CSS animations allow elements to transition gradually between keyframe style states. The basic shorthand property combines <code>animation-name</code>, <code>animation-duration</code>, and <code>animation-timing-function</code>.
+          </p>
+          <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 font-mono-code text-xs text-purple-300 mb-3">
+@keyframes slideFade {<br>
+&nbsp;&nbsp;from { opacity: 0; transform: translateY(20px); }<br>
+&nbsp;&nbsp;to &nbsp; { opacity: 1; transform: translateY(0); }<br>
+}<br><br>
+.box {<br>
+&nbsp;&nbsp;animation: slideFade 1s ease;<br>
+}
+          </div>
+        `,
+          demoCode: `@keyframes slideFade {
+  0% { opacity: 0; transform: translateY(50px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+#animation-target {
+  animation: slideFade 1.2s ease infinite alternate;
+}`,
+        },
+        {
+          id: 2,
+          title: "Lesson 2: Multi-Step Keyframes & Percentages",
+          subtitle: "Complex intermediate waypoints (0% -> 50% -> 100%)",
+          level: "Beginner",
+          xp: 30,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+            Instead of simple <code>from</code> and <code>to</code> states, percentage steps let you define intricate multi-phase motion sequences.
+          </p>
+          <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 font-mono-code text-xs text-cyan-300 mb-3">
+@keyframes pulseJump {<br>
+&nbsp;&nbsp;0% &nbsp; { transform: scale(1) translateY(0); }<br>
+&nbsp;&nbsp;50% &nbsp;{ transform: scale(1.15) translateY(-30px); }<br>
+&nbsp;&nbsp;100% { transform: scale(1) translateY(0); }<br>
+}
+          </div>
+        `,
+          demoCode: `@keyframes pulseJump {
+  0% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.15) translateY(-30px); }
+  100% { transform: scale(1) translateY(0); }
+}
+#animation-target {
+  animation: pulseJump 1.5s ease-in-out infinite;
+}`,
+        },
+        {
+          id: 3,
+          title: "Lesson 3: Mastering Timing & Bezier Easing",
+          subtitle: "Linear, steps(), cubic-bezier, acceleration curves",
+          level: "Intermediate",
+          xp: 40,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+            Timing functions dictate mathematical acceleration. Custom <code>cubic-bezier(P1x, P1y, P2x, P2y)</code> values enable realistic physical bounce and overshoot effects.
+          </p>
+          <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 font-mono-code text-xs text-pink-300 mb-3">
+/* Overshoot Bounce Easing */<br>
+animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          </div>
+        `,
+          demoCode: `@keyframes popEntrance {
+  0% { transform: scale(0.2); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+#animation-target {
+  animation: popEntrance 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite alternate;
+}`,
+        },
+        {
+          id: 4,
+          title: "Lesson 4: Fill Modes & Animation Direction",
+          subtitle: "forwards, backwards, alternate, and persistent end states",
+          level: "Intermediate",
+          xp: 40,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+            By default, elements revert to their un-animated styles when an animation finishes. <code>animation-fill-mode: forwards</code> preserves the final 100% keyframe styling!
+          </p>
+        `,
+          demoCode: `@keyframes slideStop {
+  0% { transform: translateX(-50px); opacity: 0.3; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+#animation-target {
+  animation: slideStop 1.5s ease forwards;
+}`,
+        },
+        {
+          id: 5,
+          title: "Lesson 5: 60 FPS GPU Acceleration & 3D Transforms",
+          subtitle:
+            "Composite layers, translate3d, perspective, and avoiding reflow",
+          level: "Advanced",
+          xp: 50,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+            To prevent frame drops and UI lag, restrict animated properties to <code>transform</code> and <code>opacity</code>, which leverage GPU composite layers directly.
+          </p>
+        `,
+          demoCode: `@keyframes flip3d {
+  0% { transform: perspective(800px) rotateY(0deg); }
+  100% { transform: perspective(800px) rotateY(180deg); }
+}
+#animation-target {
+  animation: flip3d 2s ease-in-out infinite alternate;
+}`,
+        },
+        {
+          id: 6,
+          title: "Lesson 6: Staggered Micro-Interactions & Glitch Sequencing",
+          subtitle: "Rapid clip-path, rotation jitter, and layered UI motion",
+          level: "Advanced",
+          xp: 60,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-3">
+            Advanced micro-interactions combine rapid transformations with staggered delays to craft cyberpunk glitches, loader spinners, and realistic physical UI responses.
+          </p>
+        `,
+          demoCode: `@keyframes glitchMotion {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-5px, 5px) rotate(-2deg); }
+  40% { transform: translate(5px, -5px) rotate(2deg); }
+  60% { transform: translate(-3px, -3px) rotate(-1deg); }
+  80% { transform: translate(3px, 3px) rotate(1deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+#animation-target {
+  animation: glitchMotion 0.4s linear infinite;
+}`,
+        },
+      ];
+
+      // --- PRACTICE CHALLENGES DATA ---
+      const CHALLENGES_DATA = [
+        {
+          id: "ch-1",
+          title: "The Heartbeat Pulse",
+          category: "Micro-Interaction",
+          xp: 50,
+          description:
+            "Create a pulsing heartbeat animation using scale transforms and non-linear keyframe steps.",
+          criteria: [
+            {
+              text: "Must include @keyframes with at least 3 steps (0%, 50%, 100%)",
+              validator: (code) =>
+                /@keyframes/.test(code) &&
+                (code.match(/\d+%/g) || []).length >= 3,
+            },
+            {
+              text: "Must modify transform: scale(...)",
+              validator: (code) => /scale\(/.test(code),
+            },
+            {
+              text: "Must set iteration to infinite",
+              validator: (code) => /infinite/.test(code),
+            },
+          ],
+          solution: `@keyframes heartbeat {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.25); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.15); }
+  60% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+#animation-target {
+  animation: heartbeat 1.2s ease-in-out infinite;
+}`,
+          initialCode: `@keyframes heartbeat {
+  0% { transform: scale(1); }
+  /* Step 1: Add scaling pulses */
+  100% { transform: scale(1); }
+}
+#animation-target {
+  /* Step 2: Set duration and infinite iteration */
+  animation: heartbeat 1.2s ease;
+}`,
+        },
+        {
+          id: "ch-2",
+          title: "Smooth Spinner Rotation",
+          category: "Loaders",
+          xp: 50,
+          description:
+            "Construct a seamless 360-degree loading spinner with linear timing.",
+          criteria: [
+            {
+              text: "Rotation reaches 360deg in final keyframe",
+              validator: (code) => /rotate\(\s*360deg\s*\)/.test(code),
+            },
+            {
+              text: "Timing function must be linear",
+              validator: (code) => /linear/.test(code),
+            },
+            {
+              text: "Must loop infinitely",
+              validator: (code) => /infinite/.test(code),
+            },
+          ],
+          solution: `@keyframes spin360 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+#animation-target {
+  animation: spin360 1s linear infinite;
+}`,
+          initialCode: `@keyframes spin360 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); } /* Change target degree */
+}
+#animation-target {
+  animation: spin360 1s ease infinite;
+}`,
+        },
+        {
+          id: "ch-3",
+          title: "Bouncing Ball with Squash & Stretch",
+          category: "Physics FX",
+          xp: 75,
+          description:
+            "Combine translateY bouncing with scale squishing when the ball impacts the ground.",
+          criteria: [
+            {
+              text: "Translates Y axis vertically (-60px or more)",
+              validator: (code) =>
+                /translateY\(\s*-[4-9]\dpx\)/.test(code) ||
+                /translateY\(-100px\)/.test(code),
+            },
+            {
+              text: "Squashes scaleY on ground contact",
+              validator: (code) => /scale/.test(code),
+            },
+            {
+              text: "Uses alternate direction or repeat loop",
+              validator: (code) => /infinite|alternate/.test(code),
+            },
+          ],
+          solution: `@keyframes bounceSquash {
+  0% { transform: translateY(-80px) scaleX(0.9) scaleY(1.1); }
+  90% { transform: translateY(0px) scaleX(1) scaleY(1); }
+  100% { transform: translateY(0px) scaleX(1.3) scaleY(0.7); }
+}
+#animation-target {
+  animation: bounceSquash 0.6s ease-in infinite alternate;
+}`,
+          initialCode: `@keyframes bounceSquash {
+  0% { transform: translateY(-80px); }
+  100% { transform: translateY(0px); }
+}
+#animation-target {
+  animation: bounceSquash 0.6s ease infinite alternate;
+}`,
+        },
+        {
+          id: "ch-4",
+          title: "3D Card Y-Axis Flip",
+          category: "3D FX",
+          xp: 75,
+          description:
+            "Flip a card 180 degrees around the Y-axis using 3D transforms.",
+          criteria: [
+            {
+              text: "Uses rotateY 180deg transform",
+              validator: (code) => /rotateY\(\s*180deg\s*\)/.test(code),
+            },
+            {
+              text: "Includes perspective for 3D depth",
+              validator: (code) => /perspective/.test(code),
+            },
+          ],
+          solution: `@keyframes cardFlip {
+  0% { transform: perspective(800px) rotateY(0deg); }
+  100% { transform: perspective(800px) rotateY(180deg); }
+}
+#animation-target {
+  animation: cardFlip 1.5s ease-in-out infinite alternate;
+}`,
+          initialCode: `@keyframes cardFlip {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(0deg); }
+}
+#animation-target {
+  animation: cardFlip 1.5s ease infinite alternate;
+}`,
+        },
+        {
+          id: "ch-5",
+          title: "Toast Notification Pop",
+          category: "Entrances",
+          xp: 60,
+          description:
+            "Animate a toast notification entrance with realistic overshoot easing.",
+          criteria: [
+            {
+              text: "Employs cubic-bezier easing with overshoot",
+              validator: (code) => /cubic-bezier/.test(code),
+            },
+            {
+              text: "Uses fill-mode: forwards",
+              validator: (code) => /forwards/.test(code),
+            },
+            {
+              text: "Animates opacity from 0 to 1",
+              validator: (code) =>
+                /opacity:\s*0/.test(code) && /opacity:\s*1/.test(code),
+            },
+          ],
+          solution: `@keyframes toastPop {
+  0% { opacity: 0; transform: translateY(50px) scale(0.8); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+#animation-target {
+  animation: toastPop 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}`,
+          initialCode: `@keyframes toastPop {
+  0% { opacity: 0; transform: translateY(50px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+#animation-target {
+  animation: toastPop 0.8s ease;
+}`,
+        },
+        {
+          id: "ch-6",
+          title: "Cyberpunk Glitch Motion",
+          category: "Advanced FX",
+          xp: 100,
+          description:
+            "Craft a rapid multi-step jitter animation to simulate a digital glitch.",
+          criteria: [
+            {
+              text: "Has 5 or more keyframe steps",
+              validator: (code) => (code.match(/\d+%/g) || []).length >= 5,
+            },
+            {
+              text: "Duration is 0.5s or faster",
+              validator: (code) => /0\.[1-5]s/.test(code),
+            },
+          ],
+          solution: `@keyframes glitchJitter {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-6px, 4px) rotate(-3deg); }
+  40% { transform: translate(6px, -4px) rotate(3deg); }
+  60% { transform: translate(-4px, -2px) rotate(-1deg); }
+  80% { transform: translate(4px, 2px) rotate(2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+#animation-target {
+  animation: glitchJitter 0.3s linear infinite;
+}`,
+          initialCode: `@keyframes glitchJitter {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(0,0); }
+}
+#animation-target {
+  animation: glitchJitter 0.3s linear infinite;
+}`,
+        },
+      ];
+
+      // --- STATE ---
+      const userProgress = JSON.parse(
+        localStorage.getItem("css_studio_progress") ||
+          '{"xp": 0, "completedChallenges": []}',
+      );
+
+      const state = {
+        duration: 1.5,
+        delay: 0,
+        iteration: "infinite",
+        timing: "ease",
+        direction: "alternate",
+        fillMode: "forwards",
+        playState: "running",
+        customBezier: { p1x: 0.25, p1y: 0.75, p2x: 0.75, p2y: 0.25 },
+        activeStepIndex: 0,
+        activeChallenge: null,
+        keyframes: [
+          {
+            percentage: 0,
+            props: {
+              translateY: 0,
+              scale: 1,
+              rotateZ: 0,
+              rotateY: 0,
+              opacity: 1,
+              backgroundColor: "#581c87",
+            },
+          },
+          {
+            percentage: 50,
+            props: {
+              translateY: -40,
+              scale: 1.1,
+              rotateZ: 5,
+              rotateY: 30,
+              opacity: 0.9,
+              backgroundColor: "#7e22ce",
+            },
+          },
+          {
+            percentage: 100,
+            props: {
+              translateY: -10,
+              scale: 0.95,
+              rotateZ: -5,
+              rotateY: -20,
+              opacity: 1,
+              backgroundColor: "#3b0764",
+            },
+          },
+        ],
+      };
+
+      // --- DOM REFERENCES ---
+      const targetNode = document.getElementById("animation-target");
+      const inputDuration = document.getElementById("input-duration");
+      const valDuration = document.getElementById("val-duration");
+      const inputDelay = document.getElementById("input-delay");
+      const valDelay = document.getElementById("val-delay");
+      const selectTiming = document.getElementById("select-timing");
+      const selectDirection = document.getElementById("select-direction");
+      const selectFillmode = document.getElementById("select-fillmode");
+      const chkInfinite = document.getElementById("chk-infinite");
+      const inputIterationRange = document.getElementById(
+        "input-iteration-range",
+      );
+      const valIteration = document.getElementById("val-iteration");
+
+      const btnTogglePlay = document.getElementById("btn-toggle-play");
+      const iconPlayState = document.getElementById("icon-play-state");
+      const lblPlayState = document.getElementById("lbl-play-state");
+      const btnRestart = document.getElementById("btn-restart");
+      const inputTimelineScrub = document.getElementById(
+        "input-timeline-scrub",
+      );
+      const lblScrubTime = document.getElementById("lbl-scrub-time");
+
+      const liveCodeViewer = document.getElementById("live-code-viewer");
+      const codeEditorTextarea = document.getElementById(
+        "code-editor-textarea",
+      );
+
+      const dynamicStyleTag = document.createElement("style");
+      document.head.appendChild(dynamicStyleTag);
+
+      window.addEventListener("DOMContentLoaded", () => {
+        setupTabs();
+        setupBezierGraph();
+        setupKeyframeTrackUI();
+        setupShapeSelector();
+        bindControls();
+        setupCodeEditor();
+        renderLessonsUI();
+        renderChallengesUI();
+        updateGamificationHeader();
+        updateAnimation();
+        startTimelineScrubberSync();
+      });
+
+      function setupTabs() {
+        const tabs = [
+          { btn: "tab-btn-lessons", content: "tab-content-lessons" },
+          { btn: "tab-btn-challenges", content: "tab-content-challenges" },
+          { btn: "tab-btn-controls", content: "tab-content-controls" },
+          { btn: "tab-btn-editor", content: "tab-content-editor" },
+          { btn: "tab-btn-bezier", content: "tab-content-bezier" },
+          { btn: "tab-btn-performance", content: "tab-content-performance" },
+        ];
+
+        tabs.forEach((t) => {
+          document.getElementById(t.btn).addEventListener("click", () => {
+            tabs.forEach((item) => {
+              document.getElementById(item.btn).className =
+                "studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-medium";
+              document.getElementById(item.content).classList.add("hidden");
+            });
+            document.getElementById(t.btn).className =
+              "studio-tab active border-b-2 border-purple-500 text-purple-400 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-bold";
+            document.getElementById(t.content).classList.remove("hidden");
+
+            if (t.btn === "tab-btn-editor") {
+              syncStateToCodeEditor();
+            }
+          });
+        });
+      }
+
+      function renderLessonsUI() {
+        const container = document.getElementById("lessons-list");
+        container.innerHTML = "";
+
+        LESSONS_DATA.forEach((lesson) => {
+          const card = document.createElement("div");
+          card.className =
+            "bg-zinc-950 p-4 rounded-2xl border border-zinc-800 hover:border-purple-500/40 transition space-y-3";
+          card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">${lesson.level}</span>
+              <h3 class="text-sm font-bold text-zinc-100 mt-1">${lesson.title}</h3>
+            </div>
+            <span class="text-xs font-mono text-amber-400 font-bold bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">+${lesson.xp} XP</span>
+          </div>
+          <p class="text-xs text-zinc-400">${lesson.subtitle}</p>
+          ${lesson.content}
+          <button class="btn-load-lesson-demo bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold border border-purple-500/30 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-play"></i> Try in Playground & Stage
+          </button>
+        `;
+
+          card
+            .querySelector(".btn-load-lesson-demo")
+            .addEventListener("click", () => {
+              dynamicStyleTag.textContent = lesson.demoCode;
+              liveCodeViewer.textContent = lesson.demoCode;
+              codeEditorTextarea.value = lesson.demoCode;
+              showToast(`Loaded "${lesson.title}" into Stage!`);
+            });
+
+          container.appendChild(card);
+        });
+      }
+
+      function renderChallengesUI() {
+        const grid = document.getElementById("challenge-cards-grid");
+        grid.innerHTML = "";
+
+        CHALLENGES_DATA.forEach((ch) => {
+          const isCompleted = userProgress.completedChallenges.includes(ch.id);
+          const card = document.createElement("div");
+          card.className = `p-4 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+            isCompleted
+              ? "bg-emerald-950/20 border-emerald-500/40 hover:border-emerald-500"
+              : "bg-zinc-950 border-zinc-800 hover:border-purple-500/50"
+          }`;
+
+          card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-mono font-bold text-purple-400">${ch.category}</span>
+              ${isCompleted ? '<span class="text-xs text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Solved</span>' : `<span class="text-[10px] font-mono text-amber-400">+${ch.xp} XP</span>`}
+            </div>
+            <h4 class="text-xs font-bold text-zinc-100">${ch.title}</h4>
+          </div>
+          <p class="text-[11px] text-zinc-400 mt-2 line-clamp-2">${ch.description}</p>
+        `;
+
+          card.addEventListener("click", () => loadChallengeWorkspace(ch));
+          grid.appendChild(card);
+        });
+      }
+
+      function loadChallengeWorkspace(ch) {
+        state.activeChallenge = ch;
+        document
+          .getElementById("active-challenge-panel")
+          .classList.remove("hidden");
+        document.getElementById("ch-title").textContent = ch.title;
+        document.getElementById("ch-description").textContent = ch.description;
+        document.getElementById("ch-xp-reward").textContent = `+${ch.xp} XP`;
+        document.getElementById("ch-code-editor").value = ch.initialCode;
+        document.getElementById("ch-validation-feedback").textContent = "";
+
+        const criteriaList = document.getElementById("ch-criteria-list");
+        criteriaList.innerHTML = ch.criteria
+          .map(
+            (c) => `
+        <li class="flex items-center gap-2 text-zinc-400" id="crit-${c.text.replace(/\s+/g, "-")}">
+          <i class="fa-solid fa-circle-notch text-zinc-600"></i> ${c.text}
+        </li>
+      `,
+          )
+          .join("");
+
+        // Auto update preview on change
+        dynamicStyleTag.textContent = ch.initialCode;
+        liveCodeViewer.textContent = ch.initialCode;
+
+        document.getElementById("challenge-status-badge").textContent =
+          `Active: ${ch.title}`;
+        document.getElementById("challenge-status-badge").className =
+          "text-xs font-bold font-mono px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30";
+
+        // Setup actions
+        document.getElementById("btn-ch-reset").onclick = () => {
+          document.getElementById("ch-code-editor").value = ch.initialCode;
+          dynamicStyleTag.textContent = ch.initialCode;
+          liveCodeViewer.textContent = ch.initialCode;
+        };
+
+        document.getElementById("btn-ch-solution").onclick = () => {
+          document.getElementById("ch-code-editor").value = ch.solution;
+          dynamicStyleTag.textContent = ch.solution;
+          liveCodeViewer.textContent = ch.solution;
+          showToast("Solution revealed!");
+        };
+
+        document.getElementById("btn-ch-submit").onclick = () =>
+          validateActiveChallenge(ch);
+      }
+
+      function validateActiveChallenge(ch) {
+        const code = document.getElementById("ch-code-editor").value;
+        dynamicStyleTag.textContent = code;
+        liveCodeViewer.textContent = code;
+
+        let allPassed = true;
+
+        ch.criteria.forEach((c) => {
+          const passed = c.validator(code);
+          const li = document.getElementById(
+            `crit-${c.text.replace(/\s+/g, "-")}`,
+          );
+          if (li) {
+            if (passed) {
+              li.className =
+                "flex items-center gap-2 text-emerald-400 font-semibold";
+              li.querySelector("i").className =
+                "fa-solid fa-circle-check text-emerald-400";
+            } else {
+              allPassed = false;
+              li.className = "flex items-center gap-2 text-rose-400";
+              li.querySelector("i").className =
+                "fa-solid fa-circle-xmark text-rose-400";
+            }
+          }
+        });
+
+        const feedback = document.getElementById("ch-validation-feedback");
+
+        if (allPassed) {
+          feedback.className = "text-xs font-bold text-emerald-400";
+          feedback.textContent = "🎉 All tests passed! Challenge completed!";
+
+          if (!userProgress.completedChallenges.includes(ch.id)) {
+            userProgress.completedChallenges.push(ch.id);
+            userProgress.xp += ch.xp;
+            localStorage.setItem(
+              "css_studio_progress",
+              JSON.stringify(userProgress),
+            );
+            updateGamificationHeader();
+            renderChallengesUI();
+
+            // Confetti Celebration
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+            });
+          }
+        } else {
+          feedback.className = "text-xs font-bold text-rose-400";
+          feedback.textContent =
+            "❌ Some validation checks failed. Adjust your code!";
+        }
+      }
+
+      function updateGamificationHeader() {
+        document.getElementById("user-xp-display").textContent =
+          `${userProgress.xp} XP`;
+        document.getElementById("user-badges-display").textContent =
+          `${userProgress.completedChallenges.length}/6`;
+      }
+
+      function bindControls() {
+        inputDuration.addEventListener("input", (e) => {
+          state.duration = parseFloat(e.target.value);
+          valDuration.textContent = `${state.duration.toFixed(1)}s`;
+          updateAnimation();
+        });
+
+        inputDelay.addEventListener("input", (e) => {
+          state.delay = parseFloat(e.target.value);
+          valDelay.textContent = `${state.delay.toFixed(1)}s`;
+          updateAnimation();
+        });
+
+        chkInfinite.addEventListener("change", (e) => {
+          if (e.target.checked) {
+            state.iteration = "infinite";
+            inputIterationRange.disabled = true;
+            inputIterationRange.classList.add("opacity-50");
+            valIteration.textContent = "infinite";
+          } else {
+            state.iteration = parseInt(inputIterationRange.value);
+            inputIterationRange.disabled = false;
+            inputIterationRange.classList.remove("opacity-50");
+            valIteration.textContent = state.iteration;
+          }
+          updateAnimation();
+        });
+
+        inputIterationRange.addEventListener("input", (e) => {
+          state.iteration = parseInt(e.target.value);
+          valIteration.textContent = state.iteration;
+          updateAnimation();
+        });
+
+        selectTiming.addEventListener("change", (e) => {
+          if (e.target.value === "custom-bezier") {
+            const b = state.customBezier;
+            state.timing = `cubic-bezier(${b.p1x}, ${b.p1y}, ${b.p2x}, ${b.p2y})`;
+          } else {
+            state.timing = e.target.value;
+          }
+          updateAnimation();
+        });
+
+        selectDirection.addEventListener("change", (e) => {
+          state.direction = e.target.value;
+          updateAnimation();
+        });
+
+        selectFillmode.addEventListener("change", (e) => {
+          state.fillMode = e.target.value;
+          updateAnimation();
+        });
+
+        btnTogglePlay.addEventListener("click", () => {
+          if (state.playState === "running") {
+            state.playState = "paused";
+            iconPlayState.className = "fa-solid fa-play";
+            lblPlayState.textContent = "Play";
+          } else {
+            state.playState = "running";
+            iconPlayState.className = "fa-solid fa-pause";
+            lblPlayState.textContent = "Pause";
+          }
+          updateAnimation();
+        });
+
+        btnRestart.addEventListener("click", () => {
+          targetNode.style.animation = "none";
+          void targetNode.offsetHeight;
+          updateAnimation();
+          showToast("Animation restarted");
+        });
+
+        document
+          .getElementById("btn-quick-copy")
+          .addEventListener("click", copyCSSToClipboard);
+        document
+          .getElementById("btn-panel-copy-css")
+          .addEventListener("click", copyCSSToClipboard);
+        document
+          .getElementById("btn-copy-modal-css")
+          .addEventListener("click", copyCSSToClipboard);
+
+        document
+          .getElementById("btn-export-code")
+          .addEventListener("click", () => {
+            document.getElementById("code-output-css").textContent =
+              liveCodeViewer.textContent;
+            document.getElementById("export-modal").classList.remove("hidden");
+          });
+        document
+          .getElementById("btn-close-modal")
+          .addEventListener("click", () => {
+            document.getElementById("export-modal").classList.add("hidden");
+          });
+
+        document
+          .getElementById("btn-add-keyframe")
+          .addEventListener("click", () => {
+            const lastStep = state.keyframes[state.keyframes.length - 1];
+            let newPct = lastStep
+              ? Math.min(100, lastStep.percentage + 20)
+              : 50;
+            if (state.keyframes.some((k) => k.percentage === newPct))
+              newPct += 5;
+
+            state.keyframes.push({
+              percentage: newPct,
+              props: {
+                translateY: -20,
+                scale: 1,
+                rotateZ: 0,
+                rotateY: 0,
+                opacity: 1,
+                backgroundColor: "#9333ea",
+              },
+            });
+            state.keyframes.sort((a, b) => a.percentage - b.percentage);
+            state.activeStepIndex = state.keyframes.findIndex(
+              (k) => k.percentage === newPct,
+            );
+            setupKeyframeTrackUI();
+            updateAnimation();
+            showToast(`Added ${newPct}% keyframe step`);
+          });
+      }
+
+      function updateAnimation() {
+        const keyframeRules = state.keyframes
+          .map((kf) => {
+            return `  ${kf.percentage}% {
+    transform: translateY(${kf.props.translateY}px) scale(${kf.props.scale}) rotateZ(${kf.props.rotateZ}deg) rotateY(${kf.props.rotateY}deg);
+    opacity: ${kf.props.opacity};
+    background-color: ${kf.props.backgroundColor};
+  }`;
+          })
+          .join("\n");
+
+        const fullCSS = `/* Generated CSS Animation */
+@keyframes studioCustomAnimation {
+${keyframeRules}
+}
+
+#animation-target {
+  animation: studioCustomAnimation ${state.duration}s ${state.timing} ${state.delay}s ${state.iteration} ${state.direction} ${state.fillMode};
+  animation-play-state: ${state.playState};
+}`;
+
+        dynamicStyleTag.textContent = fullCSS;
+        liveCodeViewer.textContent = fullCSS;
+      }
+
+      function setupCodeEditor() {
+        document
+          .getElementById("btn-format-editor")
+          .addEventListener("click", () => {
+            syncStateToCodeEditor();
+            showToast("Synced code with controls!");
+          });
+
+        document
+          .getElementById("btn-apply-editor-code")
+          .addEventListener("click", () => {
+            const customCode = codeEditorTextarea.value;
+            dynamicStyleTag.textContent = customCode;
+            liveCodeViewer.textContent = customCode;
+            showToast("Applied custom CSS code!");
+          });
+      }
+
+      function syncStateToCodeEditor() {
+        const keyframeRules = state.keyframes
+          .map((kf) => {
+            return `  ${kf.percentage}% {
+    transform: translateY(${kf.props.translateY}px) scale(${kf.props.scale}) rotateZ(${kf.props.rotateZ}deg) rotateY(${kf.props.rotateY}deg);
+    opacity: ${kf.props.opacity};
+    background-color: ${kf.props.backgroundColor};
+  }`;
+          })
+          .join("\n");
+
+        codeEditorTextarea.value = `@keyframes studioCustomAnimation {
+${keyframeRules}
+}
+
+#animation-target {
+  animation: studioCustomAnimation ${state.duration}s ${state.timing} ${state.delay}s ${state.iteration} ${state.direction} ${state.fillMode};
+}`;
+      }
+
+      function setupKeyframeTrackUI() {
+        const container = document.getElementById("keyframe-steps-container");
+        container.innerHTML = "";
+
+        state.keyframes.forEach((kf, index) => {
+          const btn = document.createElement("button");
+          btn.className = `px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center gap-1 ${
+            index === state.activeStepIndex
+              ? "bg-purple-600 text-white shadow"
+              : "bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800"
+          }`;
+          btn.textContent = `${kf.percentage}% Step`;
+          btn.addEventListener("click", () => {
+            state.activeStepIndex = index;
+            setupKeyframeTrackUI();
+          });
+          container.appendChild(btn);
+        });
+
+        renderKeyframePropertiesEditor();
+      }
+
+      function renderKeyframePropertiesEditor() {
+        const editor = document.getElementById("keyframe-properties-editor");
+        const activeKf = state.keyframes[state.activeStepIndex];
+        if (!activeKf) return;
+
+        editor.innerHTML = `
+        <div class="space-y-1">
+          <div class="flex justify-between text-[11px] text-zinc-400">
+            <span>Translate Y</span>
+            <span class="font-mono text-purple-400">${activeKf.props.translateY}px</span>
+          </div>
+          <input type="range" min="-100" max="100" value="${activeKf.props.translateY}" class="w-full" data-prop="translateY">
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-[11px] text-zinc-400">
+            <span>Scale</span>
+            <span class="font-mono text-purple-400">${activeKf.props.scale}</span>
+          </div>
+          <input type="range" min="0.2" max="2.0" step="0.05" value="${activeKf.props.scale}" class="w-full" data-prop="scale">
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-[11px] text-zinc-400">
+            <span>Rotate Z (deg)</span>
+            <span class="font-mono text-purple-400">${activeKf.props.rotateZ}°</span>
+          </div>
+          <input type="range" min="-180" max="180" value="${activeKf.props.rotateZ}" class="w-full" data-prop="rotateZ">
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-[11px] text-zinc-400">
+            <span>Opacity</span>
+            <span class="font-mono text-purple-400">${activeKf.props.opacity}</span>
+          </div>
+          <input type="range" min="0" max="1" step="0.05" value="${activeKf.props.opacity}" class="w-full" data-prop="opacity">
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-[11px] text-zinc-400">
+            <span>Background Color</span>
+          </div>
+          <input type="color" value="${activeKf.props.backgroundColor}" class="w-full h-7 bg-zinc-950 border border-zinc-800 rounded cursor-pointer" data-prop="backgroundColor">
+        </div>
+      `;
+
+        editor.querySelectorAll("input").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            const prop = e.target.dataset.prop;
+            let val = e.target.value;
+            if (prop !== "backgroundColor") val = parseFloat(val);
+            activeKf.props[prop] = val;
+            renderKeyframePropertiesEditor();
+            updateAnimation();
+          });
+        });
+      }
+
+      function setupBezierGraph() {
+        const handleP1 = document.getElementById("handle-p1");
+        const handleP2 = document.getElementById("handle-p2");
+        const lineP1 = document.getElementById("line-p1");
+        const lineP2 = document.getElementById("line-p2");
+        const curvePath = document.getElementById("bezier-curve-path");
+        const bezierOutput = document.getElementById("bezier-code-output");
+
+        function updateBezierUI() {
+          const x1 = state.customBezier.p1x * 100;
+          const y1 = 100 - state.customBezier.p1y * 100;
+          const x2 = state.customBezier.p2x * 100;
+          const y2 = 100 - state.customBezier.p2y * 100;
+
+          handleP1.setAttribute("cx", x1);
+          handleP1.setAttribute("cy", y1);
+          lineP1.setAttribute("x2", x1);
+          lineP1.setAttribute("y2", y1);
+
+          handleP2.setAttribute("cx", x2);
+          handleP2.setAttribute("cy", y2);
+          lineP2.setAttribute("x2", x2);
+          lineP2.setAttribute("y2", y2);
+
+          curvePath.setAttribute(
+            "d",
+            `M 0,100 C ${x1},${y1} ${x2},${y2} 100,0`,
+          );
+
+          const formula = `cubic-bezier(${state.customBezier.p1x}, ${state.customBezier.p1y}, ${state.customBezier.p2x}, ${state.customBezier.p2y})`;
+          bezierOutput.textContent = formula;
+        }
+
+        let activeHandle = null;
+
+        function onPointerMove(e) {
+          if (!activeHandle) return;
+          const svg = document.getElementById("bezier-svg");
+          const rect = svg.getBoundingClientRect();
+          let x = (e.clientX - rect.left) / rect.width;
+          let y = 1 - (e.clientY - rect.top) / rect.height;
+
+          x = Math.max(0, Math.min(1, parseFloat(x.toFixed(2))));
+          y = parseFloat(y.toFixed(2));
+
+          if (activeHandle === "p1") {
+            state.customBezier.p1x = x;
+            state.customBezier.p1y = y;
+          } else if (activeHandle === "p2") {
+            state.customBezier.p2x = x;
+            state.customBezier.p2y = y;
+          }
+          updateBezierUI();
+        }
+
+        handleP1.addEventListener("mousedown", () => (activeHandle = "p1"));
+        handleP2.addEventListener("mousedown", () => (activeHandle = "p2"));
+        window.addEventListener("mouseup", () => (activeHandle = null));
+        window.addEventListener("mousemove", onPointerMove);
+
+        document
+          .getElementById("btn-apply-bezier")
+          .addEventListener("click", () => {
+            selectTiming.value = "custom-bezier";
+            state.timing = `cubic-bezier(${state.customBezier.p1x}, ${state.customBezier.p1y}, ${state.customBezier.p2x}, ${state.customBezier.p2y})`;
+            updateAnimation();
+            showToast("Applied Bezier curve!");
+          });
+
+        updateBezierUI();
+      }
+
+      function setupShapeSelector() {
+        const btnCard = document.getElementById("shape-card");
+        const btnCircle = document.getElementById("shape-circle");
+        const btnHeart = document.getElementById("shape-heart");
+
+        function resetShapeBtns() {
+          [btnCard, btnCircle, btnHeart].forEach((b) => {
+            b.className =
+              "shape-btn px-2.5 py-1 text-xs rounded font-medium text-zinc-400 hover:text-zinc-200";
+          });
+        }
+
+        btnCard.addEventListener("click", () => {
+          resetShapeBtns();
+          btnCard.className =
+            "shape-btn px-2.5 py-1 text-xs rounded font-medium bg-purple-600 text-white shadow";
+          targetNode.className =
+            "w-52 h-64 bg-gradient-to-tr from-purple-900/90 via-indigo-900/90 to-zinc-900 border border-purple-500/40 rounded-2xl p-5 shadow-2xl flex flex-col justify-between select-none relative";
+          targetNode.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300">
+              <i class="fa-solid fa-cube text-base"></i>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">Target Node</span>
+          </div>
+          <div class="space-y-2">
+            <div class="h-2 w-3/4 bg-purple-400/30 rounded-full"></div>
+            <div class="h-1.5 w-1/2 bg-purple-400/20 rounded-full"></div>
+            <p class="text-xs text-zinc-300 font-medium pt-2">Live Animation Stage</p>
+          </div>
+          <div class="pt-3 border-t border-purple-500/20 flex justify-between items-center text-[10px] text-zinc-400 font-mono">
+            <span>60 FPS GPU</span>
+            <i class="fa-solid fa-bolt text-amber-400"></i>
+          </div>`;
+        });
+
+        btnCircle.addEventListener("click", () => {
+          resetShapeBtns();
+          btnCircle.className =
+            "shape-btn px-2.5 py-1 text-xs rounded font-medium bg-purple-600 text-white shadow";
+          targetNode.className =
+            "w-40 h-40 rounded-full bg-gradient-to-tr from-purple-600 via-pink-600 to-cyan-400 p-1 shadow-2xl flex items-center justify-center glow-purple select-none";
+          targetNode.innerHTML = `
+          <div class="w-full h-full bg-zinc-950 rounded-full flex flex-col items-center justify-center text-center p-4">
+            <i class="fa-solid fa-globe text-2xl text-purple-400 mb-1"></i>
+            <span class="text-xs font-bold text-zinc-200">Sphere Node</span>
+          </div>`;
+        });
+
+        btnHeart.addEventListener("click", () => {
+          resetShapeBtns();
+          btnHeart.className =
+            "shape-btn px-2.5 py-1 text-xs rounded font-medium bg-purple-600 text-white shadow";
+          targetNode.className =
+            "w-32 h-32 flex items-center justify-center text-rose-500 text-7xl select-none filter drop-shadow-lg";
+          targetNode.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+        });
+      }
+
+      function startTimelineScrubberSync() {
+        let startTime = Date.now();
+
+        function tick() {
+          if (state.playState === "running") {
+            const elapsed = ((Date.now() - startTime) / 1000) % state.duration;
+            const pct = ((elapsed / state.duration) * 100).toFixed(0);
+            inputTimelineScrub.value = pct;
+            lblScrubTime.textContent = `${elapsed.toFixed(2)}s / ${state.duration.toFixed(2)}s (${pct}%)`;
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function copyCSSToClipboard() {
+        const code = liveCodeViewer.textContent;
+        const textarea = document.createElement("textarea");
+        textarea.value = code;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showToast("CSS copied to clipboard!");
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        document.getElementById("toast-message").textContent = msg;
+        toast.classList.remove("translate-y-20", "opacity-0");
+        setTimeout(() => {
+          toast.classList.add("translate-y-20", "opacity-0");
+        }, 2500);
+      }
+    </script>
+  </body>
+</html>

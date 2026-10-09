@@ -1,0 +1,408 @@
+<!-- Include Boxicons CDN -->
+<link
+  href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+  rel="stylesheet"
+/>
+
+<style>
+  /* Base Reset & Fonts */
+  .header-wrapper {
+    width: 100%;
+    font-family:
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    box-sizing: border-box;
+  }
+
+  .header-wrapper *,
+  .header-wrapper *::before,
+  .header-wrapper *::after {
+    box-sizing: border-box;
+  }
+
+  /* =========================================================
+     1. TOP CONTACT BAR
+     ========================================================= */
+  .top-bar {
+    background-color: #0b0f19; /* Dark Luxury Navy */
+    color: #94a3b8;
+    font-size: 0.82rem;
+    padding: 10px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .top-bar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .top-bar-contact {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .top-bar-contact a {
+    color: #94a3b8;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s ease;
+  }
+
+  .top-bar-contact a:hover {
+    color: #c5a059;
+  }
+
+  .top-bar-social {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .top-bar-social a {
+    color: #94a3b8;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .top-bar-social a:hover {
+    color: #c5a059;
+  }
+
+  /* =========================================================
+     2. MAIN NAVIGATION BAR
+     ========================================================= */
+  .main-nav {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    padding: 16px 24px;
+  }
+
+  .main-nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Brand Logo */
+  .brand-logo {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-logo .brand-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+  }
+
+  .brand-logo .brand-sub {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #c5a059;
+    text-transform: uppercase;
+  }
+
+  /* Navigation Links */
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 32px;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: #334155;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    position: relative;
+    padding: 4px 0;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #0f172a;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: #c5a059;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  /* Action CTA Button */
+  .btn-nav-book {
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-nav-book:hover {
+    background: #c5a059;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(197, 160, 89, 0.3);
+  }
+
+  /* Hamburger Menu Toggle (Mobile) */
+  .mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #0f172a;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* =========================================================
+     3. MOBILE DRAWER MENU
+     ========================================================= */
+  .mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(20px);
+    z-index: 10000;
+    padding: 30px 24px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .mobile-drawer.active {
+    display: flex;
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .drawer-close {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .drawer-menu {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .drawer-link {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .drawer-link:hover {
+    color: #c5a059;
+  }
+
+  /* Responsive Breakpoints */
+  @media (max-width: 992px) {
+    .top-bar-contact span {
+      display: none;
+    }
+    .nav-menu,
+    .btn-nav-book {
+      display: none;
+    }
+    .mobile-toggle {
+      display: block;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .top-bar {
+      display: none; /* Hide top bar on extra small mobile screens for clean layout */
+    }
+  }
+</style>
+
+<header class="header-wrapper">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-container">
+      <div class="top-bar-contact">
+        <a href="tel:+2349151568417">
+          <i class="bx bx-phone-call"></i>
+          <span>+234 915 156 8417</span>
+        </a>
+        <a href="mailto:customercare@blossomluxurylocations.com">
+          <i class="bx bx-envelope"></i>
+          <span>customercare@blossomluxurylocations.com</span>
+        </a>
+      </div>
+
+      <div class="top-bar-social">
+        <a
+          href="https://wa.me/2349151568417"
+          target="_blank"
+          aria-label="WhatsApp"
+          ><i class="bx bxl-whatsapp"></i
+        ></a>
+        <a
+          href="https://www.facebook.com/people/Blossom-Luxury-Locations/100085256451914/"
+          target="_blank"
+          aria-label="Facebook"
+          ><i class="bx bxl-facebook"></i
+        ></a>
+        <a
+          href="https://instagram.com/_blossomluxurylocations?igshid=YmMyMTA2M2Y="
+          target="_blank"
+          aria-label="Instagram"
+          ><i class="bx bxl-instagram"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <nav class="main-nav">
+    <div class="main-nav-container">
+      <!-- Brand Logo -->
+      <a href="index.php" class="brand-logo">
+        <span class="brand-name">Blossom</span>
+        <span class="brand-sub">Luxury Locations</span>
+      </a>
+
+      <!-- Desktop Links (Booking Page excluded) -->
+      <ul class="nav-menu">
+        <li><a href="index.php" class="nav-link active">Home</a></li>
+        <li><a href="about.php" class="nav-link">About Us</a></li>
+        <li>
+          <a href="suites.php" class="nav-link">Apartments &amp; Suites</a>
+        </li>
+        <li><a href="amenities.php" class="nav-link">Amenities</a></li>
+        <li><a href="contact.php" class="nav-link">Contact</a></li>
+      </ul>
+
+      <!-- CTA Button to Homepage Booking Anchor -->
+      <a href="index.php#booking-form" class="btn-nav-book">
+        <span>Book Your Stay</span>
+        <i class="bx bx-calendar"></i>
+      </a>
+
+      <!-- Mobile Hamburger Button -->
+      <button
+        class="mobile-toggle"
+        id="mobile-toggle-btn"
+        aria-label="Open Navigation"
+      >
+        <i class="bx bx-menu"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- Mobile Navigation Drawer Overlay -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="drawer-header">
+    <a href="index.php" class="brand-logo">
+      <span class="brand-name" style="color: #ffffff">Blossom</span>
+      <span class="brand-sub">Luxury Locations</span>
+    </a>
+    <button class="drawer-close" id="mobile-close-btn">&times;</button>
+  </div>
+
+  <ul class="drawer-menu">
+    <li><a href="index.php" class="drawer-link">Home</a></li>
+    <li><a href="about.php" class="drawer-link">About Us</a></li>
+    <li>
+      <a href="suites.php" class="drawer-link">Apartments &amp; Suites</a>
+    </li>
+    <li><a href="amenities.php" class="drawer-link">Amenities</a></li>
+    <li><a href="contact.php" class="drawer-link">Contact Us</a></li>
+  </ul>
+
+  <div>
+    <a
+      href="index.php#booking-form"
+      class="btn-nav-book"
+      style="width: 100%; justify-content: center; background: #c5a059"
+    >
+      <span>Book Your Stay</span>
+      <i class="bx bx-calendar"></i>
+    </a>
+  </div>
+</div>
+
+<!-- Mobile Menu Drawer JavaScript Toggle -->
+<script>
+  (function () {
+    const toggleBtn = document.getElementById("mobile-toggle-btn");
+    const closeBtn = document.getElementById("mobile-close-btn");
+    const drawer = document.getElementById("mobile-drawer");
+
+    if (toggleBtn && drawer) {
+      toggleBtn.addEventListener("click", function () {
+        drawer.classList.add("active");
+      });
+    }
+
+    if (closeBtn && drawer) {
+      closeBtn.addEventListener("click", function () {
+        drawer.classList.remove("active");
+      });
+    }
+  })();
+</script>

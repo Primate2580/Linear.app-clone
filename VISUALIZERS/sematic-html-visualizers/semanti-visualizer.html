@@ -1,0 +1,1771 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phase 2 Semantic HTML Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: "#f0fdf4",
+                500: "#22c55e",
+                600: "#16a34a",
+                700: "#15803d",
+              },
+              semantic: {
+                structural: "#3b82f6", // blue
+                nav: "#10b981", // green/emerald
+                content: "#a855f7", // purple
+                aside: "#f59e0b", // amber
+                text: "#06b6d4", // cyan
+                interactive: "#ec4899", // pink
+                generic: "#6b7280", // gray (div/span)
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .font-mono-code {
+        font-family: "Fira Code", monospace;
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .dark ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(100, 116, 139, 0.4);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 116, 139, 0.7);
+      }
+      .box-hover-highlight {
+        outline: 2.5px dashed #3b82f6 !important;
+        outline-offset: -2px;
+        background-color: rgba(59, 130, 246, 0.15) !important;
+      }
+      .box-selected {
+        outline: 3px solid #f59e0b !important;
+        outline-offset: -2px;
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.3) !important;
+      }
+      .line-highlight {
+        background-color: rgba(59, 130, 246, 0.25) !important;
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-200"
+  >
+    <header
+      class="border-b border-slate-800 bg-slate-950/80 backdrop-blur px-4 py-3 sticky top-0 z-50 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl text-white shadow-lg shadow-blue-500/20"
+        >
+          <i class="fa-solid fa-cubes-stacked text-xl"></i>
+        </div>
+        <div>
+          <h1
+            class="text-lg font-bold bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent"
+          >
+            Semantic HTML Visualizer
+            <span
+              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 ml-2"
+              >Phase 2</span
+            >
+          </h1>
+          <p class="text-xs text-slate-400 hidden sm:block">
+            Analyze structure, document outline, accessibility landmarks & HTML
+            quality
+          </p>
+        </div>
+      </div>
+
+      <!-- Controls Toolbar -->
+      <div class="flex items-center gap-3">
+        <!-- Preset Select -->
+        <div class="flex items-center gap-2">
+          <label
+            for="preset-select"
+            class="text-xs text-slate-400 font-medium hidden md:inline"
+            ><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Preset:</label
+          >
+          <select
+            id="preset-select"
+            class="bg-slate-800 text-slate-200 text-xs rounded-lg px-3 py-1.5 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="blog">Blog Article Layout</option>
+            <option value="ecommerce">E-Commerce Product Page</option>
+            <option value="saas">SaaS Dashboard</option>
+            <option value="divsoup">Div Soup (Bad Example)</option>
+            <option value="divsoup-fixed">Div Soup Fixed (Semantic)</option>
+          </select>
+        </div>
+
+        <!-- View Toggle Tabs -->
+        <div
+          class="bg-slate-800 p-1 rounded-lg border border-slate-700/80 flex items-center gap-1"
+        >
+          <button
+            id="btn-view-split"
+            class="view-btn px-2.5 py-1 text-xs rounded-md font-medium text-slate-300 hover:text-white transition-all bg-slate-700 text-white shadow-sm"
+            title="Split View"
+          >
+            <i class="fa-solid fa-columns mr-1"></i>
+            <span class="hidden lg:inline">Split</span>
+          </button>
+          <button
+            id="btn-view-tree"
+            class="view-btn px-2.5 py-1 text-xs rounded-md font-medium text-slate-400 hover:text-white transition-all"
+            title="Tree Only"
+          >
+            <i class="fa-solid fa-diagram-project mr-1"></i>
+            <span class="hidden lg:inline">Tree Visual</span>
+          </button>
+          <button
+            id="btn-view-render"
+            class="view-btn px-2.5 py-1 text-xs rounded-md font-medium text-slate-400 hover:text-white transition-all"
+            title="Render Preview Only"
+          >
+            <i class="fa-solid fa-desktop mr-1"></i>
+            <span class="hidden lg:inline">Live Render</span>
+          </button>
+        </div>
+
+        <!-- Export & Theme Toggle -->
+        <div class="flex items-center gap-1.5 border-l border-slate-800 pl-3">
+          <button
+            id="btn-export"
+            class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5"
+            title="Export HTML or Audit Report"
+          >
+            <i class="fa-solid fa-download"></i>
+            <span class="hidden sm:inline">Export</span>
+          </button>
+          <button
+            id="btn-theme-toggle"
+            class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white p-1.5 rounded-lg text-xs transition"
+            title="Toggle Light/Dark Theme"
+          >
+            <i class="fa-solid fa-moon text-indigo-400"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+      <!-- LEFT PANEL: Code Editor & Source Code Controls -->
+      <section
+        id="panel-editor"
+        class="w-full lg:w-5/12 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col bg-slate-950/40 relative"
+      >
+        <div
+          class="px-4 py-2 bg-slate-900/90 border-b border-slate-800 flex justify-between items-center text-xs"
+        >
+          <div class="flex items-center gap-2 text-slate-400">
+            <i class="fa-solid fa-code text-blue-400"></i>
+            <span class="font-semibold text-slate-200">HTML Source Code</span>
+            <span id="code-stats" class="text-[10px] text-slate-500"
+              >(0 lines, 0 tags)</span
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              id="btn-format"
+              class="text-slate-400 hover:text-blue-400 text-xs transition"
+              title="Auto Format Code"
+            >
+              <i class="fa-solid fa-wand-magic"></i> Format
+            </button>
+            <button
+              id="btn-clear"
+              class="text-slate-400 hover:text-rose-400 text-xs transition"
+              title="Clear Editor"
+            >
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Styled Textarea Editor Container -->
+        <div
+          class="flex-1 relative flex overflow-hidden font-mono-code text-xs"
+        >
+          <!-- Line Numbers Column -->
+          <div
+            id="line-numbers"
+            class="w-10 py-3 bg-slate-950/80 border-r border-slate-800 text-slate-600 text-right pr-2 select-none overflow-hidden text-[11px] leading-5"
+          >
+            1
+          </div>
+          <!-- Raw Editable Code Box -->
+          <textarea
+            id="code-input"
+            spellcheck="false"
+            class="flex-1 bg-transparent p-3 text-slate-200 outline-none resize-none leading-5 overflow-auto whitespace-pre font-mono-code focus:ring-0 border-0"
+            placeholder="Paste or type your semantic HTML code here..."
+          ></textarea>
+        </div>
+
+        <!-- Quick Legend Palette -->
+        <div
+          class="px-3 py-2 bg-slate-950 border-t border-slate-800/80 text-[11px] flex flex-wrap gap-3 items-center justify-between text-slate-400"
+        >
+          <span class="font-medium">Category Color Key:</span>
+          <div class="flex flex-wrap gap-2">
+            <span class="flex items-center gap-1"
+              ><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+              Structural</span
+            >
+            <span class="flex items-center gap-1"
+              ><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              Nav</span
+            >
+            <span class="flex items-center gap-1"
+              ><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+              Main/Content</span
+            >
+            <span class="flex items-center gap-1"
+              ><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              Aside/Meta</span
+            >
+            <span class="flex items-center gap-1"
+              ><span class="w-2.5 h-2.5 rounded-full bg-gray-500"></span>
+              Generic (div)</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: Visual Tree Box / Live Preview / Analysis -->
+      <section
+        id="panel-visual"
+        class="w-full lg:w-7/12 flex flex-col bg-slate-900/50 overflow-hidden"
+      >
+        <!-- Secondary Tab Navigation (Visual Box Tree / Live Render / Outline Audit) -->
+        <div
+          class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between flex-wrap gap-2"
+        >
+          <div
+            class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800"
+          >
+            <button
+              id="tab-btn-tree"
+              class="tab-active text-xs font-semibold px-3 py-1 rounded-md text-blue-400 bg-slate-800 shadow-sm transition"
+            >
+              <i class="fa-solid fa-sitemap mr-1"></i> Visual Box Tree
+            </button>
+            <button
+              id="tab-btn-render"
+              class="text-xs font-semibold px-3 py-1 rounded-md text-slate-400 hover:text-slate-200 transition"
+            >
+              <i class="fa-solid fa-eye mr-1"></i> Live Rendered Page
+            </button>
+            <button
+              id="tab-btn-audit"
+              class="text-xs font-semibold px-3 py-1 rounded-md text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5"
+            >
+              <i class="fa-solid fa-shield-halved text-emerald-400"></i> Audit
+              Engine
+              <span
+                id="badge-score"
+                class="px-1.5 py-0.2 text-[10px] bg-emerald-500/20 text-emerald-300 rounded-full font-bold"
+                >100%</span
+              >
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <label class="flex items-center gap-1.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                id="chk-show-labels"
+                checked
+                class="rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0"
+              />
+              <span>Show Tags</span>
+            </label>
+            <label
+              class="flex items-center gap-1.5 cursor-pointer select-none ml-2"
+            >
+              <input
+                type="checkbox"
+                id="chk-show-roles"
+                checked
+                class="rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0"
+              />
+              <span>Show ARIA Roles</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- DISPLAY CONTENT CONTAINER -->
+        <div class="flex-1 overflow-auto p-4 relative" id="display-container">
+          <!-- 1. VISUAL BOX TREE VIEW -->
+          <div id="view-visual-tree" class="min-h-full space-y-4">
+            <!-- Tree Containers rendered dynamically -->
+            <div id="tree-root-container" class="space-y-2"></div>
+          </div>
+
+          <!-- 2. LIVE RENDER VIEW -->
+          <div
+            id="view-live-render"
+            class="hidden h-full min-h-[400px] bg-white text-slate-900 rounded-xl p-4 shadow-xl overflow-auto border border-slate-300"
+          >
+            <iframe
+              id="iframe-preview"
+              class="w-full h-full min-h-[500px] border-0"
+            ></iframe>
+          </div>
+
+          <!-- 3. ACCESSIBILITY & OUTLINE AUDIT ENGINE -->
+          <div id="view-audit-engine" class="hidden space-y-6">
+            <!-- Top Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <!-- Quality Score Gauge -->
+              <div
+                class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center gap-4"
+              >
+                <div
+                  class="relative w-16 h-16 flex items-center justify-center"
+                >
+                  <svg
+                    class="w-full h-full transform -rotate-90"
+                    viewBox="0 0 36 36"
+                  >
+                    <path
+                      class="text-slate-800"
+                      stroke-width="3.5"
+                      stroke="currentColor"
+                      fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      id="score-circle"
+                      class="text-emerald-500"
+                      stroke-dasharray="100, 100"
+                      stroke-width="3.5"
+                      stroke-linecap="round"
+                      stroke="currentColor"
+                      fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                  </svg>
+                  <span
+                    id="score-text"
+                    class="absolute text-sm font-bold text-slate-100"
+                    >100%</span
+                  >
+                </div>
+                <div>
+                  <h4 class="text-xs text-slate-400 font-medium">
+                    Semantic Quality
+                  </h4>
+                  <div
+                    id="score-status"
+                    class="text-sm font-semibold text-emerald-400"
+                  >
+                    Excellent
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">
+                    Based on HTML5 semantics & best practices
+                  </p>
+                </div>
+              </div>
+
+              <!-- Ratio Chart Breakdown -->
+              <div
+                class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between"
+              >
+                <div class="flex justify-between items-center">
+                  <span class="text-xs text-slate-400 font-medium"
+                    >Semantic Ratio</span
+                  >
+                  <span
+                    id="semantic-ratio-badge"
+                    class="text-xs font-semibold text-blue-400"
+                    >0% Semantic</span
+                  >
+                </div>
+                <div
+                  class="w-full bg-slate-800 h-3 rounded-full overflow-hidden flex my-2"
+                >
+                  <div
+                    id="bar-semantic"
+                    class="bg-blue-500 h-full transition-all duration-300"
+                    style="width: 50%"
+                  ></div>
+                  <div
+                    id="bar-generic"
+                    class="bg-slate-600 h-full transition-all duration-300"
+                    style="width: 50%"
+                  ></div>
+                </div>
+                <div class="flex justify-between text-[11px] text-slate-400">
+                  <span class="flex items-center gap-1"
+                    ><span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    Semantic Tags:
+                    <b id="cnt-semantic" class="text-slate-200">0</b></span
+                  >
+                  <span class="flex items-center gap-1"
+                    ><span class="w-2 h-2 rounded-full bg-slate-600"></span>
+                    Div/Span:
+                    <b id="cnt-generic" class="text-slate-200">0</b></span
+                  >
+                </div>
+              </div>
+
+              <!-- ARIA Landmarks Summary -->
+              <div
+                class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between"
+              >
+                <span class="text-xs text-slate-400 font-medium"
+                  >Implicit ARIA Landmarks</span
+                >
+                <div id="landmarks-list" class="flex flex-wrap gap-1.5 my-2">
+                  <!-- Badges populated by JS -->
+                </div>
+                <div class="text-[11px] text-slate-500">
+                  Automatically map to Assistive Tech
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Outline (Heading Hierarchy) -->
+            <div class="bg-slate-950 rounded-xl border border-slate-800 p-4">
+              <h3
+                class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2"
+              >
+                <i class="fa-solid fa-list-ol text-blue-400"></i> Document
+                Heading Outline (H1 - H6)
+              </h3>
+              <div
+                id="outline-container"
+                class="space-y-1 text-xs font-mono border-l-2 border-slate-800 pl-3"
+              >
+                <!-- Outlines generated via JS -->
+              </div>
+            </div>
+
+            <!-- Recommendations & Audit Rules Warning List -->
+            <div class="bg-slate-950 rounded-xl border border-slate-800 p-4">
+              <h3
+                class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2"
+              >
+                <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                Audit Findings & Recommendations
+              </h3>
+              <div id="audit-findings" class="space-y-2 text-xs">
+                <!-- Findings inserted via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="inspector-panel"
+          class="border-t border-slate-800 bg-slate-950 p-4 flex flex-col gap-2 transition-all"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span
+                id="inspector-tag-badge"
+                class="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                >&lt;main&gt;</span
+              >
+              <span
+                id="inspector-role-badge"
+                class="px-2 py-0.5 rounded text-[11px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                >role="main"</span
+              >
+              <span
+                id="inspector-display-type"
+                class="text-xs text-slate-400 italic"
+                >block element</span
+              >
+            </div>
+            <span class="text-[11px] text-slate-500"
+              ><i class="fa-solid fa-circle-info mr-1"></i> Interactive Element
+              Inspector</span
+            >
+          </div>
+
+          <p
+            id="inspector-description"
+            class="text-xs text-slate-300 leading-relaxed"
+          >
+            Select any element in the Visual Tree or Code Editor to inspect its
+            accessibility benefits, screen reader behavior, SEO impact, and
+            semantic rules.
+          </p>
+
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 pt-2 border-t border-slate-900 text-xs"
+          >
+            <div
+              class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800"
+            >
+              <span class="text-emerald-400 font-medium block mb-1"
+                ><i class="fa-solid fa-universal-access mr-1"></i> Screen Reader
+                & A11y</span
+              >
+              <span id="inspector-a11y" class="text-slate-400 text-[11px]"
+                >Creates a primary content landmark allowing screen reader users
+                to jump straight to main content.</span
+              >
+            </div>
+            <div
+              class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800"
+            >
+              <span class="text-blue-400 font-medium block mb-1"
+                ><i class="fa-solid fa-magnifying-glass mr-1"></i> SEO & Layout
+                Value</span
+              >
+              <span id="inspector-seo" class="text-slate-400 text-[11px]"
+                >Signals search engines the primary unique content of the web
+                page, boosting keyword indexing relevance.</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div
+      id="export-modal"
+      class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4"
+    >
+      <div
+        class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4"
+      >
+        <div
+          class="flex items-center justify-between border-b border-slate-800 pb-3"
+        >
+          <h3
+            class="font-bold text-slate-100 text-base flex items-center gap-2"
+          >
+            <i class="fa-solid fa-file-export text-blue-400"></i> Export & Share
+          </h3>
+          <button
+            id="btn-close-modal"
+            class="text-slate-400 hover:text-white p-1 rounded-lg"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-400">
+          Choose your desired export format below. You can copy the code
+          directly or download a detailed Semantic Audit summary.
+        </p>
+
+        <div class="space-y-3">
+          <button
+            id="btn-copy-code"
+            class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 p-3 rounded-xl border border-slate-700 text-xs font-semibold flex items-center justify-between transition"
+          >
+            <span class="flex items-center gap-2"
+              ><i class="fa-regular fa-copy text-blue-400 text-base"></i> Copy
+              Formatted HTML Code</span
+            >
+            <i class="fa-solid fa-chevron-right text-slate-500"></i>
+          </button>
+
+          <button
+            id="btn-download-html"
+            class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 p-3 rounded-xl border border-slate-700 text-xs font-semibold flex items-center justify-between transition"
+          >
+            <span class="flex items-center gap-2"
+              ><i class="fa-solid fa-file-code text-emerald-400 text-base"></i>
+              Download HTML Document (.html)</span
+            >
+            <i class="fa-solid fa-chevron-right text-slate-500"></i>
+          </button>
+
+          <button
+            id="btn-download-report"
+            class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 p-3 rounded-xl border border-slate-700 text-xs font-semibold flex items-center justify-between transition"
+          >
+            <span class="flex items-center gap-2"
+              ><i
+                class="fa-solid fa-file-contract text-purple-400 text-base"
+              ></i>
+              Download Accessibility & Audit Summary (.txt)</span
+            >
+            <i class="fa-solid fa-chevron-right text-slate-500"></i>
+          </button>
+        </div>
+
+        <div class="text-right pt-2">
+          <button
+            id="btn-cancel-modal"
+            class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast Box -->
+    <div
+      id="toast"
+      class="fixed bottom-5 right-5 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 z-50"
+    >
+      <i class="fa-solid fa-circle-check"></i>
+      <span id="toast-message">Notification message</span>
+    </div>
+
+    <script>
+      // --- PRESET TEMPLATES DATA ---
+      const PRESETS = {
+        blog: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern Tech Blog</title>
+</head>
+<body>
+  <header>
+    <a href="#"><h1>DevInsights Journal</h1></a>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Articles</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <header>
+        <h2>Understanding Semantic HTML5 Architecture</h2>
+        <p>Published <time datetime="2026-10-07">October 7, 2026</time> by <address class="inline">Alex Rivers</address></p>
+      </header>
+
+      <section>
+        <h3>Why Semantics Matter</h3>
+        <p>Semantic HTML introduces meaningful elements to web structure. Using <mark>proper landmarks</mark> helps assistive technology users navigate easily.</p>
+        <figure>
+          <img src="https://placehold.co/600x200/1e293b/38bdf8?text=Semantic+Tree+Structure" alt="Diagram showing visual tree box breakdown">
+          <figcaption>Fig 1. Tree hierarchy of HTML elements.</figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h3>Key Takeaways</h3>
+        <details>
+          <summary>Click to view summary list</summary>
+          <ul>
+            <li>Improves accessibility (A11y)</li>
+            <li>Enhances Search Engine Optimization</li>
+            <li>Creates cleaner, maintainable code</li>
+          </ul>
+        </details>
+      </section>
+    </article>
+
+    <aside>
+      <h3>Related Reads</h3>
+      <ul>
+        <li><a href="#">Mastering ARIA Landmarks</a></li>
+        <li><a href="#">CSS Grid Layouts Guide</a></li>
+      </ul>
+    </aside>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 DevInsights. All rights reserved.</p>
+  </footer>
+</body>
+</html>`,
+
+        ecommerce: `<header>
+  <div class="logo">
+    <h1>TechMart Express</h1>
+  </div>
+  <nav>
+    <a href="#">Categories</a>
+    <a href="#">Deals</a>
+    <a href="#">Cart (2)</a>
+  </nav>
+</header>
+
+<main>
+  <section class="product-hero">
+    <figure>
+      <img src="https://placehold.co/400x300/0f172a/38bdf8?text=Wireless+Headphones" alt="Noise Cancelling Wireless Headphones in Matte Black">
+      <figcaption>Matte Black Edition with Active Noise Cancellation</figcaption>
+    </figure>
+    
+    <article class="product-details">
+      <h2>Pro Wireless ANC Headphones</h2>
+      <p class="price"><mark>$199.99</mark> <del>$249.99</del></p>
+      <p>Experience studio-grade audio with up to 40 hours of continuous playback.</p>
+      
+      <details>
+        <summary>Technical Specifications</summary>
+        <ul>
+          <li>Bluetooth 5.3</li>
+          <li>USB-C Fast Charging</li>
+          <li>Weight: 250g</li>
+        </ul>
+      </details>
+      
+      <button>Add to Cart</button>
+    </article>
+  </section>
+
+  <aside>
+    <h3>Customer Reviews</h3>
+    <article>
+      <h4>"Best sound quality in this price range!"</h4>
+      <p>Reviewed by Sarah K. on <time datetime="2026-09-15">Sept 15, 2026</time></p>
+    </article>
+  </aside>
+</main>
+
+<footer>
+  <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>`,
+
+        saas: `<header>
+  <h1>CloudPulse Analytics</h1>
+  <nav>
+    <a href="#">Dashboard</a>
+    <a href="#">Reports</a>
+    <a href="#">Settings</a>
+  </nav>
+</header>
+
+<main>
+  <h2>System Performance Dashboard</h2>
+  
+  <section>
+    <h3>Metric Summary</h3>
+    <article>
+      <h4>Active Users</h4>
+      <p><strong>12,450</strong> (+14% this week)</p>
+    </article>
+    <article>
+      <h4>Server Uptime</h4>
+      <p><mark>99.98%</mark> Operational</p>
+    </article>
+  </section>
+
+  <section>
+    <h3>Recent System Events</h3>
+    <figure>
+      <img src="https://placehold.co/500x200/1e293b/a855f7?text=Traffic+Metrics+Chart" alt="Bar chart displaying server load over 24 hours">
+      <figcaption>Real-time traffic throughput log</figcaption>
+    </figure>
+  </section>
+</main>
+
+<aside>
+  <h3>System Alerts</h3>
+  <p><time datetime="2026-10-07T14:32">14:32 UTC</time>: Backup completed successfully.</p>
+</aside>
+
+<footer>
+  <p>CloudPulse v4.2.0 • Status: Operational</p>
+</footer>`,
+
+        divsoup: `<div class="header">
+  <div class="logo">Bad Div Soup Example</div>
+  <div class="nav-links">
+    <div class="link"><a href="#">Home</a></div>
+    <div class="link"><a href="#">Services</a></div>
+  </div>
+</div>
+
+<div class="main-body">
+  <div class="content-box">
+    <div class="title">Why Generic Divs Hurt Web Pages</div>
+    <div class="author">By Developer John</div>
+    <div class="paragraph">Using divs for everything makes screen readers lost and hurts your search engine rankings.</div>
+    <div class="image-box">
+      <img src="https://placehold.co/400x150/334155/f43f5e?text=Div+Soup+Warning" alt="Warning">
+      <div class="caption">No semantic tags used here</div>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="sidebar-title">Extra Info</div>
+    <div class="sidebar-content">Always replace generic container divs with semantic HTML5 tags!</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="copy">&copy; 2026 Non-Semantic Web</div>
+</div>`,
+
+        "divsoup-fixed": `<header>
+  <h1>Fixed Semantic Layout</h1>
+  <nav>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Services</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h2>Why Generic Divs Hurt Web Pages</h2>
+    <p>By <address class="inline">Developer John</address></p>
+    <p>Using divs for everything makes screen readers lost and hurts your search engine rankings.</p>
+    <figure>
+      <img src="https://placehold.co/400x150/0f172a/22c55e?text=Semantic+HTML+Fixed" alt="Clean Semantic Code Illustration">
+      <figcaption>Clean, structured semantic markup</figcaption>
+    </figure>
+  </article>
+
+  <aside>
+    <h3>Extra Info</h3>
+    <p>Always replace generic container divs with semantic HTML5 elements!</p>
+  </aside>
+</main>
+
+<footer>
+  <p>&copy; 2026 Clean Semantic Web</p>
+</footer>`,
+      };
+
+      // --- ELEMENT KNOWLEDGE BASE ---
+      const ELEMENT_KNOWLEDGE = {
+        header: {
+          category: "structural",
+          role: "banner",
+          display: "block element",
+          color: "border-blue-500 bg-blue-500/10 text-blue-300",
+          badge: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+          desc: "Represents introductory content, navigation links, or site headers. Usually contains heading elements (h1-h6), logos, or search forms.",
+          a11y: 'Implicitly maps to role="banner" when directly under <body>. Helps screen reader users immediately identify the site top header.',
+          seo: "High value. Aids search engines in identifying branding, main site title, and site-wide navigational landmarks.",
+        },
+        nav: {
+          category: "nav",
+          role: "navigation",
+          display: "block element",
+          color: "border-emerald-500 bg-emerald-500/10 text-emerald-300",
+          badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+          desc: "Represents a section of a page intended for navigation links (internal or external).",
+          a11y: 'Maps to role="navigation". Screen readers provide shortcuts to skip directly to navigation menus.',
+          seo: "Critical for site crawler link discovery and determining site architecture hierarchy.",
+        },
+        main: {
+          category: "content",
+          role: "main",
+          display: "block element",
+          color: "border-purple-500 bg-purple-500/10 text-purple-300",
+          badge: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+          desc: "Represents the dominant, unique content of the document body. There should only be one non-hidden <main> per document.",
+          a11y: 'Implicitly maps to role="main". Primary target when screen reader users trigger "Jump to main content" shortcuts.',
+          seo: "Extremely high value. Search engines index text inside <main> as the primary subject matter of the URL.",
+        },
+        article: {
+          category: "content",
+          role: "article",
+          display: "block element",
+          color: "border-purple-500 bg-purple-500/10 text-purple-300",
+          badge: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+          desc: "Represents a self-contained composition (blog post, product card, news story, comment) intended for independent distribution/reuse.",
+          a11y: 'Maps to role="article". Allows assistive tech to announce standalone content blocks.',
+          seo: "Great for RSS feeds, syndication, Google Rich Snippets, and identifying discrete article topics.",
+        },
+        section: {
+          category: "structural",
+          role: "region",
+          display: "block element",
+          color: "border-blue-500 bg-blue-500/10 text-blue-300",
+          badge: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+          desc: "Represents a generic standalone section of a document without a more specific semantic element. Should typically include a heading.",
+          a11y: 'Maps to role="region" when given an accessible name (aria-labelledby or heading).',
+          seo: "Groups related content blocks into clear thematic clusters for indexing.",
+        },
+        aside: {
+          category: "aside",
+          role: "complementary",
+          display: "block element",
+          color: "border-amber-500 bg-amber-500/10 text-amber-300",
+          badge: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+          desc: "Represents content indirectly related to the main content (sidebars, related links, callout boxes, ads).",
+          a11y: 'Maps to role="complementary". Allows screen reader users to skip non-essential secondary material.',
+          seo: "Helps search engines distinguish supporting information from core topic copy.",
+        },
+        footer: {
+          category: "structural",
+          role: "contentinfo",
+          display: "block element",
+          color: "border-blue-500 bg-blue-500/10 text-blue-300",
+          badge: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+          desc: "Contains information about its enclosing section or document (copyright data, author info, legal links).",
+          a11y: 'Implicitly maps to role="contentinfo" when directly under <body>.',
+          seo: "Houses structural site metadata, copyright information, and secondary navigational paths.",
+        },
+        figure: {
+          category: "content",
+          role: "figure",
+          display: "block element",
+          color: "border-cyan-500 bg-cyan-500/10 text-cyan-300",
+          badge: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+          desc: "Self-contained content, optionally with a caption (<figcaption>). Often used for images, diagrams, code listings, or quotes.",
+          a11y: "Groups visual media together with its textual explanation (<figcaption>).",
+          seo: "Associates images/media directly with relevant explanatory captions for image search ranking.",
+        },
+        figcaption: {
+          category: "text",
+          role: "caption",
+          display: "block element",
+          color: "border-cyan-500 bg-cyan-500/10 text-cyan-300",
+          badge: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+          desc: "Represents a caption or legend describing the rest of the contents of its parent <figure> element.",
+          a11y: "Serves as the accessible label/description for its enclosing <figure>.",
+          seo: "Provides high-context keywords directly tied to associated visual media.",
+        },
+        details: {
+          category: "interactive",
+          role: "group",
+          display: "block / interactive",
+          color: "border-pink-500 bg-pink-500/10 text-pink-300",
+          badge: "bg-pink-500/20 text-pink-300 border-pink-500/40",
+          desc: "Creates an interactive disclosure widget that can be toggled open/closed by the user without JavaScript.",
+          a11y: "Natively accessible toggle widget. Announces open/collapsed state to screen readers.",
+          seo: "Search engines crawl hidden details text, making it excellent for FAQ sections.",
+        },
+        summary: {
+          category: "interactive",
+          role: "button",
+          display: "block / button",
+          color: "border-pink-500 bg-pink-500/10 text-pink-300",
+          badge: "bg-pink-500/20 text-pink-300 border-pink-500/40",
+          desc: "Specifies a visible heading/label for a <details> disclosure element.",
+          a11y: "Acts as an interactive button that keyboard users can toggle with Space or Enter.",
+          seo: "Highlighted key phrase for accordion dropdowns.",
+        },
+        mark: {
+          category: "text",
+          role: "mark",
+          display: "inline element",
+          color: "border-yellow-500 bg-yellow-500/20 text-yellow-300",
+          badge: "bg-yellow-500/30 text-yellow-200 border-yellow-500/50",
+          desc: "Represents text highlighted or marked for reference due to relevance in another context.",
+          a11y: "In modern screen readers, signals highlighted text or search hit results.",
+          seo: "Emphasizes key search query terms within page content.",
+        },
+        time: {
+          category: "text",
+          role: "time",
+          display: "inline element",
+          color: "border-teal-500 bg-teal-500/10 text-teal-300",
+          badge: "bg-teal-500/20 text-teal-300 border-teal-500/40",
+          desc: "Represents a specific period in time or date. Can include the datetime attribute for machine-readable formats.",
+          a11y: "Allows screen readers to speak human-friendly dates while providing machine timestamps.",
+          seo: "Helps Google Rich Results present published dates, event schedules, and article recency.",
+        },
+        div: {
+          category: "generic",
+          role: "none / generic",
+          display: "block element",
+          color: "border-slate-600 bg-slate-800/40 text-slate-400",
+          badge: "bg-slate-700 text-slate-300 border-slate-600",
+          desc: "Generic non-semantic flow container. Has no visual or semantic meaning on its own; should only be used when no other semantic element applies.",
+          a11y: "Provides no semantic context or landmark cues to assistive technologies.",
+          seo: "Neutral. Offers no structural hints to search engine crawlers.",
+        },
+      };
+    </script>
+
+    <script>
+      // --- STATE MANAGEMENT ---
+      let currentCode = PRESETS.blog;
+      let selectedNodeId = null;
+      let hoverNodeId = null;
+      let parsedDom = null;
+      let currentView = "split"; // split, tree, render
+
+      // --- DOM REFERENCES ---
+      const codeInput = document.getElementById("code-input");
+      const lineNumbers = document.getElementById("line-numbers");
+      const treeRootContainer = document.getElementById("tree-root-container");
+      const iframePreview = document.getElementById("iframe-preview");
+      const presetSelect = document.getElementById("preset-select");
+      const codeStats = document.getElementById("code-stats");
+
+      // View Panels
+      const panelEditor = document.getElementById("panel-editor");
+      const panelVisual = document.getElementById("panel-visual");
+      const viewVisualTree = document.getElementById("view-visual-tree");
+      const viewLiveRender = document.getElementById("view-live-render");
+      const viewAuditEngine = document.getElementById("view-audit-engine");
+
+      // Inspector
+      const inspectorTagBadge = document.getElementById("inspector-tag-badge");
+      const inspectorRoleBadge = document.getElementById(
+        "inspector-role-badge",
+      );
+      const inspectorDisplayType = document.getElementById(
+        "inspector-display-type",
+      );
+      const inspectorDescription = document.getElementById(
+        "inspector-description",
+      );
+      const inspectorA11y = document.getElementById("inspector-a11y");
+      const inspectorSeo = document.getElementById("inspector-seo");
+
+      // Modal & Toasts
+      const exportModal = document.getElementById("export-modal");
+      const toast = document.getElementById("toast");
+      const toastMessage = document.getElementById("toast-message");
+
+      // --- INITIALIZATION ---
+      window.addEventListener("DOMContentLoaded", () => {
+        codeInput.value = currentCode;
+        updateLineNumbers();
+        processCodeUpdate();
+
+        // Event Listeners
+        codeInput.addEventListener("input", () => {
+          updateLineNumbers();
+          processCodeUpdate();
+        });
+
+        codeInput.addEventListener("scroll", () => {
+          lineNumbers.scrollTop = codeInput.scrollTop;
+        });
+
+        presetSelect.addEventListener("change", (e) => {
+          const val = e.target.value;
+          if (PRESETS[val]) {
+            codeInput.value = PRESETS[val];
+            updateLineNumbers();
+            processCodeUpdate();
+            showToast(
+              `Loaded "${presetSelect.options[presetSelect.selectedIndex].text}" preset`,
+            );
+          }
+        });
+
+        // View Buttons Toolbar
+        document
+          .getElementById("btn-view-split")
+          .addEventListener("click", () => setViewMode("split"));
+        document
+          .getElementById("btn-view-tree")
+          .addEventListener("click", () => setViewMode("tree"));
+        document
+          .getElementById("btn-view-render")
+          .addEventListener("click", () => setViewMode("render"));
+
+        // Tab Buttons inside Visual Panel
+        document
+          .getElementById("tab-btn-tree")
+          .addEventListener("click", () => switchVisualTab("tree"));
+        document
+          .getElementById("tab-btn-render")
+          .addEventListener("click", () => switchVisualTab("render"));
+        document
+          .getElementById("tab-btn-audit")
+          .addEventListener("click", () => switchVisualTab("audit"));
+
+        // Format & Clear
+        document
+          .getElementById("btn-format")
+          .addEventListener("click", formatCode);
+        document.getElementById("btn-clear").addEventListener("click", () => {
+          codeInput.value = "";
+          updateLineNumbers();
+          processCodeUpdate();
+          showToast("Editor cleared");
+        });
+
+        // Checkboxes
+        document
+          .getElementById("chk-show-labels")
+          .addEventListener("change", () => renderVisualTree(parsedDom));
+        document
+          .getElementById("chk-show-roles")
+          .addEventListener("change", () => renderVisualTree(parsedDom));
+
+        // Theme Toggle
+        document
+          .getElementById("btn-theme-toggle")
+          .addEventListener("click", toggleTheme);
+
+        // Export Modal Events
+        document
+          .getElementById("btn-export")
+          .addEventListener("click", () =>
+            exportModal.classList.remove("hidden"),
+          );
+        document
+          .getElementById("btn-close-modal")
+          .addEventListener("click", () => exportModal.classList.add("hidden"));
+        document
+          .getElementById("btn-cancel-modal")
+          .addEventListener("click", () => exportModal.classList.add("hidden"));
+
+        document
+          .getElementById("btn-copy-code")
+          .addEventListener("click", copyFormattedCode);
+        document
+          .getElementById("btn-download-html")
+          .addEventListener("click", downloadHtmlFile);
+        document
+          .getElementById("btn-download-report")
+          .addEventListener("click", downloadAuditReport);
+      });
+
+      // --- HELPER: LINE NUMBERS UPDATE ---
+      function updateLineNumbers() {
+        const lines = codeInput.value.split("\n").length;
+        let lineHtml = "";
+        for (let i = 1; i <= lines; i++) {
+          lineHtml += `<div>${i}</div>`;
+        }
+        lineNumbers.innerHTML = lineHtml;
+      }
+
+      // --- MAIN ENGINE: PROCESS HTML CODE ---
+      function processCodeUpdate() {
+        currentCode = codeInput.value;
+
+        // Parse HTML with DOMParser
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(currentCode, "text/html");
+
+        // We extract document body or structural root
+        parsedDom = doc.body;
+
+        // Update Live Render
+        updateLiveRender(currentCode);
+
+        // Render Visual Box Tree
+        renderVisualTree(parsedDom);
+
+        // Perform Phase 2 Accessibility & Outline Audit
+        runAuditEngine(doc);
+
+        // Update Stats
+        const totalElements = doc.querySelectorAll("*").length;
+        const totalLines = currentCode.split("\n").length;
+        codeStats.textContent = `(${totalLines} lines, ${totalElements} elements)`;
+      }
+
+      // --- LIVE PREVIEW IFRAME ---
+      function updateLiveRender(htmlCode) {
+        const doc =
+          iframePreview.contentDocument || iframePreview.contentWindow.document;
+        doc.open();
+        doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: system-ui, -apple-system, sans-serif; padding: 1.5rem; color: #1e293b; line-height: 1.5; }
+            header, nav, main, article, section, aside, footer { border: 1px dashed rgba(59, 130, 246, 0.4); padding: 0.75rem; margin-bottom: 0.75rem; border-radius: 6px; }
+            header { background: #eff6ff; }
+            nav { background: #ecfdf5; }
+            main { background: #faf5ff; }
+            aside { background: #fffbeb; }
+            footer { background: #f8fafc; }
+            mark { background: #fef08a; padding: 0.1rem 0.3rem; border-radius: 3px; }
+            time { font-family: monospace; color: #0d9488; }
+            details { background: #fdf2f8; padding: 0.5rem; border-radius: 6px; }
+            img { max-width: 100%; height: auto; border-radius: 6px; }
+          </style>
+        </head>
+        <body>
+          ${htmlCode}
+        </body>
+        </html>
+      `);
+        doc.close();
+      }
+
+      let nodeIdCounter = 0;
+
+      function renderVisualTree(rootNode) {
+        treeRootContainer.innerHTML = "";
+        nodeIdCounter = 0;
+
+        if (!rootNode || rootNode.children.length === 0) {
+          treeRootContainer.innerHTML = `
+          <div class="text-center py-12 text-slate-500 border-2 border-dashed border-slate-800 rounded-xl">
+            <i class="fa-solid fa-code text-3xl mb-2"></i>
+            <p class="text-xs">No HTML elements found in document body.</p>
+          </div>`;
+          return;
+        }
+
+        // Build Recursive Box Hierarchy
+        Array.from(rootNode.children).forEach((child) => {
+          const childBox = createTreeBox(child);
+          if (childBox) treeRootContainer.appendChild(childBox);
+        });
+      }
+
+      function createTreeBox(node) {
+        const tagName = node.tagName.toLowerCase();
+        // Skip script / style / head tags in visual box display
+        if (["script", "style", "meta", "link"].includes(tagName)) return null;
+
+        nodeIdCounter++;
+        const nodeId = `node-${nodeIdCounter}`;
+        node.setAttribute("data-tree-id", nodeId);
+
+        const info = ELEMENT_KNOWLEDGE[tagName] || ELEMENT_KNOWLEDGE["div"];
+        const showLabels = document.getElementById("chk-show-labels").checked;
+        const showRoles = document.getElementById("chk-show-roles").checked;
+
+        // Outer Container Card
+        const box = document.createElement("div");
+        box.className = `p-3 my-2 rounded-xl border transition-all duration-150 relative ${info.color} hover:shadow-lg cursor-pointer`;
+        box.dataset.nodeId = nodeId;
+        box.dataset.tag = tagName;
+
+        // Tag Label Header
+        const header = document.createElement("div");
+        header.className =
+          "flex items-center justify-between flex-wrap gap-1 mb-1.5 select-none";
+
+        let headerContent = "";
+        if (showLabels) {
+          headerContent += `<span class="px-2 py-0.5 rounded text-xs font-mono font-bold border ${info.badge}">&lt;${tagName}&gt;</span>`;
+        }
+        if (showRoles && info.role) {
+          headerContent += `<span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800/80 text-slate-300 border border-slate-700/60">role="${info.role}"</span>`;
+        }
+
+        // Display text snippet or inline inner attributes if leaf node
+        let textSnippet = "";
+        if (node.children.length === 0) {
+          const text = node.textContent.trim();
+          if (text) {
+            textSnippet = `<span class="text-xs text-slate-300 truncate max-w-[200px] block italic opacity-80">"${text.substring(0, 40)}${text.length > 40 ? "..." : ""}"</span>`;
+          }
+        }
+
+        header.innerHTML = `
+        <div class="flex items-center gap-2">
+          ${headerContent}
+          ${textSnippet}
+        </div>
+        <span class="text-[10px] text-slate-400 capitalize font-medium opacity-75">${info.category}</span>
+      `;
+
+        box.appendChild(header);
+
+        // Recursive Children Box Rendering
+        if (node.children.length > 0) {
+          const childContainer = document.createElement("div");
+          childContainer.className =
+            "pl-2 sm:pl-4 border-l-2 border-slate-700/40 space-y-2 mt-2";
+          Array.from(node.children).forEach((child) => {
+            const childElement = createTreeBox(child);
+            if (childElement) childContainer.appendChild(childElement);
+          });
+          box.appendChild(childContainer);
+        }
+
+        // Interaction Events
+        box.addEventListener("click", (e) => {
+          e.stopPropagation();
+          selectElementNode(nodeId, tagName);
+        });
+
+        box.addEventListener("mouseenter", (e) => {
+          e.stopPropagation();
+          highlightBox(nodeId);
+        });
+
+        box.addEventListener("mouseleave", (e) => {
+          e.stopPropagation();
+          clearHighlightBox();
+        });
+
+        return box;
+      }
+
+      // --- ELEMENT INSPECTION & HIGHLIGHTING ---
+      function selectElementNode(nodeId, tagName) {
+        // Clear old selected
+        document
+          .querySelectorAll(".box-selected")
+          .forEach((el) => el.classList.remove("box-selected"));
+
+        const targetBox = document.querySelector(`[data-node-id="${nodeId}"]`);
+        if (targetBox) {
+          targetBox.classList.add("box-selected");
+          targetBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        // Update Inspector Panel Data
+        const info = ELEMENT_KNOWLEDGE[tagName] || {
+          category: "generic",
+          role: "generic",
+          display: "element",
+          desc: `Standard HTML element <${tagName}>.`,
+          a11y: "Generic HTML tag behavior.",
+          seo: "Standard content structure.",
+        };
+
+        inspectorTagBadge.textContent = `<${tagName}>`;
+        inspectorRoleBadge.textContent = info.role
+          ? `role="${info.role}"`
+          : "role=none";
+        inspectorDisplayType.textContent = info.display || "element";
+        inspectorDescription.textContent = info.desc;
+        inspectorA11y.textContent = info.a11y;
+        inspectorSeo.textContent = info.seo;
+
+        // Highlight corresponding line in code editor if matches
+        highlightCodeForTag(tagName);
+      }
+
+      function highlightBox(nodeId) {
+        clearHighlightBox();
+        const target = document.querySelector(`[data-node-id="${nodeId}"]`);
+        if (target) {
+          target.classList.add("box-hover-highlight");
+        }
+      }
+
+      function clearHighlightBox() {
+        document
+          .querySelectorAll(".box-hover-highlight")
+          .forEach((el) => el.classList.remove("box-hover-highlight"));
+      }
+
+      function highlightCodeForTag(tagName) {
+        const lines = codeInput.value.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].includes(`<${tagName}`)) {
+            // Scroll textarea roughly to that position
+            const lineHeight = 20; // approximate px per line
+            codeInput.scrollTop = i * lineHeight;
+            break;
+          }
+        }
+      }
+
+      function runAuditEngine(doc) {
+        const findings = [];
+        let score = 100;
+
+        const allElements = Array.from(doc.querySelectorAll("*")).filter(
+          (el) =>
+            !["script", "style", "meta", "link"].includes(
+              el.tagName.toLowerCase(),
+            ),
+        );
+        const totalCount = allElements.length || 1;
+
+        // 1. Semantic vs Generic Elements Breakdown
+        const genericCount = doc.querySelectorAll("div, span").length;
+        const semanticCount = Math.max(0, totalCount - genericCount);
+        const semanticRatio = Math.round((semanticCount / totalCount) * 100);
+
+        document.getElementById("bar-semantic").style.width =
+          `${semanticRatio}%`;
+        document.getElementById("bar-generic").style.width =
+          `${100 - semanticRatio}%`;
+        document.getElementById("cnt-semantic").textContent = semanticCount;
+        document.getElementById("cnt-generic").textContent = genericCount;
+        document.getElementById("semantic-ratio-badge").textContent =
+          `${semanticRatio}% Semantic`;
+
+        // 2. Heading Outline Check (H1-H6)
+        const headings = Array.from(
+          doc.querySelectorAll("h1, h2, h3, h4, h5, h6"),
+        );
+        const outlineContainer = document.getElementById("outline-container");
+        outlineContainer.innerHTML = "";
+
+        if (headings.length === 0) {
+          outlineContainer.innerHTML = `<p class="text-amber-400 italic">No headings found. Add &lt;h1&gt;-&lt;h6&gt; elements to structure document outline.</p>`;
+          findings.push({
+            type: "warning",
+            text: "Document is missing headings (&lt;h1&gt;-&lt;h6&gt;). Headings are crucial for screen reader navigation.",
+          });
+          score -= 20;
+        } else {
+          let hasH1 = false;
+          headings.forEach((h) => {
+            const level = parseInt(h.tagName.substring(1));
+            if (level === 1) hasH1 = true;
+            const indent = (level - 1) * 12;
+
+            const item = document.createElement("div");
+            item.style.paddingLeft = `${indent}px`;
+            item.className =
+              "py-0.5 flex items-center gap-2 text-slate-300 hover:text-blue-400 cursor-pointer";
+            item.innerHTML = `<span class="px-1 py-0.2 bg-blue-500/20 text-blue-300 rounded text-[10px] font-bold">H${level}</span> ${h.textContent || "(Empty Heading)"}`;
+            outlineContainer.appendChild(item);
+          });
+
+          if (!hasH1) {
+            findings.push({
+              type: "warning",
+              text: "Missing &lt;h1&gt; root heading. Each document or page section should generally feature a primary &lt;h1&gt;.",
+            });
+            score -= 15;
+          }
+        }
+
+        // 3. Main Container Check
+        const mains = doc.querySelectorAll("main");
+        if (mains.length === 0) {
+          findings.push({
+            type: "warning",
+            text: "Missing &lt;main&gt; element. Screen reader users rely on &lt;main&gt; to jump directly to primary page content.",
+          });
+          score -= 15;
+        } else if (mains.length > 1) {
+          findings.push({
+            type: "error",
+            text: "Multiple &lt;main&gt; elements detected. A document should only contain one visible &lt;main&gt; landmark.",
+          });
+          score -= 15;
+        }
+
+        // 4. Div Soup Check
+        if (genericCount > semanticCount && totalCount > 5) {
+          findings.push({
+            type: "error",
+            text: 'High ratio of non-semantic &lt;div&gt;/&lt;span&gt; containers ("Div Soup"). Replace divs with &lt;article&gt;, &lt;section&gt;, or &lt;aside&gt;.',
+          });
+          score -= 25;
+        }
+
+        // 5. Image Alt Attribute Audit
+        const images = doc.querySelectorAll("img");
+        let missingAltCount = 0;
+        images.forEach((img) => {
+          if (
+            !img.hasAttribute("alt") ||
+            img.getAttribute("alt").trim() === ""
+          ) {
+            missingAltCount++;
+          }
+        });
+        if (missingAltCount > 0) {
+          findings.push({
+            type: "warning",
+            text: `Found ${missingAltCount} image(s) missing descriptive "alt" attributes for screen readers.`,
+          });
+          score -= 15;
+        }
+
+        // 6. Section Without Heading Audit
+        const sections = doc.querySelectorAll("section, article");
+        sections.forEach((sec) => {
+          const secHeadings = sec.querySelectorAll("h1, h2, h3, h4, h5, h6");
+          if (secHeadings.length === 0) {
+            findings.push({
+              type: "info",
+              text: `An &lt;${sec.tagName.toLowerCase()}&gt; element is missing a title heading. Consider adding a heading tag inside.`,
+            });
+            score -= 5;
+          }
+        });
+
+        // Update Implicit Landmarks Display
+        const landmarksList = document.getElementById("landmarks-list");
+        landmarksList.innerHTML = "";
+        const landmarksFound = new Set();
+
+        if (doc.querySelector("header")) landmarksFound.add("banner");
+        if (doc.querySelector("nav")) landmarksFound.add("navigation");
+        if (doc.querySelector("main")) landmarksFound.add("main");
+        if (doc.querySelector("aside")) landmarksFound.add("complementary");
+        if (doc.querySelector("footer")) landmarksFound.add("contentinfo");
+
+        if (landmarksFound.size === 0) {
+          landmarksList.innerHTML = `<span class="text-xs text-slate-500 italic">No landmark roles detected</span>`;
+        } else {
+          landmarksFound.forEach((role) => {
+            landmarksList.innerHTML += `<span class="px-2 py-0.5 text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full">role="${role}"</span>`;
+          });
+        }
+
+        // Final Score Calculation & UI Updates
+        score = Math.max(0, score);
+        const scoreCircle = document.getElementById("score-circle");
+        const scoreText = document.getElementById("score-text");
+        const scoreStatus = document.getElementById("score-status");
+        const badgeScore = document.getElementById("badge-score");
+
+        scoreText.textContent = `${score}%`;
+        badgeScore.textContent = `${score}%`;
+        scoreCircle.setAttribute("stroke-dasharray", `${score}, 100`);
+
+        if (score >= 85) {
+          scoreStatus.textContent = "Excellent";
+          scoreStatus.className = "text-sm font-semibold text-emerald-400";
+          badgeScore.className =
+            "px-1.5 py-0.2 text-[10px] bg-emerald-500/20 text-emerald-300 rounded-full font-bold";
+        } else if (score >= 60) {
+          scoreStatus.textContent = "Needs Work";
+          scoreStatus.className = "text-sm font-semibold text-amber-400";
+          badgeScore.className =
+            "px-1.5 py-0.2 text-[10px] bg-amber-500/20 text-amber-300 rounded-full font-bold";
+        } else {
+          scoreStatus.textContent = "Poor Semantics";
+          scoreStatus.className = "text-sm font-semibold text-rose-400";
+          badgeScore.className =
+            "px-1.5 py-0.2 text-[10px] bg-rose-500/20 text-rose-300 rounded-full font-bold";
+        }
+
+        // Render Findings List
+        const findingsContainer = document.getElementById("audit-findings");
+        findingsContainer.innerHTML = "";
+
+        if (findings.length === 0) {
+          findingsContainer.innerHTML = `
+          <div class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-base"></i>
+            <span>Great job! No structural or accessibility issues detected in your HTML template.</span>
+          </div>
+        `;
+        } else {
+          findings.forEach((f) => {
+            let colorClass = "bg-slate-900 border-slate-800 text-slate-300";
+            let icon = "fa-info-circle text-blue-400";
+
+            if (f.type === "warning") {
+              colorClass = "bg-amber-500/10 border-amber-500/20 text-amber-200";
+              icon = "fa-triangle-exclamation text-amber-400";
+            } else if (f.type === "error") {
+              colorClass = "bg-rose-500/10 border-rose-500/20 text-rose-200";
+              icon = "fa-circle-xmark text-rose-400";
+            }
+
+            findingsContainer.innerHTML += `
+            <div class="p-2.5 rounded-lg border ${colorClass} flex items-start gap-2.5">
+              <i class="fa-solid ${icon} mt-0.5"></i>
+              <span class="leading-relaxed">${f.text}</span>
+            </div>
+          `;
+          });
+        }
+      }
+
+      function setViewMode(mode) {
+        currentView = mode;
+
+        // Update Toolbar Buttons Active State
+        document.querySelectorAll(".view-btn").forEach((btn) => {
+          btn.classList.remove("bg-slate-700", "text-white", "shadow-sm");
+          btn.classList.add("text-slate-400");
+        });
+
+        if (mode === "split") {
+          document
+            .getElementById("btn-view-split")
+            .classList.add("bg-slate-700", "text-white", "shadow-sm");
+          panelEditor.classList.remove("hidden");
+          panelVisual.classList.remove("hidden");
+          panelEditor.className =
+            "w-full lg:w-5/12 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col bg-slate-950/40 relative";
+          panelVisual.className =
+            "w-full lg:w-7/12 flex flex-col bg-slate-900/50 overflow-hidden";
+        } else if (mode === "tree") {
+          document
+            .getElementById("btn-view-tree")
+            .classList.add("bg-slate-700", "text-white", "shadow-sm");
+          panelEditor.classList.add("hidden");
+          panelVisual.classList.remove("hidden");
+          panelVisual.className =
+            "w-full flex flex-col bg-slate-900/50 overflow-hidden";
+          switchVisualTab("tree");
+        } else if (mode === "render") {
+          document
+            .getElementById("btn-view-render")
+            .classList.add("bg-slate-700", "text-white", "shadow-sm");
+          panelEditor.classList.add("hidden");
+          panelVisual.classList.remove("hidden");
+          panelVisual.className =
+            "w-full flex flex-col bg-slate-900/50 overflow-hidden";
+          switchVisualTab("render");
+        }
+      }
+
+      function switchVisualTab(tab) {
+        // Clear visual tab button states
+        const tabTree = document.getElementById("tab-btn-tree");
+        const tabRender = document.getElementById("tab-btn-render");
+        const tabAudit = document.getElementById("tab-btn-audit");
+
+        [tabTree, tabRender, tabAudit].forEach((btn) => {
+          btn.className =
+            "text-xs font-semibold px-3 py-1 rounded-md text-slate-400 hover:text-slate-200 transition";
+        });
+
+        viewVisualTree.classList.add("hidden");
+        viewLiveRender.classList.add("hidden");
+        viewAuditEngine.classList.add("hidden");
+
+        if (tab === "tree") {
+          tabTree.className =
+            "tab-active text-xs font-semibold px-3 py-1 rounded-md text-blue-400 bg-slate-800 shadow-sm transition";
+          viewVisualTree.classList.remove("hidden");
+        } else if (tab === "render") {
+          tabRender.className =
+            "tab-active text-xs font-semibold px-3 py-1 rounded-md text-blue-400 bg-slate-800 shadow-sm transition";
+          viewLiveRender.classList.remove("hidden");
+        } else if (tab === "audit") {
+          tabAudit.className =
+            "tab-active text-xs font-semibold px-3 py-1 rounded-md text-emerald-400 bg-slate-800 shadow-sm transition";
+          viewAuditEngine.classList.remove("hidden");
+        }
+      }
+
+      // Auto Code Formatting Helper
+      function formatCode() {
+        try {
+          let code = codeInput.value;
+          let formatted = "";
+          let indent = 0;
+          const pad = "  ";
+
+          code.split(/>\s*</).forEach((node) => {
+            if (node.match(/^\/\w/)) indent -= 1;
+            formatted += pad.repeat(Math.max(0, indent)) + "<" + node + ">\n";
+            if (
+              node.match(/^<?\w[^>]*[^\/]$/) &&
+              !node.startsWith("input") &&
+              !node.startsWith("img") &&
+              !node.startsWith("br") &&
+              !node.startsWith("meta")
+            ) {
+              indent += 1;
+            }
+          });
+
+          codeInput.value = formatted.trim();
+          updateLineNumbers();
+          processCodeUpdate();
+          showToast("Code formatted successfully");
+        } catch (e) {
+          showToast("Formatting completed");
+        }
+      }
+
+      // Toggle Dark/Light Theme
+      function toggleTheme() {
+        const html = document.documentElement;
+        if (html.classList.contains("dark")) {
+          html.classList.remove("dark");
+          document.getElementById("btn-theme-toggle").innerHTML =
+            '<i class="fa-solid fa-sun text-amber-500"></i>';
+          showToast("Light theme activated");
+        } else {
+          html.classList.add("dark");
+          document.getElementById("btn-theme-toggle").innerHTML =
+            '<i class="fa-solid fa-moon text-indigo-400"></i>';
+          showToast("Dark theme activated");
+        }
+      }
+
+      // Toast Notification Helper
+      function showToast(msg) {
+        toastMessage.textContent = msg;
+        toast.classList.remove("translate-y-20", "opacity-0");
+        setTimeout(() => {
+          toast.classList.add("translate-y-20", "opacity-0");
+        }, 2500);
+      }
+
+      // Export Functions
+      function copyFormattedCode() {
+        const el = document.createElement("textarea");
+        el.value = codeInput.value;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand("copy");
+        document.body.removeChild(el);
+        exportModal.classList.add("hidden");
+        showToast("HTML copied to clipboard!");
+      }
+
+      function downloadHtmlFile() {
+        const blob = new Blob([codeInput.value], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "semantic-layout.html";
+        a.click();
+        URL.revokeObjectURL(url);
+        exportModal.classList.add("hidden");
+        showToast("Downloaded HTML file");
+      }
+
+      function downloadAuditReport() {
+        const score = document.getElementById("score-text").textContent;
+        const ratio = document.getElementById(
+          "semantic-ratio-badge",
+        ).textContent;
+        const findings = Array.from(
+          document.querySelectorAll("#audit-findings div span"),
+        )
+          .map((el) => `- ${el.textContent}`)
+          .join("\n");
+
+        const reportText = `====================================================
+SEMANTIC HTML PHASE 2 AUDIT REPORT
+Generated on: ${new Date().toLocaleString()}
+====================================================
+
+Semantic Quality Score: ${score}
+Semantic Ratio: ${ratio}
+
+FINDINGS & RECOMMENDATIONS:
+${findings || "No issues found! Exceptional semantic markup."}
+
+====================================================
+Generated by Phase 2 Semantic HTML Visualizer
+`;
+
+        const blob = new Blob([reportText], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "semantic-audit-report.txt";
+        a.click();
+        URL.revokeObjectURL(url);
+        exportModal.classList.add("hidden");
+        showToast("Downloaded Audit Report");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1910 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Web Design (RWD) Visualizer & Learning Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              studio: {
+                50: "#f4f4f5",
+                100: "#e4e4e7",
+                800: "#27272a",
+                900: "#18181b",
+                950: "#09090b",
+              },
+              accent: {
+                cyan: "#06b6d4",
+                purple: "#a855f7",
+                emerald: "#10b981",
+                amber: "#f59e0b",
+                pink: "#ec4899",
+                blue: "#3b82f6",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .font-mono-code {
+        font-family: "Fira Code", monospace;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(161, 161, 170, 0.3);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(161, 161, 170, 0.6);
+      }
+
+      .bg-grid-pattern {
+        background-size: 20px 20px;
+        background-image:
+          linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          );
+      }
+
+      /* Resizable Viewport Container */
+      #viewport-container {
+        transition:
+          width 0.15s ease-out,
+          height 0.15s ease-out;
+        transform-origin: top center;
+      }
+
+      .device-mockup-iphone {
+        border: 12px solid #27272a;
+        border-radius: 36px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      }
+
+      .device-mockup-ipad {
+        border: 16px solid #27272a;
+        border-radius: 28px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      }
+
+      .device-mockup-macbook {
+        border: 14px solid #18181b;
+        border-bottom-width: 20px;
+        border-radius: 16px 16px 4px 4px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      }
+
+      .resize-handle-x {
+        cursor: col-resize;
+      }
+      .resize-handle-y {
+        cursor: row-resize;
+      }
+      .resize-handle-xy {
+        cursor: nwse-resize;
+      }
+
+      .ruler-ticks-x {
+        background-image:
+          repeating-linear-gradient(
+            90deg,
+            #52525b 0,
+            #52525b 1px,
+            transparent 0,
+            transparent 10px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            #a1a1aa 0,
+            #a1a1aa 1px,
+            transparent 0,
+            transparent 50px
+          );
+        background-size:
+          100% 6px,
+          100% 12px;
+        background-position:
+          bottom left,
+          bottom left;
+        background-repeat: repeat-x;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-studio-950 text-zinc-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white"
+  >
+    <header
+      class="border-b border-zinc-800 bg-zinc-950/90 backdrop-blur px-4 py-2.5 sticky top-0 z-50 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="p-2 bg-gradient-to-tr from-cyan-600 via-blue-600 to-purple-600 rounded-xl text-white shadow-lg shadow-cyan-500/20"
+        >
+          <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+        </div>
+        <div>
+          <h1
+            class="text-base font-bold bg-gradient-to-r from-cyan-400 via-blue-300 to-purple-400 bg-clip-text text-transparent"
+          >
+            RWD Visualizer & Learning Studio
+          </h1>
+          <p class="text-[11px] text-zinc-400 hidden sm:block">
+            Interactive Viewport Simulator, CSS Layout Generators & Challenges
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-4">
+        <div
+          class="hidden md:flex items-center gap-3 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl text-xs font-medium"
+        >
+          <div
+            class="flex items-center gap-1.5 text-amber-400"
+            title="XP Points"
+          >
+            <i class="fa-solid fa-bolt"></i>
+            <span id="user-xp-display" class="font-bold">0 XP</span>
+          </div>
+          <div class="w-px h-3 bg-zinc-700"></div>
+          <div
+            class="flex items-center gap-1.5 text-cyan-400"
+            title="Solved Challenges"
+          >
+            <i class="fa-solid fa-trophy"></i>
+            <span id="user-badges-display" class="font-bold">0/6</span>
+          </div>
+        </div>
+
+        <button
+          id="btn-quick-copy"
+          class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-lg shadow-cyan-600/20 transition flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-copy"></i>
+          <span class="hidden sm:inline">Copy CSS</span>
+        </button>
+        <button
+          id="btn-export-code"
+          class="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-lg transition flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-file-export"></i> Export HTML
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+      <!-- LEFT CONTROL & LESSONS SIDEBAR -->
+      <aside
+        class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-zinc-800 flex flex-col bg-zinc-900/60 overflow-y-auto"
+      >
+        <!-- NAV TABS -->
+        <div
+          class="flex items-center bg-zinc-950 px-3 border-b border-zinc-800 text-xs font-medium overflow-x-auto"
+        >
+          <button
+            id="tab-btn-playground"
+            class="studio-tab active border-b-2 border-cyan-500 text-cyan-400 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-bold"
+          >
+            <i class="fa-solid fa-sliders text-cyan-400"></i> Layout Generators
+          </button>
+          <button
+            id="tab-btn-lessons"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-semibold"
+          >
+            <i class="fa-solid fa-book-open text-amber-400"></i> Lessons
+          </button>
+          <button
+            id="tab-btn-challenges"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-semibold"
+          >
+            <i class="fa-solid fa-gamepad text-purple-400"></i> Challenges
+          </button>
+          <button
+            id="tab-btn-editor"
+            class="studio-tab border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 px-3.5 py-3 flex items-center gap-2 whitespace-nowrap font-semibold"
+          >
+            <i class="fa-solid fa-code text-pink-400"></i> Live Editor
+          </button>
+        </div>
+
+        <div class="p-4 sm:p-5 space-y-5 flex-1">
+          <!-- 1. LAYOUT GENERATORS & CONTROLS TAB -->
+          <div id="tab-content-playground" class="space-y-5">
+            <!-- Engine Selector -->
+            <div
+              class="bg-zinc-950 p-3.5 rounded-2xl border border-zinc-800 space-y-2"
+            >
+              <label
+                class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-layer-group text-cyan-400"></i> Responsive
+                Engine Switcher
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <button
+                  class="engine-select-btn bg-cyan-600 text-white font-bold text-xs py-2 px-2.5 rounded-xl border border-cyan-500 shadow transition text-left"
+                  data-engine="grid"
+                >
+                  <i class="fa-solid fa-table-cells block mb-1 text-sm"></i> CSS
+                  Grid
+                </button>
+                <button
+                  class="engine-select-btn bg-zinc-900 text-zinc-400 hover:text-zinc-200 font-medium text-xs py-2 px-2.5 rounded-xl border border-zinc-800 transition text-left"
+                  data-engine="flexbox"
+                >
+                  <i
+                    class="fa-solid fa-arrows-split-up-and-left block mb-1 text-sm"
+                  ></i>
+                  Flexbox Wrap
+                </button>
+                <button
+                  class="engine-select-btn bg-zinc-900 text-zinc-400 hover:text-zinc-200 font-medium text-xs py-2 px-2.5 rounded-xl border border-zinc-800 transition text-left"
+                  data-engine="clamp"
+                >
+                  <i class="fa-solid fa-text-height block mb-1 text-sm"></i>
+                  Dynamic clamp()
+                </button>
+                <button
+                  class="engine-select-btn bg-zinc-900 text-zinc-400 hover:text-zinc-200 font-medium text-xs py-2 px-2.5 rounded-xl border border-zinc-800 transition text-left"
+                  data-engine="container"
+                >
+                  <i class="fa-solid fa-box-archive block mb-1 text-sm"></i>
+                  Container Query
+                </button>
+                <button
+                  class="engine-select-btn bg-zinc-900 text-zinc-400 hover:text-zinc-200 font-medium text-xs py-2 px-2.5 rounded-xl border border-zinc-800 transition text-left"
+                  data-engine="aspect"
+                >
+                  <i class="fa-solid fa-expand block mb-1 text-sm"></i> Aspect
+                  Ratio
+                </button>
+                <button
+                  class="engine-select-btn bg-zinc-900 text-zinc-400 hover:text-zinc-200 font-medium text-xs py-2 px-2.5 rounded-xl border border-zinc-800 transition text-left"
+                  data-engine="media"
+                >
+                  <i class="fa-solid fa-laptop-code block mb-1 text-sm"></i>
+                  @media Queries
+                </button>
+              </div>
+            </div>
+
+            <!-- DYNAMIC ENGINE CONTROLS -->
+            <div
+              id="engine-controls-container"
+              class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-4"
+            >
+              <!-- Controls injected via JavaScript according to selected engine -->
+            </div>
+          </div>
+
+          <!-- 2. LESSONS MODULE TAB -->
+          <div id="tab-content-lessons" class="hidden space-y-4">
+            <div
+              class="flex items-center justify-between bg-zinc-950 p-4 rounded-2xl border border-zinc-800"
+            >
+              <div>
+                <h2
+                  class="text-sm font-bold text-zinc-100 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-graduation-cap text-amber-400"></i> RWD
+                  Masterclass
+                </h2>
+                <p class="text-xs text-zinc-400 mt-0.5">
+                  Learn modern responsive CSS layout strategies through hands-on
+                  demos.
+                </p>
+              </div>
+              <span
+                class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                >6 Lessons</span
+              >
+            </div>
+
+            <div class="space-y-3" id="lessons-list">
+              <!-- Lessons rendered via JS -->
+            </div>
+          </div>
+
+          <!-- 3. HANDS-ON CHALLENGES TAB -->
+          <div id="tab-content-challenges" class="hidden space-y-5">
+            <div
+              class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+            >
+              <div>
+                <h2
+                  class="text-sm font-bold text-zinc-100 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-trophy text-purple-400"></i> RWD
+                  Practice Engine
+                </h2>
+                <p class="text-xs text-zinc-400 mt-0.5">
+                  Solve layout challenges with automatic computed styles test
+                  verification.
+                </p>
+              </div>
+              <span
+                id="challenge-status-badge"
+                class="text-xs font-bold font-mono px-3 py-1 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700"
+              >
+                Select a Challenge
+              </span>
+            </div>
+
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              id="challenge-cards-grid"
+            >
+              <!-- Challenge Cards injected via JS -->
+            </div>
+
+            <!-- Active Challenge Workspace -->
+            <div
+              id="active-challenge-panel"
+              class="hidden bg-zinc-950 p-4 sm:p-5 rounded-2xl border border-purple-500/30 space-y-4"
+            >
+              <div
+                class="flex justify-between items-start border-b border-zinc-800 pb-3"
+              >
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      id="ch-title"
+                      class="text-base font-bold text-purple-300"
+                      >Challenge Title</span
+                    >
+                    <span
+                      id="ch-xp-reward"
+                      class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                      >+50 XP</span
+                    >
+                  </div>
+                  <p
+                    id="ch-description"
+                    class="text-xs text-zinc-300 mt-1 leading-relaxed"
+                  ></p>
+                </div>
+              </div>
+
+              <!-- Validation Checklist -->
+              <div
+                class="bg-zinc-900/80 p-3.5 rounded-xl border border-zinc-800 space-y-2"
+              >
+                <h4
+                  class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-list-check text-cyan-400"></i> Automated
+                  Test Criteria
+                </h4>
+                <ul
+                  id="ch-criteria-list"
+                  class="space-y-1.5 text-xs text-zinc-400 font-mono"
+                ></ul>
+              </div>
+
+              <!-- Challenge Code Editor -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-zinc-400 font-medium"
+                    >Your Challenge Code:</span
+                  >
+                  <div class="flex items-center gap-2">
+                    <button
+                      id="btn-ch-reset"
+                      class="text-zinc-400 hover:text-zinc-200 text-xs"
+                    >
+                      <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button
+                      id="btn-ch-solution"
+                      class="text-amber-400 hover:text-amber-300 text-xs font-semibold"
+                    >
+                      <i class="fa-solid fa-lightbulb"></i> Solution
+                    </button>
+                  </div>
+                </div>
+                <textarea
+                  id="ch-code-editor"
+                  spellcheck="false"
+                  class="w-full h-44 bg-zinc-900 text-cyan-300 font-mono-code text-xs p-3.5 rounded-xl border border-zinc-800 focus:outline-none focus:border-purple-500 resize-y"
+                ></textarea>
+              </div>
+
+              <div class="flex items-center justify-between pt-1">
+                <span
+                  id="ch-validation-feedback"
+                  class="text-xs font-semibold"
+                ></span>
+                <button
+                  id="btn-ch-submit"
+                  class="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg transition flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-vial-circle-check"></i> Run Tests
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. LIVE CODE EDITOR TAB -->
+          <div id="tab-content-editor" class="hidden space-y-4">
+            <div
+              class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3
+                    class="text-xs font-bold text-zinc-200 uppercase tracking-wider flex items-center gap-2"
+                  >
+                    <i class="fa-solid fa-code text-pink-400"></i> Custom HTML &
+                    CSS Playground Editor
+                  </h3>
+                  <p class="text-[11px] text-zinc-400">
+                    Edit the entire responsive document rendered inside the
+                    viewport
+                  </p>
+                </div>
+              </div>
+
+              <textarea
+                id="code-editor-textarea"
+                spellcheck="false"
+                class="w-full h-80 bg-zinc-900 text-cyan-300 font-mono-code text-xs p-4 rounded-xl border border-zinc-800 focus:outline-none focus:border-pink-500 resize-y"
+              ></textarea>
+
+              <div class="flex items-center justify-between pt-1">
+                <p class="text-[11px] text-zinc-500 italic">
+                  Changes instantly update inside the live viewport canvas.
+                </p>
+                <button
+                  id="btn-apply-editor-code"
+                  class="bg-pink-600 hover:bg-pink-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold shadow-lg shadow-pink-600/20 transition flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-play"></i> Update Canvas
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section
+        class="w-full lg:w-1/2 flex flex-col bg-zinc-950 relative overflow-hidden"
+      >
+        <!-- VIEWPORT TOOLBAR -->
+        <div
+          class="p-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between flex-wrap gap-2 z-10"
+        >
+          <!-- Preset Breakpoints -->
+          <div class="flex items-center gap-1 overflow-x-auto py-0.5">
+            <button
+              class="preset-btn px-2.5 py-1 text-xs rounded-lg font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+              data-w="375"
+              data-h="667"
+              data-device="iphone"
+            >
+              <i class="fa-solid fa-mobile-screen text-[10px] mr-1"></i> Mobile
+              (375px)
+            </button>
+            <button
+              class="preset-btn px-2.5 py-1 text-xs rounded-lg font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+              data-w="768"
+              data-h="1024"
+              data-device="ipad"
+            >
+              <i class="fa-solid fa-tablet-screen-button text-[10px] mr-1"></i>
+              Tablet (768px)
+            </button>
+            <button
+              class="preset-btn px-2.5 py-1 text-xs rounded-lg font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+              data-w="1024"
+              data-h="768"
+              data-device="macbook"
+            >
+              <i class="fa-solid fa-laptop text-[10px] mr-1"></i> Laptop
+              (1024px)
+            </button>
+            <button
+              class="preset-btn px-2.5 py-1 text-xs rounded-lg font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+              data-w="1280"
+              data-h="800"
+              data-device="frameless"
+            >
+              <i class="fa-solid fa-desktop text-[10px] mr-1"></i> Desktop
+              (1280px)
+            </button>
+          </div>
+
+          <!-- Frame & Orientation Controls -->
+          <div class="flex items-center gap-2">
+            <button
+              id="btn-toggle-orientation"
+              class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
+              title="Rotate Orientation"
+            >
+              <i class="fa-solid fa-rotate"></i>
+              <span id="lbl-orientation" class="hidden sm:inline"
+                >Portrait</span
+              >
+            </button>
+
+            <select
+              id="select-device-frame"
+              class="bg-zinc-800 border border-zinc-700 text-xs rounded-lg px-2 py-1 text-zinc-200 focus:outline-none"
+            >
+              <option value="frameless">Frameless</option>
+              <option value="iphone">iPhone Mockup</option>
+              <option value="ipad">iPad Mockup</option>
+              <option value="macbook">MacBook Frame</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- MEDIA QUERY DETECTION BAR & DIMENSIONS BAR -->
+        <div
+          class="px-4 py-2 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between text-xs font-mono"
+        >
+          <div class="flex items-center gap-2">
+            <span
+              class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"
+            ></span>
+            <span
+              id="active-breakpoint-indicator"
+              class="font-bold text-cyan-400"
+              >@media (min-width: 768px)</span
+            >
+          </div>
+          <div class="flex items-center gap-2 text-zinc-400">
+            <input
+              type="number"
+              id="input-vp-width"
+              value="768"
+              class="w-14 bg-zinc-950 border border-zinc-800 rounded text-center text-xs py-0.5 text-cyan-300 font-bold"
+            />
+            <span>×</span>
+            <input
+              type="number"
+              id="input-vp-height"
+              value="600"
+              class="w-14 bg-zinc-950 border border-zinc-800 rounded text-center text-xs py-0.5 text-cyan-300 font-bold"
+            />
+            <span>px</span>
+          </div>
+        </div>
+
+        <!-- STAGE CONTAINER & RESIZABLE FRAME -->
+        <div
+          class="flex-1 bg-grid-pattern p-6 overflow-auto flex items-start justify-center relative min-h-[380px]"
+          id="stage-bg-area"
+        >
+          <!-- RULER TOP -->
+          <div
+            class="absolute top-0 left-0 right-0 h-4 ruler-ticks-x opacity-30 pointer-events-none"
+          ></div>
+
+          <!-- RESIZABLE VIEWPORT WRAPPER -->
+          <div
+            id="viewport-container"
+            class="relative bg-white text-zinc-900 rounded-lg shadow-2xl overflow-hidden flex flex-col w-[768px] h-[600px] transition-all"
+          >
+            <!-- Viewport Header Info Bar -->
+            <div
+              class="bg-zinc-100 border-b border-zinc-200 px-3 py-1 flex items-center justify-between text-[11px] font-mono text-zinc-500 select-none"
+            >
+              <div class="flex items-center gap-1.5">
+                <span
+                  class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"
+                ></span>
+                <span
+                  class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"
+                ></span>
+                <span
+                  class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"
+                ></span>
+              </div>
+              <span
+                id="viewport-dimension-overlay"
+                class="font-bold text-zinc-700"
+                >768px × 600px</span
+              >
+              <span class="text-[10px] text-zinc-400">Target Viewport</span>
+            </div>
+
+            <!-- RENDERED IFRAME CONTENT -->
+            <iframe
+              id="viewport-iframe"
+              class="w-full flex-1 border-none bg-white"
+            ></iframe>
+
+            <!-- RESIZE HANDLES -->
+            <div
+              id="handle-r"
+              class="resize-handle-x absolute right-0 top-0 bottom-0 w-3 hover:bg-cyan-500/40 transition"
+            ></div>
+            <div
+              id="handle-b"
+              class="resize-handle-y absolute bottom-0 left-0 right-0 h-3 hover:bg-cyan-500/40 transition"
+            ></div>
+            <div
+              id="handle-br"
+              class="resize-handle-xy absolute right-0 bottom-0 w-4 h-4 hover:bg-cyan-500/80 bg-cyan-500/30 rounded-tl transition"
+            ></div>
+          </div>
+        </div>
+
+        <!-- PERSISTENT LIVE GENERATED CSS CODE VIEWER -->
+        <div
+          class="bg-zinc-950 border-t border-zinc-800 flex flex-col max-h-48"
+        >
+          <div
+            class="px-4 py-2 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between"
+          >
+            <span
+              class="text-xs font-bold text-cyan-300 flex items-center gap-1.5"
+            >
+              <i class="fa-solid fa-code text-cyan-400"></i> Active CSS Rule
+            </span>
+            <button
+              id="btn-panel-copy-css"
+              class="bg-cyan-600/80 hover:bg-cyan-600 text-white px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition"
+            >
+              <i class="fa-solid fa-copy"></i> Copy Rules
+            </button>
+          </div>
+          <pre
+            id="live-code-viewer"
+            class="p-3 bg-zinc-950 font-mono-code text-[11px] text-cyan-300 overflow-y-auto overflow-x-auto select-all flex-1 leading-relaxed"
+          ></pre>
+        </div>
+      </section>
+    </main>
+
+    <!-- EXPORT MODAL -->
+    <div
+      id="export-modal"
+      class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4"
+    >
+      <div
+        class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4"
+      >
+        <div
+          class="flex justify-between items-center border-b border-zinc-800 pb-3"
+        >
+          <h3 class="font-bold text-zinc-100 text-base flex items-center gap-2">
+            <i class="fa-solid fa-file-export text-cyan-400"></i> Export
+            Standalone Responsive Web Page
+          </h3>
+          <button
+            id="btn-close-modal"
+            class="text-zinc-400 hover:text-white p-1 rounded-lg"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <pre
+          id="export-code-preview"
+          class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 font-mono-code text-xs text-cyan-300 overflow-x-auto max-h-56 select-all"
+        ></pre>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+          <button
+            id="btn-download-html"
+            class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+          >
+            <i class="fa-solid fa-download"></i> Download HTML File
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div
+      id="toast"
+      class="fixed bottom-5 right-5 bg-cyan-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 z-50"
+    >
+      <i class="fa-solid fa-circle-check"></i>
+      <span id="toast-message">Notification message</span>
+    </div>
+
+    <script>
+      // --- LESSONS CURRICULUM DATA ---
+      const LESSONS_DATA = [
+        {
+          id: 1,
+          title: "Lesson 1: Viewport Meta Tag & RWD Foundations",
+          subtitle: "Controlling layout behavior on mobile browsers",
+          level: "Beginner",
+          xp: 25,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-2">
+            Without a viewport meta tag, mobile browsers render pages at desktop width (~980px) and scale down.
+          </p>
+          <div class="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 font-mono-code text-[11px] text-cyan-300 mb-2">
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+          </div>
+        `,
+          htmlCode: `<style>
+  body { font-family: sans-serif; padding: 20px; margin: 0; background: #f8fafc; }
+  .card { background: #e0f2fe; border: 2px solid #0284c7; padding: 16px; border-radius: 12px; }
+</style>
+<div class="card">
+  <h2 style="color: #0284c7; margin-top:0;">Responsive Viewport Demo</h2>
+  <p style="color: #334155; line-height: 1.5;">Resize the viewport stage to test how fluid width cards automatically scale and adjust text bounds without horizontal scrollbars.</p>
+</div>`,
+        },
+        {
+          id: 2,
+          title: "Lesson 2: Flexbox Wrapping & Micro-layouts",
+          subtitle: "flex-wrap, flex-grow, and gap spacing",
+          level: "Beginner",
+          xp: 30,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-2">
+            <code>flex-wrap: wrap</code> lets items wrap onto new lines automatically when the viewport contracts, eliminating overflowing content.
+          </p>
+        `,
+          htmlCode: `<style>
+  .flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  .flex-item {
+    flex: 1 1 180px;
+    background: #f0fdf4;
+    border: 2px solid #16a34a;
+    padding: 16px;
+    border-radius: 10px;
+    color: #15803d;
+    font-weight: bold;
+  }
+</style>
+<div class="flex-container">
+  <div class="flex-item">Card A (min 180px)</div>
+  <div class="flex-item">Card B (min 180px)</div>
+  <div class="flex-item">Card C (min 180px)</div>
+</div>`,
+        },
+        {
+          id: 3,
+          title: "Lesson 3: CSS Grid auto-fill & minmax() Magic",
+          subtitle: "Responsive grid layout with zero media queries",
+          level: "Intermediate",
+          xp: 40,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-2">
+            Using <code>grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))</code> creates an auto-responsive grid that recalculates column count automatically!
+          </p>
+        `,
+          htmlCode: `<style>
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  .grid-card {
+    background: #faf5ff;
+    border: 2px solid #9333ea;
+    padding: 16px;
+    border-radius: 12px;
+    color: #7e22ce;
+    font-weight: bold;
+  }
+</style>
+<div class="grid-container">
+  <div class="grid-card">Grid Item 1</div>
+  <div class="grid-card">Grid Item 2</div>
+  <div class="grid-card">Grid Item 3</div>
+  <div class="grid-card">Grid Item 4</div>
+</div>`,
+        },
+        {
+          id: 4,
+          title: "Lesson 4: Dynamic Fluid Typography with clamp()",
+          subtitle: "Minimum, ideal viewport scaling, and maximum constraints",
+          level: "Intermediate",
+          xp: 40,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-2">
+            <code>font-size: clamp(MIN, VAL, MAX)</code> guarantees readable, fluid scaling across screens without needing multiple font media queries.
+          </p>
+        `,
+          htmlCode: `<style>
+  .fluid-title {
+    font-size: clamp(1.25rem, 4vw + 0.5rem, 2.75rem);
+    color: #be185d;
+    font-family: sans-serif;
+    font-weight: 800;
+    padding: 20px;
+    line-height: 1.2;
+  }
+</style>
+<h1 class="fluid-title">Fluid Title Scaling with clamp()</h1>`,
+        },
+        {
+          id: 5,
+          title: "Lesson 5: Modern Container Queries (@container)",
+          subtitle:
+            "Component styling based on parent box width, not screen size",
+          level: "Advanced",
+          xp: 50,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-2">
+            Container queries adjust child layouts based on the component parent container's available width instead of global viewport breakpoints.
+          </p>
+        `,
+          htmlCode: `<style>
+  .wrapper {
+    container-type: inline-size;
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  .card {
+    background: #fff7ed;
+    border: 2px solid #ea580c;
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  @container (min-width: 400px) {
+    .card {
+      flex-direction: row;
+      align-items: center;
+      background: #ffedf0;
+      border-color: #ec4899;
+    }
+  }
+</style>
+<div class="wrapper">
+  <div class="card">
+    <div style="width: 50px; height: 50px; background: #ea580c; border-radius: 8px;"></div>
+    <div>
+      <h3 style="margin: 0; font-size: 16px;">Container-Aware Card</h3>
+      <p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">Flips to row layout when parent container exceeds 400px!</p>
+    </div>
+  </div>
+</div>`,
+        },
+        {
+          id: 6,
+          title: "Lesson 6: Responsive Media & Aspect-Ratio",
+          subtitle: "aspect-ratio, object-fit, and layout shift prevention",
+          level: "Advanced",
+          xp: 60,
+          content: `
+          <p class="text-xs text-zinc-300 leading-relaxed mb-2">
+            Combine <code>aspect-ratio: 16 / 9</code> with <code>object-fit: cover</code> to create responsive media containers that preserve proportions without CLS.
+          </p>
+        `,
+          htmlCode: `<style>
+  .media-box {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 16 / 9;
+    background: #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: sans-serif;
+  }
+</style>
+<div class="media-box">
+  <div style="text-align: center;">
+    <h3>16:9 Aspect Ratio Box</h3>
+    <p style="font-size: 12px; opacity: 0.8;">Resize stage width to test responsive scaling</p>
+  </div>
+</div>`,
+        },
+      ];
+
+      // --- CHALLENGES DATA ---
+      const CHALLENGES_DATA = [
+        {
+          id: "ch-1",
+          title: "Auto-Fitting Card Grid",
+          xp: 50,
+          description:
+            "Build an auto-responsive grid where cards have a minimum width of 200px and automatically fill remaining space with 0 media queries.",
+          criteria: [
+            {
+              text: "Must use display: grid",
+              validator: (code) => /display:\s*grid/.test(code),
+            },
+            {
+              text: "Must use grid-template-columns with auto-fit or auto-fill",
+              validator: (code) => /auto-fit|auto-fill/.test(code),
+            },
+            {
+              text: "Must use minmax(200px, 1fr)",
+              validator: (code) => /minmax\(\s*200px/.test(code),
+            },
+          ],
+          solution: `<style>
+  .grid-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 20px;
+  }
+  .card {
+    background: #e0f2fe;
+    border: 2px solid #0284c7;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: sans-serif;
+  }
+</style>
+<div class="grid-box">
+  <div class="card">Card 1</div>
+  <div class="card">Card 2</div>
+  <div class="card">Card 3</div>
+</div>`,
+          initialCode: `<style>
+  .grid-box {
+    /* Step 1: Add grid display and auto-fit minmax columns */
+  }
+  .card {
+    background: #e0f2fe;
+    padding: 20px;
+  }
+</style>
+<div class="grid-box">
+  <div class="card">Card 1</div>
+  <div class="card">Card 2</div>
+  <div class="card">Card 3</div>
+</div>`,
+        },
+        {
+          id: "ch-2",
+          title: "Fluid Heading with clamp()",
+          xp: 50,
+          description:
+            "Create a dynamic fluid header with font-size clamp() scaling from min 1.5rem to max 3rem.",
+          criteria: [
+            {
+              text: "Uses font-size: clamp(...)",
+              validator: (code) => /font-size:\s*clamp\(/.test(code),
+            },
+            {
+              text: "Min constraint specifies 1.5rem",
+              validator: (code) => /clamp\(\s*1\.5rem/.test(code),
+            },
+            {
+              text: "Max constraint specifies 3rem",
+              validator: (code) => /3rem\s*\)/.test(code),
+            },
+          ],
+          solution: `<style>
+  .fluid-heading {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    color: #0284c7;
+    font-family: sans-serif;
+  }
+</style>
+<h1 class="fluid-heading">Responsive Scaling Title</h1>`,
+          initialCode: `<style>
+  .fluid-heading {
+    /* Add font-size: clamp(...) here */
+  }
+</style>
+<h1 class="fluid-heading">Responsive Scaling Title</h1>`,
+        },
+        {
+          id: "ch-3",
+          title: "Responsive Flexbox Navbar",
+          xp: 60,
+          description:
+            "Build a flexible navigation bar using flex-wrap that wraps links cleanly on narrow mobile viewports.",
+          criteria: [
+            {
+              text: "Uses display: flex",
+              validator: (code) => /display:\s*flex/.test(code),
+            },
+            {
+              text: "Uses flex-wrap: wrap",
+              validator: (code) => /flex-wrap:\s*wrap/.test(code),
+            },
+            {
+              text: "Uses gap for item spacing",
+              validator: (code) => /gap:/.test(code),
+            },
+          ],
+          solution: `<style>
+  .nav-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #1e293b;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: sans-serif;
+  }
+  .nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    background: #334155;
+    border-radius: 6px;
+  }
+</style>
+<nav class="nav-bar">
+  <a class="nav-link" href="#">Home</a>
+  <a class="nav-link" href="#">Features</a>
+  <a class="nav-link" href="#">Pricing</a>
+  <a class="nav-link" href="#">Contact</a>
+</nav>`,
+          initialCode: `<style>
+  .nav-bar {
+    /* Set display flex, flex-wrap wrap, and gap spacing */
+  }
+</style>
+<nav class="nav-bar">
+  <a class="nav-link" href="#">Home</a>
+  <a class="nav-link" href="#">Features</a>
+  <a class="nav-link" href="#">Pricing</a>
+</nav>`,
+        },
+        {
+          id: "ch-4",
+          title: "Container Query Card",
+          xp: 70,
+          description:
+            "Construct a container query component using container-type: inline-size and @container rules.",
+          criteria: [
+            {
+              text: "Defines container-type: inline-size",
+              validator: (code) => /container-type:\s*inline-size/.test(code),
+            },
+            {
+              text: "Includes @container media rule",
+              validator: (code) => /@container/.test(code),
+            },
+          ],
+          solution: `<style>
+  .card-container {
+    container-type: inline-size;
+    padding: 10px;
+  }
+  .card-item {
+    background: #fdf2f8;
+    border: 2px solid #db2777;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: sans-serif;
+  }
+  @container (min-width: 350px) {
+    .card-item {
+      background: #f0fdf4;
+      border-color: #16a34a;
+    }
+  }
+</style>
+<div class="card-container">
+  <div class="card-item">Container-Sensitive Card</div>
+</div>`,
+          initialCode: `<style>
+  .card-container {
+    /* Set container-type here */
+  }
+  .card-item {
+    background: #fdf2f8;
+    padding: 16px;
+  }
+  /* Write @container query here */
+</style>
+<div class="card-container">
+  <div class="card-item">Container-Sensitive Card</div>
+</div>`,
+        },
+        {
+          id: "ch-5",
+          title: "Aspect-Ratio Media Card",
+          xp: 60,
+          description:
+            "Create a video/image placeholder container that maintains a 16 / 9 aspect-ratio with object-fit: cover.",
+          criteria: [
+            {
+              text: "Uses aspect-ratio property",
+              validator: (code) => /aspect-ratio:/.test(code),
+            },
+            {
+              text: "Uses 16 / 9 or 16/9 proportion",
+              validator: (code) => /16\s*\/\s*9/.test(code),
+            },
+          ],
+          solution: `<style>
+  .media-wrapper {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 16 / 9;
+    background: #0f172a;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: sans-serif;
+  }
+</style>
+<div class="media-wrapper">16:9 Video Box</div>`,
+          initialCode: `<style>
+  .media-wrapper {
+    width: 100%;
+    max-width: 400px;
+    background: #0f172a;
+    /* Add aspect-ratio: 16 / 9 */
+  }
+</style>
+<div class="media-wrapper">16:9 Video Box</div>`,
+        },
+        {
+          id: "ch-6",
+          title: "Multi-Breakpoint Media Query",
+          xp: 80,
+          description:
+            "Write a responsive CSS layout using @media (min-width: 600px) and @media (min-width: 900px) breakpoints.",
+          criteria: [
+            {
+              text: "Has @media (min-width: 600px)",
+              validator: (code) =>
+                /@media\s*\(\s*min-width:\s*600px\s*\)/.test(code),
+            },
+            {
+              text: "Has @media (min-width: 900px)",
+              validator: (code) =>
+                /@media\s*\(\s*min-width:\s*900px\s*\)/.test(code),
+            },
+          ],
+          solution: `<style>
+  .responsive-box {
+    background: #fee2e2;
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  @media (min-width: 600px) {
+    .responsive-box { background: #fef3c7; }
+  }
+  @media (min-width: 900px) {
+    .responsive-box { background: #dcfce7; }
+  }
+</style>
+<div class="responsive-box">Breakpoint Responsive Card</div>`,
+          initialCode: `<style>
+  .responsive-box {
+    background: #fee2e2;
+    padding: 20px;
+  }
+  /* Add @media (min-width: 600px) and @media (min-width: 900px) rules */
+</style>
+<div class="responsive-box">Breakpoint Responsive Card</div>`,
+        },
+      ];
+
+      let appState = {
+        activeTab: "playground",
+        selectedEngine: "grid",
+        userXP: 0,
+        solvedChallenges: new Set(),
+        activeChallenge: null,
+        orientation: "portrait",
+        deviceFrame: "frameless",
+        viewportWidth: 768,
+        viewportHeight: 600,
+
+        // Engine dynamic settings
+        grid: { colsMin: 200, gap: 16, autoMode: "auto-fit" },
+        flexbox: { minWidth: 180, gap: 12, grow: 1 },
+        clamp: { minRem: 1.25, maxRem: 2.75, vwFactor: 4 },
+        container: { minWidth: 400 },
+        aspect: { ratio: "16 / 9" },
+        media: { mobBg: "#fef2f2", tabBg: "#fefce8", deskBg: "#f0fdf4" },
+      };
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadSavedUserData();
+        initTabs();
+        initEngineControls();
+        initLessons();
+        initChallenges();
+        initViewportResizer();
+        initCodeEditors();
+        initExportModal();
+
+        renderEngineView();
+        updateBreakpointIndicator();
+      });
+
+      // --- USER XP & STORAGE LOGIC ---
+      function loadSavedUserData() {
+        const savedXP = localStorage.getItem("rwd_user_xp");
+        const savedChallenges = localStorage.getItem("rwd_solved_challenges");
+        if (savedXP) appState.userXP = parseInt(savedXP, 10);
+        if (savedChallenges)
+          appState.solvedChallenges = new Set(JSON.parse(savedChallenges));
+        updateUserStatsUI();
+      }
+
+      function updateUserStatsUI() {
+        document.getElementById("user-xp-display").innerText =
+          `${appState.userXP} XP`;
+        document.getElementById("user-badges-display").innerText =
+          `${appState.solvedChallenges.size}/${CHALLENGES_DATA.length}`;
+      }
+
+      function addXP(amount) {
+        appState.userXP += amount;
+        localStorage.setItem("rwd_user_xp", appState.userXP);
+        updateUserStatsUI();
+      }
+
+      function initTabs() {
+        const tabs = [
+          {
+            btn: "tab-btn-playground",
+            content: "tab-content-playground",
+            name: "playground",
+          },
+          {
+            btn: "tab-btn-lessons",
+            content: "tab-content-lessons",
+            name: "lessons",
+          },
+          {
+            btn: "tab-btn-challenges",
+            content: "tab-content-challenges",
+            name: "challenges",
+          },
+          {
+            btn: "tab-btn-editor",
+            content: "tab-content-editor",
+            name: "editor",
+          },
+        ];
+
+        tabs.forEach((tab) => {
+          const btnElem = document.getElementById(tab.btn);
+          btnElem.addEventListener("click", () => {
+            tabs.forEach((t) => {
+              const b = document.getElementById(t.btn);
+              const c = document.getElementById(t.content);
+              b.classList.remove(
+                "border-cyan-500",
+                "text-cyan-400",
+                "active",
+                "font-bold",
+              );
+              b.classList.add(
+                "border-transparent",
+                "text-zinc-400",
+                "font-semibold",
+              );
+              c.classList.add("hidden");
+            });
+
+            btnElem.classList.remove(
+              "border-transparent",
+              "text-zinc-400",
+              "font-semibold",
+            );
+            btnElem.classList.add(
+              "border-cyan-500",
+              "text-cyan-400",
+              "active",
+              "font-bold",
+            );
+            document.getElementById(tab.content).classList.remove("hidden");
+            appState.activeTab = tab.name;
+
+            if (tab.name === "playground") renderEngineView();
+          });
+        });
+      }
+
+      function initEngineControls() {
+        const engineBtns = document.querySelectorAll(".engine-select-btn");
+        engineBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            engineBtns.forEach((b) => {
+              b.className =
+                "engine-select-btn bg-zinc-900 text-zinc-400 hover:text-zinc-200 font-medium text-xs py-2 px-2.5 rounded-xl border border-zinc-800 transition text-left";
+            });
+            btn.className =
+              "engine-select-btn bg-cyan-600 text-white font-bold text-xs py-2 px-2.5 rounded-xl border border-cyan-500 shadow transition text-left";
+            appState.selectedEngine = btn.dataset.engine;
+            renderEngineControls();
+            renderEngineView();
+          });
+        });
+
+        renderEngineControls();
+      }
+
+      function renderEngineControls() {
+        const container = document.getElementById("engine-controls-container");
+        const e = appState.selectedEngine;
+
+        if (e === "grid") {
+          container.innerHTML = `
+          <h3 class="text-xs font-bold text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-sliders text-cyan-400"></i> CSS Grid Parameters
+          </h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-zinc-400">Card Min Width: <b class="text-cyan-300" id="lbl-grid-min">${appState.grid.colsMin}px</b></span>
+              </div>
+              <input type="range" id="input-grid-min" min="120" max="350" value="${appState.grid.colsMin}" class="w-full accent-cyan-500">
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-zinc-400">Grid Gap: <b class="text-cyan-300" id="lbl-grid-gap">${appState.grid.gap}px</b></span>
+              </div>
+              <input type="range" id="input-grid-gap" min="4" max="40" value="${appState.grid.gap}" class="w-full accent-cyan-500">
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button class="grid-mode-btn text-xs px-3 py-1.5 rounded-lg border font-bold ${appState.grid.autoMode === "auto-fit" ? "bg-cyan-600 text-white border-cyan-500" : "bg-zinc-900 border-zinc-800 text-zinc-400"}" data-mode="auto-fit">auto-fit</button>
+              <button class="grid-mode-btn text-xs px-3 py-1.5 rounded-lg border font-bold ${appState.grid.autoMode === "auto-fill" ? "bg-cyan-600 text-white border-cyan-500" : "bg-zinc-900 border-zinc-800 text-zinc-400"}" data-mode="auto-fill">auto-fill</button>
+            </div>
+          </div>
+        `;
+
+          document
+            .getElementById("input-grid-min")
+            .addEventListener("input", (evt) => {
+              appState.grid.colsMin = parseInt(evt.target.value);
+              document.getElementById("lbl-grid-min").innerText =
+                `${appState.grid.colsMin}px`;
+              renderEngineView();
+            });
+          document
+            .getElementById("input-grid-gap")
+            .addEventListener("input", (evt) => {
+              appState.grid.gap = parseInt(evt.target.value);
+              document.getElementById("lbl-grid-gap").innerText =
+                `${appState.grid.gap}px`;
+              renderEngineView();
+            });
+          document.querySelectorAll(".grid-mode-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              appState.grid.autoMode = btn.dataset.mode;
+              renderEngineControls();
+              renderEngineView();
+            });
+          });
+        } else if (e === "flexbox") {
+          container.innerHTML = `
+          <h3 class="text-xs font-bold text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-sliders text-cyan-400"></i> Flexbox Wrap Parameters
+          </h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-zinc-400">Flex Basis Min-Width: <b class="text-cyan-300" id="lbl-flex-basis">${appState.flexbox.minWidth}px</b></span>
+              </div>
+              <input type="range" id="input-flex-basis" min="100" max="320" value="${appState.flexbox.minWidth}" class="w-full accent-cyan-500">
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-zinc-400">Flex Gap: <b class="text-cyan-300" id="lbl-flex-gap">${appState.flexbox.gap}px</b></span>
+              </div>
+              <input type="range" id="input-flex-gap" min="4" max="40" value="${appState.flexbox.gap}" class="w-full accent-cyan-500">
+            </div>
+          </div>
+        `;
+
+          document
+            .getElementById("input-flex-basis")
+            .addEventListener("input", (evt) => {
+              appState.flexbox.minWidth = parseInt(evt.target.value);
+              document.getElementById("lbl-flex-basis").innerText =
+                `${appState.flexbox.minWidth}px`;
+              renderEngineView();
+            });
+          document
+            .getElementById("input-flex-gap")
+            .addEventListener("input", (evt) => {
+              appState.flexbox.gap = parseInt(evt.target.value);
+              document.getElementById("lbl-flex-gap").innerText =
+                `${appState.flexbox.gap}px`;
+              renderEngineView();
+            });
+        } else if (e === "clamp") {
+          container.innerHTML = `
+          <h3 class="text-xs font-bold text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-text-height text-cyan-400"></i> Typography clamp() Controls
+          </h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <span class="text-zinc-400">Min Size: <b class="text-cyan-300">${appState.clamp.minRem}rem</b></span>
+              <input type="range" id="input-clamp-min" min="0.8" max="2" step="0.1" value="${appState.clamp.minRem}" class="w-full accent-cyan-500">
+            </div>
+            <div>
+              <span class="text-zinc-400">Max Size: <b class="text-cyan-300">${appState.clamp.maxRem}rem</b></span>
+              <input type="range" id="input-clamp-max" min="2" max="5" step="0.25" value="${appState.clamp.maxRem}" class="w-full accent-cyan-500">
+            </div>
+          </div>
+        `;
+
+          document
+            .getElementById("input-clamp-min")
+            .addEventListener("input", (evt) => {
+              appState.clamp.minRem = parseFloat(evt.target.value);
+              renderEngineView();
+            });
+          document
+            .getElementById("input-clamp-max")
+            .addEventListener("input", (evt) => {
+              appState.clamp.maxRem = parseFloat(evt.target.value);
+              renderEngineView();
+            });
+        } else {
+          container.innerHTML = `<p class="text-xs text-zinc-400">Interactive live preset for <b>${e.toUpperCase()}</b> active on stage. Resize the stage to observe adaptive response.</p>`;
+        }
+      }
+
+      function renderEngineView() {
+        const e = appState.selectedEngine;
+        let cssRules = "";
+        let bodyContent = "";
+
+        if (e === "grid") {
+          cssRules = `.grid-container {\n  display: grid;\n  grid-template-columns: repeat(${appState.grid.autoMode}, minmax(${appState.grid.colsMin}px, 1fr));\n  gap: ${appState.grid.gap}px;\n  padding: 20px;\n}\n.card {\n  background: #e0f2fe;\n  border: 2px solid #0284c7;\n  padding: 20px;\n  border-radius: 12px;\n  font-family: sans-serif;\n  color: #0369a1;\n  font-weight: bold;\n}`;
+          bodyContent = `<div class="grid-container">
+          <div class="card">Card 1</div>
+          <div class="card">Card 2</div>
+          <div class="card">Card 3</div>
+          <div class="card">Card 4</div>
+        </div>`;
+        } else if (e === "flexbox") {
+          cssRules = `.flex-wrapper {\n  display: flex;\n  flex-wrap: wrap;\n  gap: ${appState.flexbox.gap}px;\n  padding: 20px;\n}\n.flex-card {\n  flex: 1 1 ${appState.flexbox.minWidth}px;\n  background: #f0fdf4;\n  border: 2px solid #16a34a;\n  padding: 20px;\n  border-radius: 12px;\n  font-family: sans-serif;\n  color: #15803d;\n  font-weight: bold;\n}`;
+          bodyContent = `<div class="flex-wrapper">
+          <div class="flex-card">Flex Item 1</div>
+          <div class="flex-card">Flex Item 2</div>
+          <div class="flex-card">Flex Item 3</div>
+        </div>`;
+        } else if (e === "clamp") {
+          const clampFormula = `clamp(${appState.clamp.minRem}rem, 4vw + 0.5rem, ${appState.clamp.maxRem}rem)`;
+          cssRules = `.fluid-heading {\n  font-size: ${clampFormula};\n  color: #be185d;\n  font-family: sans-serif;\n  font-weight: 800;\n  padding: 20px;\n  line-height: 1.2;\n}`;
+          bodyContent = `<h1 class="fluid-heading">Fluid Title Scaling (${clampFormula})</h1>`;
+        } else if (e === "container") {
+          cssRules = `.wrapper {\n  container-type: inline-size;\n  padding: 20px;\n}\n.card {\n  background: #fff7ed;\n  border: 2px solid #ea580c;\n  padding: 16px;\n  border-radius: 12px;\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n@container (min-width: 400px) {\n  .card {\n    flex-direction: row;\n    background: #ffedf0;\n    border-color: #ec4899;\n  }\n}`;
+          bodyContent = `<div class="wrapper">
+          <div class="card">
+            <div style="width: 60px; height: 60px; background: #ea580c; border-radius: 8px;"></div>
+            <div style="font-family: sans-serif;">
+              <h3 style="margin: 0; font-size: 16px;">Container-Aware Box</h3>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #555;">Flips direction when container width > 400px</p>
+            </div>
+          </div>
+        </div>`;
+        } else if (e === "aspect") {
+          cssRules = `.media-box {\n  width: 100%;\n  max-width: 500px;\n  aspect-ratio: 16 / 9;\n  background: #0f172a;\n  border-radius: 12px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: white;\n  font-family: sans-serif;\n  margin: 20px;\n}`;
+          bodyContent = `<div class="media-box">
+          <div style="text-align: center;">
+            <h3 style="margin: 0;">16:9 Aspect Box</h3>
+            <p style="font-size: 12px; opacity: 0.8;">Resize stage width to see fluid scaling</p>
+          </div>
+        </div>`;
+        } else if (e === "media") {
+          cssRules = `.responsive-box {\n  background: ${appState.media.mobBg};\n  padding: 24px;\n  font-family: sans-serif;\n  border-radius: 12px;\n  margin: 20px;\n  font-weight: bold;\n}\n@media (min-width: 600px) {\n  .responsive-box { background: ${appState.media.tabBg}; }\n}\n@media (min-width: 900px) {\n  .responsive-box { background: ${appState.media.deskBg}; }\n}`;
+          bodyContent = `<div class="responsive-box">
+          Resize viewport to trigger min-width 600px & 900px breakpoints.
+        </div>`;
+        }
+
+        const fullCode = `<style>\n  body { margin: 0; padding: 0; font-family: sans-serif; }\n${cssRules}\n</style>\n${bodyContent}`;
+        updateIframeCode(fullCode);
+        document.getElementById("live-code-viewer").innerText = cssRules;
+        document.getElementById("code-editor-textarea").value = fullCode;
+      }
+
+      function updateIframeCode(fullHTML) {
+        const iframe = document.getElementById("viewport-iframe");
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(fullHTML);
+        doc.close();
+      }
+
+      function initLessons() {
+        const listContainer = document.getElementById("lessons-list");
+        listContainer.innerHTML = "";
+
+        LESSONS_DATA.forEach((lesson) => {
+          const item = document.createElement("div");
+          item.className =
+            "bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3";
+          item.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">${lesson.level} • +${lesson.xp} XP</span>
+              <h3 class="text-xs font-bold text-zinc-100 mt-1">${lesson.title}</h3>
+            </div>
+            <button class="btn-load-lesson bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded-lg text-xs font-semibold transition" data-id="${lesson.id}">
+              <i class="fa-solid fa-play text-[10px]"></i> Load
+            </button>
+          </div>
+          ${lesson.content}
+        `;
+          listContainer.appendChild(item);
+        });
+
+        document.querySelectorAll(".btn-load-lesson").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = parseInt(btn.dataset.id);
+            const lesson = LESSONS_DATA.find((l) => l.id === id);
+            if (lesson) {
+              updateIframeCode(lesson.htmlCode);
+              document.getElementById("code-editor-textarea").value =
+                lesson.htmlCode;
+              document.getElementById("live-code-viewer").innerText =
+                `/* Loaded: ${lesson.title} */`;
+              showToast(`Loaded ${lesson.title} into stage!`);
+            }
+          });
+        });
+      }
+
+      function initChallenges() {
+        const gridContainer = document.getElementById("challenge-cards-grid");
+        gridContainer.innerHTML = "";
+
+        CHALLENGES_DATA.forEach((ch) => {
+          const isSolved = appState.solvedChallenges.has(ch.id);
+          const card = document.createElement("div");
+          card.className = `p-4 rounded-2xl border transition cursor-pointer flex flex-col justify-between space-y-2 ${isSolved ? "bg-emerald-950/20 border-emerald-500/40" : "bg-zinc-950 border-zinc-800 hover:border-purple-500/50"}`;
+          card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold ${isSolved ? "text-emerald-400" : "text-purple-300"}">${ch.title}</span>
+              ${isSolved ? '<i class="fa-solid fa-circle-check text-emerald-400"></i>' : `<span class="text-[10px] font-bold text-amber-400">+${ch.xp} XP</span>`}
+            </div>
+            <p class="text-[11px] text-zinc-400 line-clamp-2">${ch.description}</p>
+          </div>
+          <button class="w-full text-center py-1.5 rounded-xl text-xs font-bold ${isSolved ? "bg-emerald-500/20 text-emerald-300" : "bg-purple-600 hover:bg-purple-500 text-white"} transition">
+            ${isSolved ? "Review Solution" : "Start Challenge"}
+          </button>
+        `;
+
+          card.addEventListener("click", () => loadChallengeWorkspace(ch));
+          gridContainer.appendChild(card);
+        });
+
+        // Submit challenge test runner
+        document
+          .getElementById("btn-ch-submit")
+          .addEventListener("click", runChallengeValidation);
+        document
+          .getElementById("btn-ch-reset")
+          .addEventListener("click", () => {
+            if (appState.activeChallenge) {
+              document.getElementById("ch-code-editor").value =
+                appState.activeChallenge.initialCode;
+              updateIframeCode(appState.activeChallenge.initialCode);
+            }
+          });
+        document
+          .getElementById("btn-ch-solution")
+          .addEventListener("click", () => {
+            if (appState.activeChallenge) {
+              document.getElementById("ch-code-editor").value =
+                appState.activeChallenge.solution;
+              updateIframeCode(appState.activeChallenge.solution);
+            }
+          });
+      }
+
+      function loadChallengeWorkspace(ch) {
+        appState.activeChallenge = ch;
+        document
+          .getElementById("active-challenge-panel")
+          .classList.remove("hidden");
+        document.getElementById("ch-title").innerText = ch.title;
+        document.getElementById("ch-xp-reward").innerText = `+${ch.xp} XP`;
+        document.getElementById("ch-description").innerText = ch.description;
+        document.getElementById("ch-code-editor").value = ch.initialCode;
+
+        const criteriaList = document.getElementById("ch-criteria-list");
+        criteriaList.innerHTML = "";
+        ch.criteria.forEach((crit, index) => {
+          const li = document.createElement("li");
+          li.id = `crit-item-${index}`;
+          li.className = "flex items-center gap-2 text-zinc-400";
+          li.innerHTML = `<i class="fa-regular fa-circle text-zinc-600"></i> <span>${crit.text}</span>`;
+          criteriaList.appendChild(li);
+        });
+
+        document.getElementById("ch-validation-feedback").innerText = "";
+        updateIframeCode(ch.initialCode);
+        document
+          .getElementById("active-challenge-panel")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      function runChallengeValidation() {
+        const ch = appState.activeChallenge;
+        if (!ch) return;
+
+        const userCode = document.getElementById("ch-code-editor").value;
+        updateIframeCode(userCode);
+
+        let allPassed = true;
+        ch.criteria.forEach((crit, index) => {
+          const passed = crit.validator(userCode);
+          const li = document.getElementById(`crit-item-${index}`);
+          if (passed) {
+            li.className =
+              "flex items-center gap-2 text-emerald-400 font-semibold";
+            li.querySelector("i").className =
+              "fa-solid fa-circle-check text-emerald-400";
+          } else {
+            allPassed = false;
+            li.className = "flex items-center gap-2 text-rose-400";
+            li.querySelector("i").className =
+              "fa-solid fa-circle-xmark text-rose-400";
+          }
+        });
+
+        const feedback = document.getElementById("ch-validation-feedback");
+        if (allPassed) {
+          feedback.innerText = " All Tests Passed!";
+          feedback.className = "text-xs font-bold text-emerald-400";
+
+          if (!appState.solvedChallenges.has(ch.id)) {
+            appState.solvedChallenges.add(ch.id);
+            localStorage.setItem(
+              "rwd_solved_challenges",
+              JSON.stringify([...appState.solvedChallenges]),
+            );
+            addXP(ch.xp);
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            showToast(`Challenge Solved! +${ch.xp} XP Awarded!`);
+            initChallenges();
+          }
+        } else {
+          feedback.innerText = " Some tests failed. Review criteria above.";
+          feedback.className = "text-xs font-bold text-rose-400";
+        }
+      }
+
+      function initViewportResizer() {
+        const vp = document.getElementById("viewport-container");
+        const inputW = document.getElementById("input-vp-width");
+        const inputH = document.getElementById("input-vp-height");
+        const dimOverlay = document.getElementById(
+          "viewport-dimension-overlay",
+        );
+
+        function setDimensions(w, h) {
+          appState.viewportWidth = w;
+          appState.viewportHeight = h;
+          vp.style.width = `${w}px`;
+          vp.style.height = `${h}px`;
+          inputW.value = w;
+          inputH.value = h;
+          dimOverlay.innerText = `${w}px × ${h}px`;
+          updateBreakpointIndicator();
+        }
+
+        // Presets
+        document.querySelectorAll(".preset-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const w = parseInt(btn.dataset.w);
+            const h = parseInt(btn.dataset.h);
+            setDimensions(w, h);
+            setDeviceFrame(btn.dataset.device);
+          });
+        });
+
+        inputW.addEventListener("input", (e) =>
+          setDimensions(
+            parseInt(e.target.value) || 320,
+            appState.viewportHeight,
+          ),
+        );
+        inputH.addEventListener("input", (e) =>
+          setDimensions(
+            appState.viewportWidth,
+            parseInt(e.target.value) || 300,
+          ),
+        );
+
+        // Orientation toggle
+        document
+          .getElementById("btn-toggle-orientation")
+          .addEventListener("click", () => {
+            const newW = appState.viewportHeight;
+            const newH = appState.viewportWidth;
+            appState.orientation =
+              appState.orientation === "portrait" ? "landscape" : "portrait";
+            document.getElementById("lbl-orientation").innerText =
+              appState.orientation;
+            setDimensions(newW, newH);
+          });
+
+        // Device frame dropdown
+        document
+          .getElementById("select-device-frame")
+          .addEventListener("change", (e) => {
+            setDeviceFrame(e.target.value);
+          });
+
+        // Resize handles logic
+        const handleR = document.getElementById("handle-r");
+        const handleB = document.getElementById("handle-b");
+        const handleBR = document.getElementById("handle-br");
+
+        let isResizing = false,
+          startX,
+          startY,
+          startW,
+          startH;
+
+        function startResize(e) {
+          isResizing = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          startW = vp.offsetWidth;
+          startH = vp.offsetHeight;
+          document.addEventListener("mousemove", doResize);
+          document.addEventListener("mouseup", stopResize);
+        }
+
+        function doResize(e) {
+          if (!isResizing) return;
+          const newW = Math.max(280, startW + (e.clientX - startX));
+          const newH = Math.max(200, startH + (e.clientY - startY));
+          setDimensions(newW, newH);
+        }
+
+        function stopResize() {
+          isResizing = false;
+          document.removeEventListener("mousemove", doResize);
+          document.removeEventListener("mouseup", stopResize);
+        }
+
+        handleR.addEventListener("mousedown", startResize);
+        handleB.addEventListener("mousedown", startResize);
+        handleBR.addEventListener("mousedown", startResize);
+      }
+
+      function setDeviceFrame(frameName) {
+        const vp = document.getElementById("viewport-container");
+        vp.className =
+          "relative bg-white text-zinc-900 shadow-2xl overflow-hidden flex flex-col transition-all";
+        if (frameName === "iphone") vp.classList.add("device-mockup-iphone");
+        else if (frameName === "ipad") vp.classList.add("device-mockup-ipad");
+        else if (frameName === "macbook")
+          vp.classList.add("device-mockup-macbook");
+        else vp.classList.add("rounded-lg");
+      }
+
+      function updateBreakpointIndicator() {
+        const w = appState.viewportWidth;
+        const elem = document.getElementById("active-breakpoint-indicator");
+        if (w < 640) elem.innerText = `@media (max-width: 639px) [Mobile]`;
+        else if (w < 768)
+          elem.innerText = `@media (min-width: 640px) [Small Tablet]`;
+        else if (w < 1024)
+          elem.innerText = `@media (min-width: 768px) [Tablet / Medium]`;
+        else if (w < 1280)
+          elem.innerText = `@media (min-width: 1024px) [Laptop / Large]`;
+        else
+          elem.innerText = `@media (min-width: 1280px) [Desktop Extra Large]`;
+      }
+
+      function initCodeEditors() {
+        document
+          .getElementById("btn-apply-editor-code")
+          .addEventListener("click", () => {
+            const code = document.getElementById("code-editor-textarea").value;
+            updateIframeCode(code);
+            showToast("Canvas updated successfully!");
+          });
+
+        document
+          .getElementById("btn-quick-copy")
+          .addEventListener("click", copyActiveCSS);
+        document
+          .getElementById("btn-panel-copy-css")
+          .addEventListener("click", copyActiveCSS);
+      }
+
+      function copyActiveCSS() {
+        const code = document.getElementById("live-code-viewer").innerText;
+        copyToClipboard(code);
+        showToast("CSS copied to clipboard!");
+      }
+
+      function copyToClipboard(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+
+      function initExportModal() {
+        const modal = document.getElementById("export-modal");
+        document
+          .getElementById("btn-export-code")
+          .addEventListener("click", () => {
+            const fullHTML = document.getElementById(
+              "code-editor-textarea",
+            ).value;
+            document.getElementById("export-code-preview").innerText = fullHTML;
+            modal.classList.remove("hidden");
+          });
+
+        document
+          .getElementById("btn-close-modal")
+          .addEventListener("click", () => modal.classList.add("hidden"));
+
+        document
+          .getElementById("btn-download-html")
+          .addEventListener("click", () => {
+            const content = document.getElementById(
+              "code-editor-textarea",
+            ).value;
+            const blob = new Blob([content], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "responsive-page.html";
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("HTML file downloaded!");
+          });
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        document.getElementById("toast-message").innerText = msg;
+        toast.classList.remove("translate-y-20", "opacity-0");
+        setTimeout(() => {
+          toast.classList.add("translate-y-20", "opacity-0");
+        }, 2500);
+      }
+    </script>
+  </body>
+</html>
